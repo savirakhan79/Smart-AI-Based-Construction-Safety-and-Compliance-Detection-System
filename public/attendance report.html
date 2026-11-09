@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SafeSite  -  Attendance report</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0a0a0a", // Orange-500
+                        "primary-light": "#171717", // Orange-300
+                        "primary-dark": "#c2410c", // Orange-700
+                        "accent": "#fed7aa", // Orange-400
+                        "background-dark": "#0f0f10", // Very dark grey/black
+                        "surface-dark": "#18181b", // Zinc-900
+                        "surface-darker": "#121214",
+                        "text-main": "#e4e4e7", // Zinc-200
+                        "text-sub": "#a1a1aa", // Zinc-400
+                        "border-dark": "#27272a" // Zinc-800
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.1)',
+                        'glow': '0 0 15px rgba(249, 115, 22, 0.15)'
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #18181b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3f3f46;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #52525b;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #000000;
+            color: #e4e4e7;
+        }
+        #logoutBtn {
+          cursor: pointer;
+}
+canvas {
+    filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.05));
+}
+.tracking-tighter { letter-spacing: -0.02em; }
+
+    </style>
+</head>
+<body class="bg-black font-display text-text-main antialiased overflow-hidden selection:bg-primary selection:text-white">
+<div class="flex h-screen w-full">
+<aside class="w-72 bg-black border-r border-border-dark flex-col hidden lg:flex z-30 flex-shrink-0">
+<div class="h-20 flex items-center px-8 border-b border-border-dark">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg size-8 shadow-sm flex-shrink-0 border border-border-dark relative" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBT4c_9y1DyK0rjWxxGBuWBQAWWLjyanVLXEu2XHl55BQ5P1GXuwHb-XTnzohmN071a_FgGwSMJKj_Y2hToOY3OsQu8FdgmY-5eIoODNAYcEeiEwdOOkzzpXbBdF81ofy4I7sukeYnZkjMzgkFMWkubY02a34czHsPOBo8QpRs-bXQq4rf17N0tIdt8_k2_F7A1s_QIHeGxSJFmouMsu4Ggk0qS7SJW_eAaZk6zr3h-4SGafUZYBRAookTX8APh_OEWPAbSBbnjIdaA");'>
+<div class="size-9 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white shadow-glow">
+    <img src="logo.png" alt="My Logo" class="h-6 w-6 object-contain" />
+  </div>
+
+</div>
+<h1 class="text-text-main text-lg font-bold leading-tight tracking-wide">SafeSite <span class="text-primary"></span></h1>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+<div class="px-4 mb-2">
+</div>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-sub rounded-lg hover:bg-surface-darker hover:text-white transition-colors group" href="Admin-Dashboard.html">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-white/5 text-white border border-neutral-700 shadow-soft mb-1 group" href="live monitoring.html">
+<span class="material-symbols-outlined text-orange-500">videocam</span>
+<span class="text-sm font-medium">Live Monitoring</span>
+<span class="ml-auto size-2 rounded-full bg-red-500 animate-pulse"></span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-orange-500/10 text-orange-500 shadow-glow-sub border border-orange-500/20 group relative overflow-hidden mb-1" href="attendance report.html">
+<div class="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-500"></div>
+<span class="material-symbols-outlined icon-filled">calendar_month</span>
+<span class="text-sm font-bold relative z-10">Attendance Reports</span>
+<span class="ml-auto bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg">Live</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workermanagementsystem.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">engineering</span>
+<span class="text-sm font-medium">Staff Management</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="live incident.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">crisis_alert</span>
+<span class="text-sm font-medium">Live Incidents</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="safety-compliance-ppe-detection.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">health_and_safety</span>
+<span class="text-sm font-medium">Safety Compliance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="violotion.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">warning_amber</span>
+<span class="text-sm font-medium">Violations</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="salary.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">payments</span>
+<span class="text-sm font-medium">Salary &amp; Rewards</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workerperformance.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">trending_up</span>
+<span class="text-sm font-medium">Performance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="reportandanalysics.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">analytics</span>
+<span class="text-sm font-medium">Reports Center</span>
+</a>
+<div class="mt-auto px-2 pb-4 pt-8">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="systemsettingscreen.html">
+<span class="material-symbols-outlined group-hover:text-neutral-200 transition-colors">settings</span>
+<span class="text-sm font-medium">System Settings</span>
+</a>
+</nav>
+</aside>
+<div class="flex-1 flex flex-col h-screen overflow-hidden bg-black">
+<header class="h-20 flex-shrink-0 flex items-center justify-between px-8 bg-black border-b border-border-dark z-20">
+<div class="flex items-center gap-6">
+<div class="lg:hidden flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg size-9 shadow-sm flex-shrink-0 border border-border-dark relative" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBT4c_9y1DyK0rjWxxGBuWBQAWWLjyanVLXEu2XHl55BQ5P1GXuwHb-XTnzohmN071a_FgGwSMJKj_Y2hToOY3OsQu8FdgmY-5eIoODNAYcEeiEwdOOkzzpXbBdF81ofy4I7sukeYnZkjMzgkFMWkubY02a34czHsPOBo8QpRs-bXQq4rf17N0tIdt8_k2_F7A1s_QIHeGxSJFmouMsu4Ggk0qS7SJW_eAaZk6zr3h-4SGafUZYBRAookTX8APh_OEWPAbSBbnjIdaA");'>
+<div class="absolute inset-0 bg-orange-500/10 rounded-lg"></div>
+</div>
+</div>
+<div>
+    
+<h2 class="text-xl font-bold text-white tracking-tight">Attendance Reports</h2>
+<p class="text-sm text-text-sub mt-0.5 hidden sm:block">Detailed logs, worker timesheets, and absentee analysis</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden md:flex items-center">
+<span class="absolute left-3 text-text-sub material-symbols-outlined text-[20px]">search</span>
+<input id="searchInput"
+ class="pl-10 pr-4 py-2 bg-surface-darker border border-border-dark rounded-lg w-64 text-sm text-text-main focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-600"
+ placeholder="Search reports..."
+ type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative">
+    <button id="notifBtn" class="relative p-2 rounded-lg text-text-sub hover:bg-surface-darker transition-all">
+        <span class="material-symbols-outlined">notifications</span>
+        <span id="notifDot" class="absolute top-2 right-2 size-2 bg-primary rounded-full shadow-[0_0_10px_rgba(249,115,22,0.5)]"></span>
+    </button>
+
+    <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-72 bg-surface-dark border border-border-dark rounded-xl shadow-2xl z-[100] overflow-hidden">
+        <div class="p-3 border-b border-border-dark flex justify-between items-center bg-surface-darker">
+            <span class="text-xs font-bold text-white">Recent Activity</span>
+            <button onclick="clearNotifications()" class="text-[10px] text-primary hover:underline">Clear All</button>
+        </div>
+        
+        <div id="notifList" class="max-h-60 overflow-y-auto">
+            <div class="p-3 border-b border-border-dark hover:bg-white/[0.02] transition-all cursor-pointer">
+                <p class="text-[11px] text-white font-medium">System Ready</p>
+                <p class="text-[10px] text-text-sub">Staff management database linked successfully.</p>
+                <p class="text-[9px] text-gray-500 mt-1">Just now</p>
+            </div>
+        </div>
+        
+        <div class="p-2 text-center bg-surface-darker">
+            <button class="text-[10px] text-text-sub hover:text-white transition-all">View All Alerts</button>
+        </div>
+    </div>
+</div>
+
+<div class="h-8 w-[1px] bg-border-dark mx-1"></div>
+<button id="logoutBtn" class="flex items-center gap-3 hover:bg-surface-darker p-1.5 pr-3 rounded-full border border-transparent hover:border-border-dark transition-all cursor-pointer">
+<div class="size-9 rounded-full border border-border-dark shadow-sm overflow-hidden bg-surface-darker flex items-center justify-center">
+    <img 
+        src="admin.png" 
+        alt="Admin" 
+        class="w-full h-full object-cover">
+</div>  
+<div class="hidden md:block text-left">
+    <p class="text-sm font-semibold text-gray-200 leading-none">Ali Khan</p>
+  </div>
+  <span class="material-symbols-outlined text-gray-500 text-sm">expand_more</span>
+</button>
+
+<script>
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+
+      window.location.href = "adminloginscreen.html";
+  });
+</script>
+</div>
+</div>
+</header>
+<div class="flex-1 flex flex-col h-screen overflow-hidden bg-black">
+
+<main class="flex-1 overflow-y-auto p-6 lg:p-8 scroll-smooth">
+<div class="max-w-[1600px] mx-auto flex flex-col gap-6">
+<div class="bg-surface-dark p-5 rounded-xl border border-border-dark shadow-soft flex flex-col lg:flex-row items-center justify-between gap-4">
+<div class="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+<div class="flex items-center bg-surface-darker rounded-lg border border-border-dark p-1">
+<button onclick="loadAttendance('daily', this)" class="px-3 py-1.5 rounded-lg text-sm text-text-sub hover:bg-surface-darker hover:text-white transition-colors">Daily</button>
+<button onclick="loadAttendance('weekly', this)" class="px-3 py-1.5 rounded-lg text-sm text-text-sub hover:bg-surface-darker hover:text-white transition-colors">Weekly</button>
+<button onclick="loadAttendance('monthly', this)" class="px-3 py-1.5 rounded-lg text-sm text-text-sub hover:bg-surface-darker hover:text-white transition-colors">Monthly</button>
+
+</div>
+
+<div class="h-8 w-[1px] bg-border-dark hidden sm:block"></div>
+<div class="flex items-center gap-2 w-full sm:w-auto">
+<div class="relative w-full sm:w-auto">
+<input class="pl-9 pr-4 py-1.5 bg-surface-darker border border-border-dark rounded-lg text-sm text-text-main focus:border-primary focus:ring-1 focus:ring-primary outline-none w-full sm:w-40" type="date" value="2023-10-24"/>
+<span class="absolute left-2.5 top-2 text-text-sub material-symbols-outlined text-[16px]">calendar_today</span>
+</div>
+<span class="text-text-sub text-sm">to</span>
+<div class="relative w-full sm:w-auto">
+<input class="pl-9 pr-4 py-1.5 bg-surface-darker border border-border-dark rounded-lg text-sm text-text-main focus:border-primary focus:ring-1 focus:ring-primary outline-none w-full sm:w-40" type="date" value="2023-10-24"/>
+<span class="absolute left-2.5 top-2 text-text-sub material-symbols-outlined text-[16px]">calendar_today</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 w-full lg:w-auto">
+<button class="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-darker border border-border-dark rounded-lg text-sm font-medium text-text-sub hover:text-white hover:border-gray-600 transition-colors">
+<span class="material-symbols-outlined text-[18px]">filter_alt</span>
+                        Filters
+                    </button>
+<div class="h-8 w-[1px] bg-border-dark hidden lg:block"></div>
+<button onclick="downloadCSV()" class="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-primary/20">
+  <span class="material-symbols-outlined text-[18px]">table_view</span>
+  Export Excel
+</button>
+
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="bg-surface-dark p-5 rounded-xl border border-border-dark shadow-soft relative overflow-hidden group">
+<div class="flex justify-between items-start mb-2 relative z-10">
+<div>
+<p class="text-xs font-semibold text-text-sub uppercase tracking-wide">Present Today</p>
+<h3 class="text-2xl font-bold text-white mt-1 present-today">0<span class="text-sm font-normal text-text-sub">/0</span></h3>
+</div>
+<div class="p-2 rounded-lg bg-emerald-900/20 text-emerald-500">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+</div>
+<div class="w-full bg-surface-darker rounded-full h-1.5 mt-2">
+<div class="bg-emerald-500 h-1.5 rounded-full" style="width: 86%"></div>
+</div>
+<p class="text-[11px] text-emerald-500 mt-2 font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                    +2.4% vs yesterday
+                </p>
+</div>
+<div class="bg-surface-dark p-5 rounded-xl border border-border-dark shadow-soft relative overflow-hidden group">
+<div class="flex justify-between items-start mb-2 relative z-10">
+<div>
+<p class="text-xs font-semibold text-text-sub uppercase tracking-wide">Late Arrivals</p>
+<h3 class="text-2xl font-bold text-white mt-1 late-arrivals">0</h3>
+</div>
+<div class="p-2 rounded-lg bg-amber-900/20 text-amber-500">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+</div>
+<div class="w-full bg-surface-darker rounded-full h-1.5 mt-2">
+<div class="bg-amber-500 h-1.5 rounded-full" style="width: 15%"></div>
+</div>
+<p class="text-[11px] text-amber-500 mt-2 font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                    High lateness at Gate 3
+                </p>
+</div>
+<div class="bg-surface-dark p-5 rounded-xl border border-border-dark shadow-soft relative overflow-hidden group">
+<div class="flex justify-between items-start mb-2 relative z-10">
+<div>
+<p class="text-xs font-semibold text-text-sub uppercase tracking-wide">Absent</p>
+<h3 class="text-2xl font-bold text-white mt-1 absent">0</h3>
+</div>
+<div class="p-2 rounded-lg bg-red-900/20 text-red-500">
+<span class="material-symbols-outlined">person_off</span>
+</div>
+</div>
+<div class="w-full bg-surface-darker rounded-full h-1.5 mt-2">
+<div class="bg-red-500 h-1.5 rounded-full" style="width: 10%"></div>
+</div>
+<p class="text-[11px] text-text-sub mt-2 font-medium">
+                    24 Approved Leaves
+                </p>
+</div>
+<div class="bg-surface-dark p-5 rounded-xl border border-border-dark shadow-soft relative overflow-hidden group">
+<div class="flex justify-between items-start mb-2 relative z-10">
+<div>
+<p class="text-xs font-semibold text-text-sub uppercase tracking-wide">Avg Work Hours</p>
+<h3 class="text-2xl font-bold text-white mt-1 avg-hours">0 <span class="text-sm font-normal text-text-sub">hrs</span></h3>
+</div>
+<div class="p-2 rounded-lg bg-blue-900/20 text-blue-500">
+<span class="material-symbols-outlined">timelapse</span>
+</div>
+</div>
+<div class="w-full bg-surface-darker rounded-full h-1.5 mt-2">
+<div class="bg-blue-500 h-1.5 rounded-full" style="width: 75%"></div>
+</div>
+<p class="text-[11px] text-blue-500 mt-2 font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                    On target
+                </p>
+</div>
+</div>
+<div class="bg-surface-dark rounded-xl border border-border-dark shadow-soft flex flex-col">
+<div class="p-5 border-b border-border-dark flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<h3 class="font-bold text-white text-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">analytics</span>
+                        Worker Attendance Log
+                    </h3>
+<div class="flex items-center gap-2">
+<div class="relative">
+<span class="absolute left-3 top-2 text-text-sub material-symbols-outlined text-[18px]">search</span>
+<input id="filterInput"class="pl-9 pr-4 py-1.5 bg-surface-darker border border-border-dark rounded-lg text-sm text-text-main focus:border-primary focus:ring-1 focus:ring-primary outline-none w-64" placeholder="Filter by Name or ID" type="text"/>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-darker text-xs uppercase tracking-wider text-text-sub font-semibold border-b border-border-dark">
+<th class="px-6 py-4">Worker ID</th>
+<th class="px-6 py-4">Worker</th>
+<th class="px-6 py-4">Date</th>
+<th class="px-6 py-4">Check In</th>
+<th class="px-6 py-4">Check Out</th>
+<th class="px-6 py-4">Total Hours</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4 text-right">Actions</th>
+</tr>
+</thead>
+<tbody id="attendanceTable" class="divide-y divide-border-dark text-sm"></tbody>
+
+</table>
+</div>
+<div class="p-4 border-t border-border-dark flex items-center justify-between text-sm text-text-sub">
+<span>Showing 1 to 5 </span>
+<div class="flex gap-2">
+<button class="px-3 py-1 border border-border-dark rounded hover:bg-surface-darker disabled:opacity-50 text-text-sub hover:text-white transition-colors">Previous</button>
+<button class="px-3 py-1 bg-surface-darker border border-border-dark rounded text-white">1</button>
+<button class="px-3 py-1 bg-primary text-white border border-primary rounded hover:bg-primary-dark transition-colors">2</button>
+<button class="px-3 py-1 bg-surface-darker border border-border-dark rounded hover:bg-surface-darker text-text-sub hover:text-white">3</button>
+<button class="px-3 py-1 border border-border-dark rounded hover:bg-surface-darker text-text-sub hover:text-white transition-colors">Next</button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="bg-surface-dark rounded-xl border border-border-dark shadow-soft p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-bold text-white text-lg">Weekly Attendance Trends</h3>
+<select class="text-xs bg-surface-darker border-border-dark rounded-lg text-text-sub focus:border-primary focus:ring-primary py-1 px-2">
+<option>This Week</option>
+<option>Last Week</option>
+</select>
+</div>
+<canvas id="weeklyChart" height="200"></canvas>
+
+</div>
+<div class="bg-surface-dark rounded-xl border border-border-dark shadow-soft p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold text-white text-lg">Top Absentees</h3>
+<button class="text-xs font-medium text-primary hover:text-primary-light">View All</button>
+</div>
+<div id="topAbsenteesList" class="space-y-3">
+<p class="text-xs text-text-sub italic">No absentees for this period.</p>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+<!-- ================= WORKER ACTION MODAL (Detail + Status Change) ================= -->
+<div id="actionModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4">
+  <div id="actionModalBackdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+  <div class="relative bg-surface-dark border border-border-dark rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+    <div class="p-5 border-b border-border-dark flex items-center justify-between bg-surface-darker">
+      <div class="flex items-center gap-3">
+        <div id="modalAvatar" class="size-10 rounded-lg bg-surface-dark border border-border-dark flex items-center justify-center text-xs font-bold text-orange-500">--</div>
+        <div>
+          <p id="modalWorkerName" class="text-sm font-bold text-white leading-none">Worker Name</p>
+          <p id="modalWorkerMeta" class="text-[11px] text-text-sub mt-1">ID • Date</p>
+        </div>
+      </div>
+      <button onclick="closeActionModal()" class="p-1.5 rounded-lg hover:bg-white/5 text-text-sub hover:text-white transition-all">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <div class="p-5 space-y-4">
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div class="bg-surface-darker border border-border-dark rounded-lg p-3">
+          <p class="text-text-sub uppercase tracking-wide text-[10px] mb-1">Check In</p>
+          <p id="modalCheckIn" class="text-emerald-400 font-semibold text-sm">--:--</p>
+        </div>
+        <div class="bg-surface-darker border border-border-dark rounded-lg p-3">
+          <p class="text-text-sub uppercase tracking-wide text-[10px] mb-1">Check Out</p>
+          <p id="modalCheckOut" class="text-pink-400 font-semibold text-sm">--:--</p>
+        </div>
+        <div class="bg-surface-darker border border-border-dark rounded-lg p-3">
+          <p class="text-text-sub uppercase tracking-wide text-[10px] mb-1">Total Hours</p>
+          <p id="modalHours" class="text-white font-semibold text-sm">0 hrs</p>
+        </div>
+        <div class="bg-surface-darker border border-border-dark rounded-lg p-3">
+          <p class="text-text-sub uppercase tracking-wide text-[10px] mb-1">Current Status</p>
+          <p id="modalStatus" class="font-semibold text-sm">--</p>
+        </div>
+      </div>
+
+      <div>
+        <p class="text-xs font-semibold text-text-sub uppercase tracking-wide mb-2">Change Status</p>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="submitStatusChange('Present')" class="px-3 py-1.5 rounded-lg text-xs font-bold border bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20 transition-colors">Present</button>
+          <button onclick="submitStatusChange('Late')" class="px-3 py-1.5 rounded-lg text-xs font-bold border bg-amber-500/10 text-amber-500 border-amber-500/20 hover:bg-amber-500/20 transition-colors">Late</button>
+          <button onclick="submitStatusChange('Absent')" class="px-3 py-1.5 rounded-lg text-xs font-bold border bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/20 transition-colors">Absent</button>
+          <button onclick="submitStatusChange('Leave')" class="px-3 py-1.5 rounded-lg text-xs font-bold border bg-neutral-800 text-neutral-400 border-neutral-700 hover:bg-neutral-700 transition-colors">On Leave</button>
+        </div>
+      </div>
+
+      <p id="modalUpdatedNote" class="text-[10px] text-text-sub italic hidden"></p>
+    </div>
+
+    <div class="p-4 border-t border-border-dark bg-surface-darker flex justify-end">
+      <button onclick="closeActionModal()" class="px-4 py-2 rounded-lg text-sm font-medium text-text-sub hover:text-white hover:bg-white/5 transition-colors">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const tableBody = document.getElementById("attendanceTable");
+const buttons = document.querySelectorAll("button[onclick^='loadAttendance']");
+const presentTodayElem = document.querySelector(".present-today");
+const lateArrivalsElem = document.querySelector(".late-arrivals");
+const absentElem = document.querySelector(".absent");
+const avgHoursElem = document.querySelector(".avg-hours");
+
+// Tracks whichever tab (daily/weekly/monthly) is currently active so
+// "Export Excel" always downloads exactly what's on screen right now.
+let currentReportType = "daily";
+// Holds the row currently open in the action modal (workerId + date)
+let activeActionTarget = null;
+
+// ================= WEEKLY / MONTHLY CHART =================
+const ctx = document.getElementById('weeklyChart').getContext('2d');
+let attendanceChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        datasets: [{ label:'Attendance', data: [0,0,0,0,0,0,0], backgroundColor:'#f97316' }]
+    },
+    options:{
+        responsive:true,
+        plugins:{legend:{display:false}},
+        scales:{y:{beginAtZero:true}}
+    }
+});
+
+// ================= HELPER FUNCTIONS =================
+const token = localStorage.getItem("token") || "";
+
+async function fetchWithAuth(url){
+    const res = await fetch(url, { headers:{ Authorization:`Bearer ${token}` } });
+    if(res.status===401 || res.status===403){ alert("Session expired. Please login again."); window.location.href="adminloginscreen.html"; return null; }
+    return res.json();
+}
+
+// ================= UPDATE CHART FUNCTION =================
+function updateChart(data, type){
+    let labels = [];
+    let chartData = [];
+
+    if(type === 'daily'){
+        labels = ['Today'];
+        chartData = [data.length];
+    } else if(type === 'weekly'){
+        const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+        labels = days;
+        chartData = days.map(d=>{
+            return data.filter(x => new Date(x.date).toLocaleDateString('en-US', { weekday: 'short' }) === d).length;
+        });
+    } else if(type === 'monthly'){
+        const monthDates = Array.from(new Set(data.map(d=>new Date(d.date).getDate()))).sort((a,b)=>a-b);
+        labels = monthDates.map(d=>d.toString());
+        chartData = monthDates.map(date => data.filter(x => new Date(x.date).getDate() === date).length);
+    }
+
+    attendanceChart.data.labels = labels;
+    attendanceChart.data.datasets[0].data = chartData;
+    attendanceChart.update();
+}
+
+// ================= LOAD ATTENDANCE DATA =================
+// ================= LOAD ATTENDANCE DATA (Enhanced) =================
+async function loadAttendance(type, button) {
+    // Remember the active tab so Export Excel matches what's on screen
+    currentReportType = type;
+
+    // UI Feedback: Active state toggle
+    buttons.forEach(b => b.classList.remove("bg-white/10", "text-white", "border-neutral-700"));
+    if (button) {
+        button.classList.add("bg-white/10", "text-white", "border-neutral-700");
+    }
+
+    try {
+        const res = await fetch(`http://localhost:5000/api/attendance/report?type=${type}`);
+        const data = await res.json();
+        tableBody.innerHTML = "";
+
+        let present = 0, late = 0, absentCount = 0, hours = 0, hoursCount = 0;
+
+        data.forEach(d => {
+            // Role & Shift display logic
+            const userRole = d.role ? d.role.toUpperCase() : "WORKER";
+            const userShift = d.shift || "Morning"; // Default Morning
+            const shiftColor = userShift === "Night" ? "text-indigo-400" : "text-orange-400";
+
+            // Status Styling
+            let statusStyle = "";
+            if (d.status === "Present" || d.status === "Completed") statusStyle = "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
+            else if (d.status === "Late") statusStyle = "bg-amber-500/10 text-amber-500 border-amber-500/20";
+            else if (d.status === "Absent") statusStyle = "bg-red-500/10 text-red-500 border-red-500/20";
+            else statusStyle = "bg-neutral-800 text-neutral-400 border-neutral-700";
+
+            // Check-in cell: show real time in emerald, or a muted "--:--"
+            // for auto/manual Absent rows instead of leaving it blank.
+            const checkInDisplay = d.checkIn && d.checkIn !== "--:--"
+                ? `<span class="font-semibold text-emerald-400 text-xs">${d.checkIn}</span>`
+                : `<span class="font-semibold text-text-sub text-xs">--:--</span>`;
+            const checkOutDisplay = d.checkOut && d.checkOut !== "--:--"
+                ? `<span class="text-pink-400 font-semibold text-xs">${d.checkOut}</span>`
+                : `<span class="text-text-sub font-semibold text-xs">--:--</span>`;
+
+            const safeWorkerId = (d.workerId || "").replace(/'/g, "\\'");
+            const safeDate = (d.date || "").replace(/'/g, "\\'");
+            const safeName = (d.workerName || "Unknown").replace(/'/g, "\\'");
+
+            tableBody.innerHTML += `
+                <tr class="hover:bg-white/[0.02] transition-all group border-b border-border-dark last:border-0">
+                    <td class="px-6 py-4 font-mono text-[11px] text-text-sub group-hover:text-white">
+                        ${d.workerId || "#---"}
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 rounded-lg bg-surface-darker border border-border-dark flex items-center justify-center text-[11px] font-bold text-orange-500">
+                                ${d.workerName ? d.workerName.substring(0,2).toUpperCase() : '??'}
+                            </div>
+                            <div>
+                                <p class="font-bold text-white text-sm">${d.workerName || "Unknown"}</p>
+                                <p class="text-[10px] font-medium ${shiftColor}">${userRole} | ${userShift}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-text-sub text-xs">${d.date}</td>
+                    <td class="px-6 py-4">${checkInDisplay}</td>
+                    <td class="px-6 py-4">${checkOutDisplay}</td>
+                    <td class="px-6 py-4">
+                        <span class="text-white font-medium">${d.totalHours || 0}</span><span class="text-text-sub text-[10px] ml-1">hrs</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold border uppercase tracking-wider ${statusStyle}">
+                            ${d.status || "N/A"}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="openActionModal('${safeWorkerId}', '${safeDate}')" class="p-1.5 rounded-lg hover:bg-white/5 text-text-sub hover:text-white transition-all">
+                            <span class="material-symbols-outlined text-[18px]">more_horiz</span>
+                        </button>
+                    </td>
+                </tr>`;
+
+            // Counters for Cards
+            if (d.status === "Present" || d.status === "Completed") present++;
+            if (d.status === "Late") late++;
+            if (d.status === "Absent") absentCount++;
+            if (Number(d.totalHours) > 0) { hours += Number(d.totalHours); hoursCount++; }
+        });
+
+        // Summary Cards Update
+        presentTodayElem.innerHTML = `${present}<span class="text-sm font-normal text-text-sub ml-1">/ ${data.length}</span>`;
+        lateArrivalsElem.innerText = late;
+        absentElem.innerText = absentCount;
+        avgHoursElem.innerHTML = `${hoursCount ? (hours / hoursCount).toFixed(1) : 0}<span class="text-sm font-normal text-text-sub ml-1">hrs</span>`;
+
+        updateChart(data, type);
+        updateTopAbsentees(data);
+
+    } catch (err) {
+        console.error("Load Error:", err);
+    }
+}
+
+// ================= TOP ABSENTEES (updates live whenever any worker is Absent) =================
+function updateTopAbsentees(data){
+    const box = document.getElementById("topAbsenteesList");
+    const absentRows = data.filter(d => d.status === "Absent");
+
+    if (absentRows.length === 0) {
+        box.innerHTML = `<p class="text-xs text-text-sub italic">No absentees for this period.</p>`;
+        return;
+    }
+
+    // Count absences per worker across the currently loaded period
+    const counts = {};
+    absentRows.forEach(d => {
+        const key = d.workerId || "unknown";
+        if (!counts[key]) counts[key] = { name: d.workerName || "Unknown", count: 0, id: key };
+        counts[key].count++;
+    });
+
+    const sorted = Object.values(counts).sort((a, b) => b.count - a.count).slice(0, 5);
+
+    box.innerHTML = sorted.map(w => `
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="size-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-[11px] font-bold text-red-500">
+                    ${w.name.substring(0,2).toUpperCase()}
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-white leading-none">${w.name}</p>
+                    <p class="text-[10px] text-text-sub mt-1">${w.id}</p>
+                </div>
+            </div>
+            <span class="text-xs font-bold text-red-500">${w.count} day${w.count > 1 ? "s" : ""}</span>
+        </div>
+    `).join("");
+}
+
+// ================= EXPORT CSV (now matches the active tab) =================
+async function downloadCSV(){
+    try {
+        const res = await fetch(`http://localhost:5000/api/attendance/export?type=${currentReportType}`);
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `attendance_report_${currentReportType}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    } catch(err){
+        console.error("Error exporting CSV:", err);
+    }
+}
+
+// ================= ACTION MODAL: open / close / detail load / status change =================
+async function openActionModal(workerId, date){
+    activeActionTarget = { workerId, date };
+    const modal = document.getElementById("actionModal");
+    modal.classList.remove("hidden");
+
+    // Reset to a loading state
+    document.getElementById("modalAvatar").innerText = "..";
+    document.getElementById("modalWorkerName").innerText = "Loading...";
+    document.getElementById("modalWorkerMeta").innerText = `${workerId} • ${date}`;
+    document.getElementById("modalCheckIn").innerText = "--:--";
+    document.getElementById("modalCheckOut").innerText = "--:--";
+    document.getElementById("modalHours").innerText = "0 hrs";
+    document.getElementById("modalStatus").innerText = "--";
+    document.getElementById("modalUpdatedNote").classList.add("hidden");
+
+    try {
+        const res = await fetch(`http://localhost:5000/api/attendance/detail?workerID=${encodeURIComponent(workerId)}&date=${encodeURIComponent(date)}`);
+        const json = await res.json();
+        if (!json.success) { alert(json.error || "Could not load worker detail"); return; }
+
+        const d = json.data;
+        document.getElementById("modalAvatar").innerText = d.workerName ? d.workerName.substring(0,2).toUpperCase() : "??";
+        document.getElementById("modalWorkerName").innerText = d.workerName || "Unknown";
+        document.getElementById("modalWorkerMeta").innerText = `${d.workerId} • ${d.date} • ${d.site || "N/A"}`;
+        document.getElementById("modalCheckIn").innerText = d.checkIn || "--:--";
+        document.getElementById("modalCheckOut").innerText = d.checkOut || "--:--";
+        document.getElementById("modalHours").innerText = `${d.totalHours || 0} hrs`;
+
+        const statusEl = document.getElementById("modalStatus");
+        statusEl.innerText = d.status || "N/A";
+        statusEl.className = "font-semibold text-sm " +
+            (d.status === "Present" || d.status === "Completed" ? "text-emerald-500" :
+             d.status === "Late" ? "text-amber-500" :
+             d.status === "Absent" ? "text-red-500" : "text-neutral-400");
+
+        if (d.manuallyUpdatedAt) {
+            const note = document.getElementById("modalUpdatedNote");
+            note.innerText = `Manually updated by ${d.manuallyUpdatedBy || "Admin"} on ${new Date(d.manuallyUpdatedAt).toLocaleString()}`;
+            note.classList.remove("hidden");
+        }
+    } catch (err) {
+        console.error("Detail Load Error:", err);
+        alert("Could not load worker detail.");
+    }
+}
+
+function closeActionModal(){
+    document.getElementById("actionModal").classList.add("hidden");
+    activeActionTarget = null;
+}
+
+document.getElementById("actionModalBackdrop").addEventListener("click", closeActionModal);
+
+async function submitStatusChange(newStatus){
+    if (!activeActionTarget) return;
+    const { workerId, date } = activeActionTarget;
+    try {
+        const res = await fetch("http://localhost:5000/api/attendance/status", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ workerID: workerId, date, status: newStatus })
+        });
+        const json = await res.json();
+        if (!json.success) { alert(json.error || "Could not update status"); return; }
+
+        closeActionModal();
+        // Refresh whichever tab is currently active so the table, cards,
+        // and Top Absentees box all reflect the change
+        const activeBtn = document.querySelector("button.bg-white\\/10[onclick^='loadAttendance']") || buttons[0];
+        loadAttendance(currentReportType, activeBtn);
+    } catch (err) {
+        console.error("Status Update Error:", err);
+        alert("Could not update status.");
+    }
+}
+
+// ================= LOGOUT =================
+document.getElementById("logoutBtn").onclick = ()=>{ window.location.href="adminloginscreen.html"; };
+
+// ================= FILTER TABLE SEARCH =================
+document.getElementById("filterInput").addEventListener("input", function(){
+    const filter = this.value.toLowerCase();
+    tableBody.querySelectorAll("tr").forEach(row=>{
+        row.style.display = [...row.children].some(td=>td.textContent.toLowerCase().includes(filter)) ? "" : "none";
+    });
+});
+
+// ================= SET TODAY'S DATE FOR DATE INPUTS =================
+document.querySelectorAll('input[type="date"]').forEach(input=>{
+    input.value = new Date().toISOString().split('T')[0];
+});
+
+// ================= INITIAL LOAD =================
+loadAttendance("daily", buttons[0]);
+const notifBtn = document.getElementById('notifBtn');
+const notifDropdown = document.getElementById('notifDropdown');
+
+if (notifBtn) {
+    notifBtn.onclick = (e) => {
+        e.stopPropagation();
+        notifDropdown.classList.toggle('hidden');
+    };
+}
+
+window.onclick = (e) => {
+    if (notifDropdown && !notifBtn.contains(e.target)) {
+        notifDropdown.classList.add('hidden');
+    }
+};
+
+function clearNotifications() {
+    const list = document.getElementById('notifList');
+    list.innerHTML = '<div class="p-8 text-center text-text-sub text-xs italic">No new notifications</div>';
+    document.getElementById('notifDot').classList.add('hidden');
+}
+</script>
+
+</body></html>

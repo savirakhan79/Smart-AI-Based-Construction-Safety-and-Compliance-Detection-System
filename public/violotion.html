@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Violation - Safety Compliance System</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f97316",
+                        "primary-light": "#fdba74",
+                        "primary-dark": "#c2410c",
+                        "accent": "#fb923c",
+                        "background-dark": "#000000",
+                        "surface-dark": "#262626",
+                        "surface-darker": "#171717",
+                        "text-main": "#fafafa",
+                        "text-sub": "#a3a3a3",
+                        "border-dark": "#404040"
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.1)',
+                        'glow': '0 0 15px rgba(249, 115, 22, 0.15)'
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #18181b; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .icon-filled { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { background-color: #0f0f10; color: #e4e4e7; }
+        .screen-overlay { position: fixed; inset: 0; background-color: #0f0f10; z-index: 200; display: none; flex-direction: column; }
+        .screen-overlay.active { display: flex; }
+        .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 300; display: none; align-items: center; justify-content: center; }
+        .modal-backdrop.active { display: flex; }
+        /* Proof modal gets a higher z-index so it can stack ON TOP of the worker detail modal
+           instead of hiding it behind the same layer */
+        #proofModal { z-index: 350; }
+        .toast {
+            position: fixed; bottom: 24px; right: 24px; z-index: 400;
+            background: #262626; border: 1px solid #404040; border-left: 4px solid #f97316;
+            color: #fafafa; padding: 12px 18px; border-radius: 10px; font-size: 13px; font-weight: 500;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            transform: translateY(20px); opacity: 0; pointer-events: none; transition: all .25s ease;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+    </style>
+</head>
+<body class="bg-background-dark font-display text-text-main antialiased overflow-hidden selection:bg-primary selection:text-white">
+<div class="flex h-screen w-full">
+<aside class="w-72 bg-black border-r border-border-dark flex-col hidden lg:flex z-30 flex-shrink-0">
+<div class="h-20 flex items-center px-8 border-b border-border-dark">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg size-8 shadow-sm flex-shrink-0 border border-border-dark relative" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBT4c_9y1DyK0rjWxxGBuWBQAWWLjyanVLXEu2XHl55BQ5P1GXuwHb-XTnzohmN071a_FgGwSMJKj_Y2hToOY3OsQu8FdgmY-5eIoODNAYcEeiEwdOOkzzpXbBdF81ofy4I7sukeYnZkjMzgkFMWkubY02a34czHsPOBo8QpRs-bXQq4rf17N0tIdt8_k2_F7A1s_QIHeGxSJFmouMsu4Ggk0qS7SJW_eAaZk6zr3h-4SGafUZYBRAookTX8APh_OEWPAbSBbnjIdaA");'>
+<div class="size-9 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white shadow-glow">
+    <img src="logo.png" alt="My Logo" class="h-6 w-6 object-contain" />
+  </div>
+</div>
+<h1 class="text-text-main text-lg font-bold leading-tight tracking-wide">SafeSite<span class="text-primary"></span></h1>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+<div class="px-4 mb-2"></div>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-sub rounded-lg hover:bg-surface-darker hover:text-white transition-colors group" href="Admin-Dashboard.html">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-white/5 text-white border border-neutral-700 shadow-soft mb-1 group" href="live monitoring.html">
+<span class="material-symbols-outlined text-orange-500">videocam</span>
+<span class="text-sm font-medium">Live Monitoring</span>
+<span class="ml-auto size-2 rounded-full bg-red-500 animate-pulse"></span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-orange-500/10 text-orange-500 shadow-glow-sub border border-orange-500/20 group relative overflow-hidden mb-1" href="attendance report.html">
+<div class="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-500"></div>
+<span class="material-symbols-outlined icon-filled">calendar_month</span>
+<span class="text-sm font-bold relative z-10">Attendance Reports</span>
+<span class="ml-auto bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg">Live</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workermanagementsystem.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">engineering</span>
+<span class="text-sm font-medium">Staff Management</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="live incident.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">crisis_alert</span>
+<span class="text-sm font-medium">Live Incidents</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="safety-compliance-ppe-detection.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">health_and_safety</span>
+<span class="text-sm font-medium">Safety Compliance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="violotion.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">warning_amber</span>
+<span class="text-sm font-medium">Violations</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="salary.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">payments</span>
+<span class="text-sm font-medium">Salary &amp; Rewards</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workerperformance.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">trending_up</span>
+<span class="text-sm font-medium">Performance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="reportandanalysics.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">analytics</span>
+<span class="text-sm font-medium">Reports Center</span>
+</a>
+<div class="mt-auto px-2 pb-4 pt-8">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="systemsettingscreen.html">
+<span class="material-symbols-outlined group-hover:text-neutral-200 transition-colors">settings</span>
+<span class="text-sm font-medium">System Settings</span>
+</a>
+</div>
+
+</nav>
+
+</aside>
+<div class="flex-1 flex flex-col h-screen overflow-hidden bg-background-dark">
+<header class="h-20 flex-shrink-0 flex items-center justify-between px-8 bg-black border-b border-border-dark z-20">
+<div class="flex items-center gap-6">
+<div class="lg:hidden flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg size-9 shadow-sm flex-shrink-0 border border-border-dark relative" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBT4c_9y1DyK0rjWxxGBuWBQAWWLjyanVLXEu2XHl55BQ5P1GXuwHb-XTnzohmN071a_FgGwSMJKj_Y2hToOY3OsQu8FdgmY-5eIoODNAYcEeiEwdOOkzzpXbBdF81ofy4I7sukeYnZkjMzgkFMWkubY02a34czHsPOBo8QpRs-bXQq4rf17N0tIdt8_k2_F7A1s_QIHeGxSJFmouMsu4Ggk0qS7SJW_eAaZk6zr3h-4SGafUZYBRAookTX8APh_OEWPAbSBbnjIdaA");'>
+<div class="absolute inset-0 bg-orange-500/10 rounded-lg"></div>
+</div>
+</div>
+<div>
+<h2 class="text-xl font-bold text-white tracking-tight">Violation Management</h2>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden md:flex items-center">
+<span class="absolute left-3 text-text-sub material-symbols-outlined text-[20px]">search</span>
+<input
+    id="searchInput"
+    class="pl-10 pr-4 py-2 bg-surface-darker border border-border-dark rounded-lg w-64 text-sm text-text-main focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-600"
+    placeholder="Search staff, IDs..."
+    type="text"
+/></div>
+<div class="flex items-center gap-3">
+<div class="relative">
+    <button id="notifBtn" class="relative p-2 rounded-lg text-text-sub hover:bg-surface-darker transition-all">
+        <span class="material-symbols-outlined">notifications</span>
+        <span id="notifDot" class="absolute top-2 right-2 size-2 bg-primary rounded-full shadow-[0_0_10px_rgba(249,115,22,0.5)]"></span>
+    </button>
+
+    <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-72 bg-surface-dark border border-border-dark rounded-xl shadow-2xl z-[100] overflow-hidden">
+        <div class="p-3 border-b border-border-dark flex justify-between items-center bg-surface-darker">
+            <span class="text-xs font-bold text-white">Recent Activity</span>
+            <div class="flex items-center gap-3">
+                <button onclick="clearNotifications(event)" class="text-[10px] text-primary hover:underline">Clear All</button>
+                <button id="notifCloseBtn" title="Close" class="size-5 flex items-center justify-center rounded hover:bg-white/10 text-text-sub hover:text-white transition-all">
+                    <span class="material-symbols-outlined text-[16px]">close</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="notifList" class="max-h-60 overflow-y-auto">
+        </div>
+
+        <div class="p-2 text-center bg-surface-darker">
+            <button id="viewAllAlertsBtn" class="text-[10px] text-text-sub hover:text-white transition-all">View All Alerts</button>
+        </div>
+    </div>
+</div>
+
+<div class="h-8 w-[1px] bg-border-dark mx-1"></div>
+<button id="logoutBtn" class="flex items-center gap-3 hover:bg-surface-darker p-1.5 pr-3 rounded-full border border-transparent hover:border-border-dark transition-all cursor-pointer">
+<div class="size-9 rounded-full border border-border-dark shadow-sm overflow-hidden bg-surface-darker flex items-center justify-center">
+    <img
+        src="admin.png"
+        alt="Admin"
+        class="w-full h-full object-cover">
+</div>
+<div class="hidden md:block text-left">
+    <p class="text-sm font-semibold text-gray-200 leading-none">Ali Khan</p>
+  </div>
+  <span class="material-symbols-outlined text-gray-500 text-sm">expand_more</span>
+</button>
+
+</div>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto p-6 lg:p-8 scroll-smooth">
+<div class="max-w-[1600px] mx-auto flex flex-col gap-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-surface-dark p-6 rounded-xl border border-border-dark shadow-soft flex items-center justify-between group hover:border-primary/50 transition-all border-l-4 border-l-primary">
+<div>
+<p class="text-xs font-semibold text-text-sub uppercase tracking-wide">Total Violations</p>
+<p id="totalViolations" class="text-3xl font-bold text-white mt-2">0</p>
+<div id="totalTrend" class="flex items-center gap-1 mt-2 text-emerald-500 text-xs font-medium">
+<span class="material-symbols-outlined text-sm">trending_down</span>
+<span id="totalTrendText">12% from yesterday</span>
+                            </div>
+</div>
+<div class="size-14 rounded-xl bg-surface-darker flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">list_alt</span>
+</div>
+</div>
+<div class="bg-surface-dark p-6 rounded-xl border border-border-dark shadow-soft flex items-center justify-between group hover:border-amber-500/50 transition-all border-l-4 border-l-amber-500">
+<div>
+<p class="text-xs font-semibold text-text-sub uppercase tracking-wide">Unresolved Incidents</p>
+<p id="unresolvedIncidents"class="text-3xl font-bold text-white mt-2">0</p>
+<div class="flex items-center gap-1 mt-2 text-amber-500 text-xs font-medium">
+<span class="material-symbols-outlined text-sm">pending_actions</span>
+                                Requires Review
+                            </div>
+</div>
+<div class="size-14 rounded-xl bg-surface-darker flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">warning</span>
+</div>
+</div>
+<div class="bg-surface-dark p-6 rounded-xl border border-border-dark shadow-soft flex items-center justify-between group hover:border-red-500/50 transition-all border-l-4 border-l-red-500">
+<div>
+<p class="text-xs font-semibold text-text-sub uppercase tracking-wide">Critical Safety Breaches</p>
+<p id="criticalBreaches" class="text-3xl font-bold text-white mt-2">0</p>
+<div class="flex items-center gap-1 mt-2 text-red-500 text-xs font-medium">
+<span class="material-symbols-outlined text-sm">report</span>
+                                High Priority
+                            </div>
+</div>
+<div class="size-14 rounded-xl bg-surface-darker flex items-center justify-center text-red-500 group-hover:bg-red-500 group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">emergency_home</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+<div class="xl:col-span-3">
+<div class="bg-surface-dark rounded-xl border border-border-dark shadow-soft flex flex-col h-full overflow-hidden">
+<div class="p-5 border-b border-border-dark flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<h3 class="font-bold text-white text-lg">Violation Log</h3>
+<span id="liveStreamBadge" class="px-2.5 py-0.5 rounded-full bg-surface-darker border border-border-dark text-xs text-text-sub">Real-time Stream</span>
+</div>
+<div class="flex items-center gap-2">
+<select id="violationTypeFilter" class="form-select text-sm bg-surface-darker text-text-main border-border-dark rounded-lg focus:border-primary focus:ring-primary py-1.5 pr-8">
+<option value="All Types">All Types</option>
+<option value="Missing Helmet">Missing Helmet</option>
+<option value="Unsafe Zone Entry">Unsafe Zone</option>
+<option value="Missing Hi-Vis Vest">Missing Vest</option>
+</select>
+<button id="exportLogBtn" class="flex items-center gap-2 px-4 py-1.5 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-medium transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                                        Export Log
+                                    </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-darker text-xs uppercase tracking-wider text-text-sub font-semibold border-b border-border-dark">
+<th class="px-6 py-4">Worker Name</th>
+<th class="px-6 py-4">Violation Type</th>
+<th class="px-6 py-4">Date &amp; Time</th>
+<th class="px-6 py-4">Severity</th>
+<th class="px-6 py-4">Action Status</th>
+<th class="px-6 py-4 text-right">Action</th>
+</tr>
+</thead>
+<tbody id="violationsTableBody">
+</tbody>
+</table>
+<p id="emptyState" class="hidden text-center text-sm text-text-sub py-10">No violations match your search.</p>
+</div>
+<div class="p-4 border-t border-border-dark flex items-center justify-between text-sm text-text-sub">
+<span id="paginationLabel">Showing 1 to 4 of 4 violations</span>
+<div id="paginationControls" class="flex gap-2">
+<button id="prevPageBtn" class="px-3 py-1 border border-border-dark rounded hover:bg-surface-darker text-text-sub hover:text-white transition-colors">Previous</button>
+<div id="pageNumbers" class="flex gap-2"></div>
+<button id="nextPageBtn" class="px-3 py-1 border border-border-dark rounded hover:bg-surface-darker text-text-sub hover:text-white transition-colors">Next</button>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-6">
+<div class="bg-surface-dark rounded-xl border border-border-dark shadow-soft p-6">
+<h3 class="font-bold text-white mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">payments</span>
+                                Penalty Summary
+                            </h3>
+<div class="space-y-4">
+<div class="p-3 bg-surface-darker rounded-lg border border-border-dark">
+<p class="text-xs text-text-sub uppercase font-bold tracking-wider mb-1">Weekly Fines</p>
+<p id="weeklyFines" class="text-xl font-bold text-white">Rs. 0</p>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between text-xs">
+<span class="text-text-sub">Critical Breaches</span>
+<span id="criticalBarLabel" class="text-white font-medium">0%</span>
+</div>
+<div class="w-full bg-surface-darker h-1.5 rounded-full overflow-hidden">
+<div id="criticalBar" class="bg-red-500 h-full transition-all duration-500" style="width:0%"></div>
+</div>
+<div class="flex items-center justify-between text-xs pt-1">
+<span class="text-text-sub">PPE Violations</span>
+<span id="ppeBarLabel" class="text-white font-medium">0%</span>
+</div>
+<div class="w-full bg-surface-darker h-1.5 rounded-full overflow-hidden">
+<div id="ppeBar" class="bg-primary h-full transition-all duration-500" style="width:0%"></div>
+</div>
+</div>
+<button id="viewBillingBtn" class="w-full mt-2 py-2.5 bg-border-dark hover:bg-gray-700 text-white text-xs font-bold rounded-lg transition-colors border border-border-dark">VIEW BILLING RECON</button>
+</div>
+</div>
+<div class="bg-surface-dark rounded-xl border border-border-dark shadow-soft flex flex-col flex-1 overflow-hidden">
+<div class="p-5 border-b border-border-dark flex items-center justify-between bg-surface-darker/50">
+<h3 class="font-bold text-white text-sm">Repeat Offenders</h3>
+<span class="material-symbols-outlined text-red-500 text-sm">emergency</span>
+</div>
+<div id="repeatOffendersList" class="flex-1 overflow-y-auto p-4 space-y-4">
+</div>
+<div class="p-4 border-t border-border-dark text-center">
+<button id="watchlistBtn" class="text-xs font-bold text-primary hover:text-primary-light transition-colors">WATCHLIST MANAGEMENT</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+<!-- ===================== NEXT SCREEN: NOTIFICATIONS ===================== -->
+<div id="notificationsScreen" class="screen-overlay">
+  <header class="h-20 flex-shrink-0 flex items-center justify-between gap-4 px-8 bg-black border-b border-border-dark">
+    <div class="flex items-center gap-4">
+      <button data-close-screen="notificationsScreen" class="flex items-center gap-2 px-3 py-2 rounded-lg border border-border-dark hover:border-primary/50 hover:bg-surface-darker text-text-sub hover:text-white transition-all">
+        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+        <span class="text-xs font-bold">Back</span>
+      </button>
+      <h2 class="text-xl font-bold text-white tracking-tight">All Alerts</h2>
+    </div>
+    <button data-close-screen="notificationsScreen" title="Close" class="size-9 flex items-center justify-center rounded-lg border border-border-dark hover:border-red-500/50 hover:bg-red-500/10 text-text-sub hover:text-red-400 transition-all">
+      <span class="material-symbols-outlined text-[20px]">close</span>
+    </button>
+  </header>
+  <main class="flex-1 overflow-y-auto p-8">
+    <div class="max-w-3xl mx-auto flex flex-col gap-3" id="fullNotifList"></div>
+  </main>
+</div>
+
+<!-- ===================== NEXT SCREEN: BILLING RECONCILIATION ===================== -->
+<div id="billingReconScreen" class="screen-overlay">
+  <header class="h-20 flex-shrink-0 flex items-center justify-between gap-4 px-8 bg-black border-b border-border-dark">
+    <div class="flex items-center gap-4">
+      <button data-close-screen="billingReconScreen" class="flex items-center gap-2 px-3 py-2 rounded-lg border border-border-dark hover:border-primary/50 hover:bg-surface-darker text-text-sub hover:text-white transition-all">
+        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+        <span class="text-xs font-bold">Back</span>
+      </button>
+      <h2 class="text-xl font-bold text-white tracking-tight">Billing Reconciliation</h2>
+      <span class="ml-2 px-2.5 py-0.5 rounded-full bg-orange-500/10 text-orange-500 border border-orange-500/20 text-xs font-bold">All Penalized Workers</span>
+    </div>
+    <button data-close-screen="billingReconScreen" title="Close" class="size-9 flex items-center justify-center rounded-lg border border-border-dark hover:border-red-500/50 hover:bg-red-500/10 text-text-sub hover:text-red-400 transition-all">
+      <span class="material-symbols-outlined text-[20px]">close</span>
+    </button>
+  </header>
+  <main class="flex-1 overflow-y-auto p-8">
+    <div class="max-w-5xl mx-auto flex flex-col gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-surface-dark p-5 rounded-xl border border-border-dark">
+          <p class="text-xs text-text-sub uppercase font-bold tracking-wider mb-1">Total Fines</p>
+          <p id="billingTotalFines" class="text-2xl font-bold text-white">Rs. 0</p>
+        </div>
+        <div class="bg-surface-dark p-5 rounded-xl border border-border-dark">
+          <p class="text-xs text-text-sub uppercase font-bold tracking-wider mb-1">Penalized Workers</p>
+          <p id="billingWorkerCount" class="text-2xl font-bold text-white">0</p>
+        </div>
+        <div class="bg-surface-dark p-5 rounded-xl border border-border-dark">
+          <p class="text-xs text-text-sub uppercase font-bold tracking-wider mb-1">Avg. Fine / Worker</p>
+          <p id="billingAvgFine" class="text-2xl font-bold text-white">Rs. 0</p>
+        </div>
+      </div>
+      <div class="bg-surface-dark rounded-xl border border-border-dark overflow-hidden">
+        <div class="px-6 py-3 border-b border-border-dark bg-surface-darker/50">
+          <p class="text-[11px] text-text-sub">Click any row to see that worker's full fine &amp; violation breakdown.</p>
+        </div>
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-surface-darker text-xs uppercase tracking-wider text-text-sub font-semibold border-b border-border-dark">
+              <th class="px-6 py-4">Worker</th>
+              <th class="px-6 py-4">Violations</th>
+              <th class="px-6 py-4">Severity Mix</th>
+              <th class="px-6 py-4 text-right">Fine Amount</th>
+              <th class="px-6 py-4 text-right">Details</th>
+            </tr>
+          </thead>
+          <tbody id="billingTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ===================== NEXT SCREEN: WATCHLIST MANAGEMENT ===================== -->
+<div id="watchlistScreen" class="screen-overlay">
+  <header class="h-20 flex-shrink-0 flex items-center justify-between gap-4 px-8 bg-black border-b border-border-dark">
+    <div class="flex items-center gap-4">
+      <button data-close-screen="watchlistScreen" class="flex items-center gap-2 px-3 py-2 rounded-lg border border-border-dark hover:border-primary/50 hover:bg-surface-darker text-text-sub hover:text-white transition-all">
+        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+        <span class="text-xs font-bold">Back</span>
+      </button>
+      <h2 class="text-xl font-bold text-white tracking-tight">Watchlist Management</h2>
+    </div>
+    <button data-close-screen="watchlistScreen" title="Close" class="size-9 flex items-center justify-center rounded-lg border border-border-dark hover:border-red-500/50 hover:bg-red-500/10 text-text-sub hover:text-red-400 transition-all">
+      <span class="material-symbols-outlined text-[20px]">close</span>
+    </button>
+  </header>
+  <main class="flex-1 overflow-y-auto p-8">
+    <div class="max-w-4xl mx-auto flex flex-col gap-4" id="watchlistDetailList"></div>
+  </main>
+</div>
+
+<!-- ===================== EXPORT MODAL ===================== -->
+<div id="exportModal" class="modal-backdrop">
+  <div class="bg-surface-dark border border-border-dark rounded-xl w-full max-w-sm p-6 shadow-2xl">
+    <h3 class="text-white font-bold text-lg mb-1">Export Violation Report</h3>
+    <p class="text-text-sub text-xs mb-5">Choose a period, then download the report as CSV.</p>
+    <div class="space-y-2 mb-5">
+      <label class="flex items-center gap-3 p-3 rounded-lg border border-border-dark hover:border-primary/50 cursor-pointer bg-surface-darker">
+        <input type="radio" name="exportRange" value="daily" class="accent-orange-500">
+        <span class="text-sm text-white">Daily <span class="text-text-sub">— today only</span></span>
+      </label>
+      <label class="flex items-center gap-3 p-3 rounded-lg border border-border-dark hover:border-primary/50 cursor-pointer bg-surface-darker">
+        <input type="radio" name="exportRange" value="weekly" checked class="accent-orange-500">
+        <span class="text-sm text-white">Weekly <span class="text-text-sub">— last 7 days</span></span>
+      </label>
+      <label class="flex items-center gap-3 p-3 rounded-lg border border-border-dark hover:border-primary/50 cursor-pointer bg-surface-darker">
+        <input type="radio" name="exportRange" value="monthly" class="accent-orange-500">
+        <span class="text-sm text-white">Monthly <span class="text-text-sub">— last 30 days</span></span>
+      </label>
+      <label class="flex items-center gap-3 p-3 rounded-lg border border-border-dark hover:border-primary/50 cursor-pointer bg-surface-darker">
+        <input type="radio" name="exportRange" value="all" class="accent-orange-500">
+        <span class="text-sm text-white">All Time <span class="text-text-sub">— full log</span></span>
+      </label>
+    </div>
+    <div class="flex gap-3">
+      <button id="cancelExportBtn" class="flex-1 py-2.5 rounded-lg border border-border-dark text-text-sub hover:text-white hover:bg-surface-darker text-sm font-bold transition-colors">Cancel</button>
+      <button id="confirmExportBtn" class="flex-1 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-bold transition-colors">Download CSV</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PROOF MODAL (single violation) =====================
+     Now widened + includes a right-hand sidebar image (site/PPE illustration). -->
+<div id="proofModal" class="modal-backdrop">
+  <div class="bg-surface-dark border border-border-dark rounded-xl w-full max-w-md shadow-2xl overflow-hidden max-h-[85vh] flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-border-dark bg-surface-darker flex-shrink-0">
+      <h3 class="text-white font-bold text-sm">Violation Proof</h3>
+      <button id="proofCloseBtn" title="Close" class="size-8 flex items-center justify-center rounded-lg hover:bg-red-500/10 text-text-sub hover:text-red-400 transition-all">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+    <div id="proofBody" class="p-6 max-h-[65vh] overflow-y-auto"></div>
+    <div class="px-6 pb-6">
+      <button id="proofCloseBtn2" class="w-full py-2.5 rounded-lg border border-border-dark text-text-sub hover:text-white hover:bg-surface-darker text-sm font-bold transition-colors">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== WORKER DETAIL MODAL (repeat offenders / billing rows) ===================== -->
+<div id="workerDetailModal" class="modal-backdrop">
+  <div class="bg-surface-dark border border-border-dark rounded-xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[80vh] flex flex-col">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-border-dark bg-surface-darker flex-shrink-0">
+      <h3 id="workerDetailTitle" class="text-white font-bold text-sm">Worker Detail</h3>
+      <button id="workerDetailCloseBtn" title="Close" class="size-8 flex items-center justify-center rounded-lg hover:bg-red-500/10 text-text-sub hover:text-red-400 transition-all">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+    <div id="workerDetailBody" class="p-6 overflow-y-auto"></div>
+    <div class="px-6 pb-6 pt-2 flex-shrink-0">
+      <button id="workerDetailCloseBtn2" class="w-full py-2.5 rounded-lg border border-border-dark text-text-sub hover:text-white hover:bg-surface-darker text-sm font-bold transition-colors">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- Firebase (compat build - works from a plain file too) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+// =====================================================================
+// Dashboard JS for SafeSite - Violation Management
+// =====================================================================
+
+// ---- Fine table by severity (Rs.) ----
+const FINE_TABLE = { High: 15000, Medium: 8000, Low: 3000 };
+
+function daysAgo(n) {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return d;
+}
+function fmtDate(d) {
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function fmtTime(d) {
+    return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+
+const rawDummy = [
+    { fullName: "Robert Miller", workerID: "WK-8821", violationType: "Missing Helmet", severity: "High", status: "Awaiting Review", daysBack: 0 },
+    { fullName: "Sarah Kovic", workerID: "WK-9004", violationType: "Unsafe Zone Entry", severity: "High", status: "Penalty Issued", daysBack: 0 },
+    { fullName: "Tom Chen", workerID: "WK-7732", violationType: "Missing Hi-Vis Vest", severity: "Medium", status: "First Warning", daysBack: 1 },
+    { fullName: "Lee Min-ho", workerID: "WK-9110", violationType: "Missing Helmet", severity: "Low", status: "Resolved", daysBack: 2 },
+    { fullName: "Robert Miller", workerID: "WK-8821", violationType: "Unsafe Zone Entry", severity: "High", status: "Penalty Issued", daysBack: 3 },
+    { fullName: "James Dalton", workerID: "WK-5541", violationType: "Missing Helmet", severity: "High", status: "Penalty Issued", daysBack: 4 },
+    { fullName: "James Dalton", workerID: "WK-5541", violationType: "Unsafe Zone Entry", severity: "High", status: "Penalty Issued", daysBack: 6 },
+    { fullName: "Anita Lopez", workerID: "WK-6602", violationType: "Missing Hi-Vis Vest", severity: "Medium", status: "First Warning", daysBack: 8 },
+    { fullName: "Marco Rossi", workerID: "WK-3390", violationType: "Missing Helmet", severity: "Medium", status: "Awaiting Review", daysBack: 12 },
+    { fullName: "James Dalton", workerID: "WK-5541", violationType: "Missing Hi-Vis Vest", severity: "Medium", status: "Penalty Issued", daysBack: 15 },
+    { fullName: "Anita Lopez", workerID: "WK-6602", violationType: "Unsafe Zone Entry", severity: "High", status: "Penalty Issued", daysBack: 20 },
+    { fullName: "Marco Rossi", workerID: "WK-3390", violationType: "Missing Helmet", severity: "Low", status: "Resolved", daysBack: 25 },
+];
+
+let workersData = rawDummy.map((w, i) => {
+    const d = daysAgo(w.daysBack);
+    return {
+        id: 'V' + (i + 1),
+        fullName: w.fullName,
+        workerID: w.workerID,
+        violationType: w.violationType,
+        dateObj: d,
+        date: fmtDate(d),
+        time: fmtTime(d),
+        severity: w.severity,
+        status: w.status,
+        fine: FINE_TABLE[w.severity] || 0
+    };
+});
+
+let notificationsData = [
+    { title: "System Ready", description: "Staff management database linked successfully.", time: "Just now", detail: "All modules (Attendance, Violations, Staff Management) are now syncing correctly with the central database. No action needed." },
+    { title: "Critical Breach Logged", description: "Robert Miller flagged for Missing Helmet in Zone B.", time: "5 min ago", detail: "Camera 4 (Zone B) detected a worker without head protection. Severity marked High. Awaiting supervisor review before a penalty is issued." },
+    { title: "Repeat Offender Alert", description: "James Dalton has crossed 3 violations this month.", time: "1 hr ago", detail: "James Dalton (WK-5541) now has 3 logged violations in the last 30 days and has been added to the watchlist for closer monitoring." }
+];
+
+// State
+let filteredData = [...workersData];
+let currentPage = 1;
+const PAGE_SIZE = 4;
+
+// Track whether the worker-detail modal was open when proof modal was launched,
+// so we know to restore it after proof modal closes.
+let proofOpenedFromWorkerDetail = false;
+
+// =====================================================================
+// Rendering
+// =====================================================================
+// Maps a violation type to a representative evidence photo,
+// shown directly inside the "camera" evidence box in the proof modal.
+function violationEvidenceImage(violationType) {
+    const images = {
+        "Missing Helmet": "https://images.unsplash.com/photo-1590496793929-36417d3117de?q=80&w=800&auto=format&fit=crop",
+        "Unsafe Zone Entry": "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800&auto=format&fit=crop",
+        "Missing Hi-Vis Vest": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=800&auto=format&fit=crop"
+    };
+    return images[violationType] || "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800&auto=format&fit=crop";
+}
+
+function severityColor(sev) {
+    return { High: "red", Medium: "amber", Low: "blue" }[sev] || "gray";
+}
+function statusColor(status) {
+    if (status.includes('Resolved') || status.includes('Penalty')) return 'emerald-500';
+    if (status.includes('Awaiting')) return 'amber-500';
+    return 'text-sub';
+}
+
+function renderViolationsTable() {
+    const tbody = document.getElementById("violationsTableBody");
+    const emptyState = document.getElementById("emptyState");
+    tbody.innerHTML = "";
+
+    if (filteredData.length === 0) {
+        emptyState.classList.remove('hidden');
+    } else {
+        emptyState.classList.add('hidden');
+    }
+
+    const totalPages = Math.max(1, Math.ceil(filteredData.length / PAGE_SIZE));
+    if (currentPage > totalPages) currentPage = totalPages;
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const pageItems = filteredData.slice(start, start + PAGE_SIZE);
+
+    pageItems.forEach(worker => {
+        const color = severityColor(worker.severity);
+        const sColor = statusColor(worker.status);
+
+        const tr = document.createElement("tr");
+        tr.className = "group hover:bg-surface-darker transition-colors";
+        tr.innerHTML = `
+            <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                    <div class="size-8 rounded bg-surface-darker border border-border-dark flex items-center justify-center text-text-sub font-semibold text-xs">${worker.fullName.split(' ').map(n=>n[0]).join('')}</div>
+                    <div>
+                        <p class="font-semibold text-gray-200">${worker.fullName}</p>
+                        <p class="text-[10px] text-text-sub">ID: ${worker.workerID}</p>
+                    </div>
+                </div>
+            </td>
+            <td class="px-6 py-4 text-gray-300">
+                <div class="flex items-center gap-2">
+                    <span class="size-2 rounded-full bg-${color}-500"></span>
+                    ${worker.violationType}
+                </div>
+            </td>
+            <td class="px-6 py-4">
+                <p class="text-gray-400">${worker.date}</p>
+                <p class="text-xs text-text-sub">${worker.time}</p>
+            </td>
+            <td class="px-6 py-4">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-${color}-900/30 text-${color}-500 border border-${color}-900/50">${worker.severity}</span>
+            </td>
+            <td class="px-6 py-4">
+                <span class="flex items-center gap-1.5 text-xs font-medium text-${sColor}">
+                    <span class="material-symbols-outlined text-[14px]">${worker.status.includes('Resolved') || worker.status.includes('Penalty') ? 'check_circle' : 'schedule'}</span>
+                    ${worker.status}
+                </span>
+            </td>
+            <td class="px-6 py-4 text-right">
+                <button class="js-view-proof px-3 py-1.5 ${worker.status.includes('Resolved') || worker.status.includes('Penalty') ? 'bg-surface-darker hover:bg-surface-dark text-text-main' : 'bg-primary/10 hover:bg-primary text-primary hover:text-white'} rounded text-xs font-bold transition-all border border-primary/20 cursor-pointer" data-vid="${worker.id}">VIEW PROOF</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+    const label = document.getElementById("paginationLabel");
+    const start = filteredData.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1;
+    const end = Math.min(currentPage * PAGE_SIZE, filteredData.length);
+    label.textContent = `Showing ${start} to ${end} of ${filteredData.length} violations`;
+
+    const pageNumbers = document.getElementById("pageNumbers");
+    pageNumbers.innerHTML = "";
+    for (let p = 1; p <= totalPages; p++) {
+        const btn = document.createElement("button");
+        btn.textContent = p;
+        btn.className = p === currentPage
+            ? "px-3 py-1 bg-primary text-white border border-primary rounded"
+            : "px-3 py-1 bg-surface-darker border border-border-dark rounded hover:text-white text-text-sub";
+        btn.addEventListener("click", () => { currentPage = p; renderViolationsTable(); });
+        pageNumbers.appendChild(btn);
+    }
+
+    document.getElementById("prevPageBtn").disabled = currentPage === 1;
+    document.getElementById("nextPageBtn").disabled = currentPage === totalPages;
+    document.getElementById("prevPageBtn").classList.toggle("opacity-40", currentPage === 1);
+    document.getElementById("nextPageBtn").classList.toggle("opacity-40", currentPage === totalPages);
+}
+
+function applyFilters() {
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const type = document.getElementById("violationTypeFilter").value;
+    filteredData = workersData.filter(w => {
+        const matchesSearch = w.fullName.toLowerCase().includes(search) || w.workerID.toLowerCase().includes(search);
+        const matchesType = type === "All Types" || w.violationType === type;
+        return matchesSearch && matchesType;
+    });
+    currentPage = 1;
+    renderViolationsTable();
+}
+
+// =====================================================================
+// Summary cards
+// =====================================================================
+function renderSummary() {
+    const today = new Date();
+    const isToday = d => d.toDateString() === today.toDateString();
+
+    const totalAll = workersData.length;
+    const total24h = workersData.filter(w => isToday(w.dateObj)).length;
+    const unresolved = workersData.filter(w => w.status === "Awaiting Review" || w.status === "First Warning").length;
+    const critical = workersData.filter(w => w.severity === "High").length;
+
+    document.getElementById("totalViolations").innerText = totalAll;
+    document.getElementById("totalTrendText").textContent = `${total24h} logged today`;
+    document.getElementById("unresolvedIncidents").innerText = unresolved;
+    document.getElementById("criticalBreaches").innerText = critical;
+
+    const totalCount = workersData.length || 1;
+    const criticalPct = Math.round((critical / totalCount) * 100);
+    const ppeCount = workersData.filter(w => w.violationType.includes("Helmet") || w.violationType.includes("Vest")).length;
+    const ppePct = Math.round((ppeCount / totalCount) * 100);
+
+    document.getElementById("criticalBar").style.width = criticalPct + "%";
+    document.getElementById("criticalBarLabel").textContent = criticalPct + "%";
+    document.getElementById("ppeBar").style.width = ppePct + "%";
+    document.getElementById("ppeBarLabel").textContent = ppePct + "%";
+
+    const weekAgo = daysAgo(7);
+    const weeklyFines = workersData.filter(w => w.dateObj >= weekAgo).reduce((sum, w) => sum + w.fine, 0);
+    document.getElementById("weeklyFines").textContent = "Rs. " + weeklyFines.toLocaleString();
+}
+
+// =====================================================================
+// Notifications
+// =====================================================================
+function renderNotifications() {
+    const list = document.getElementById("notifList");
+    list.innerHTML = "";
+    notificationsData.forEach((n, i) => {
+        const div = document.createElement("div");
+        div.className = "p-3 border-b border-border-dark hover:bg-white/[0.02] transition-all cursor-pointer";
+        div.innerHTML = `
+            <p class="text-[11px] text-white font-medium">${n.title}</p>
+            <p class="text-[10px] text-text-sub">${n.description}</p>
+            <p class="text-[9px] text-gray-500 mt-1">${n.time}</p>
+        `;
+        div.addEventListener("click", () => openNotificationsScreen(i));
+        list.appendChild(div);
+    });
+}
+
+function openNotificationsScreen(highlightIndex) {
+    document.getElementById("notifDropdown").classList.add("hidden");
+    const container = document.getElementById("fullNotifList");
+    container.innerHTML = "";
+    notificationsData.forEach((n, i) => {
+        const div = document.createElement("div");
+        div.className = `p-5 rounded-xl border ${i === highlightIndex ? 'border-primary bg-primary/5' : 'border-border-dark bg-surface-dark'}`;
+        div.innerHTML = `
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-sm font-bold text-white">${n.title}</p>
+                <span class="text-[10px] text-text-sub">${n.time}</span>
+            </div>
+            <p class="text-xs text-text-sub mb-2">${n.description}</p>
+            <p class="text-xs text-gray-400 leading-relaxed">${n.detail}</p>
+        `;
+        container.appendChild(div);
+    });
+    document.getElementById("notificationsScreen").classList.add("active");
+}
+
+function clearNotifications(e) {
+    e.stopPropagation();
+    notificationsData = [];
+    renderNotifications();
+    document.getElementById("notifDot").classList.add("hidden");
+    showToast("All notifications cleared");
+}
+
+// =====================================================================
+// Repeat Offenders
+// =====================================================================
+function computeRepeatOffenders() {
+    const map = {};
+    workersData.forEach(w => {
+        if (!map[w.workerID]) map[w.workerID] = { name: w.fullName, workerID: w.workerID, count: 0, last: null, history: [] };
+        map[w.workerID].count += 1;
+        map[w.workerID].history.push(w);
+        if (!map[w.workerID].last || w.dateObj > map[w.workerID].last.dateObj) map[w.workerID].last = w;
+    });
+    return Object.values(map).filter(o => o.count >= 2).sort((a, b) => b.count - a.count);
+}
+
+function renderRepeatOffenders() {
+    const offenders = computeRepeatOffenders();
+    const container = document.getElementById("repeatOffendersList");
+    container.innerHTML = "";
+    if (offenders.length === 0) {
+        container.innerHTML = `<p class="text-xs text-text-sub text-center py-6">No repeat offenders right now.</p>`;
+        return;
+    }
+    offenders.forEach(o => {
+        const initials = o.name.split(' ').map(n => n[0]).join('');
+        const div = document.createElement("div");
+        div.className = "flex items-center gap-3 cursor-pointer p-2 -mx-2 rounded-lg hover:bg-white/5 transition-colors";
+        div.title = "View " + o.name + "'s violation history";
+        div.innerHTML = `
+            <div class="relative">
+                <div class="size-10 rounded-full bg-surface-darker border border-border-dark flex items-center justify-center font-bold text-xs text-text-sub">${initials}</div>
+                <span class="absolute -top-1 -right-1 size-5 rounded-full bg-red-600 text-[10px] font-bold flex items-center justify-center text-white border-2 border-surface-dark">${o.count}</span>
+            </div>
+            <div class="flex-1">
+                <p class="text-sm font-semibold text-white">${o.name}</p>
+                <p class="text-[10px] text-text-sub uppercase tracking-wider font-medium">Last: ${o.last.date} • ${o.last.violationType}</p>
+            </div>
+            <button class="js-offender-detail p-1.5 hover:bg-surface-darker rounded-lg text-text-sub pointer-events-none">
+                <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+            </button>
+        `;
+        div.addEventListener("click", () => openWorkerDetailModal(o.workerID));
+        container.appendChild(div);
+    });
+}
+
+function openWatchlistScreen() {
+    const offenders = computeRepeatOffenders();
+    const container = document.getElementById("watchlistDetailList");
+    container.innerHTML = "";
+    if (offenders.length === 0) {
+        container.innerHTML = `<p class="text-sm text-text-sub text-center py-10">No workers on the watchlist yet.</p>`;
+    }
+    offenders.forEach(o => {
+        const initials = o.name.split(' ').map(n => n[0]).join('');
+        const rows = o.history
+            .sort((a, b) => b.dateObj - a.dateObj)
+            .map(h => `
+                <tr class="border-t border-border-dark/60 cursor-pointer hover:bg-white/5 transition-colors" data-vid="${h.id}">
+                    <td class="px-4 py-2 text-xs text-gray-300">${h.violationType}</td>
+                    <td class="px-4 py-2 text-xs text-gray-400">${h.date}</td>
+                    <td class="px-4 py-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-${severityColor(h.severity)}-900/30 text-${severityColor(h.severity)}-500 border border-${severityColor(h.severity)}-900/50">${h.severity}</span></td>
+                    <td class="px-4 py-2 text-xs text-gray-400">${h.status}</td>
+                    <td class="px-4 py-2 text-right text-text-sub"><span class="material-symbols-outlined text-[16px]">chevron_right</span></td>
+                </tr>
+            `).join("");
+        const div = document.createElement("div");
+        div.className = "bg-surface-dark border border-border-dark rounded-xl overflow-hidden";
+        div.innerHTML = `
+            <div class="flex items-center gap-4 p-5 bg-surface-darker/50">
+                <div class="relative">
+                    <div class="size-12 rounded-full bg-surface-darker border border-border-dark flex items-center justify-center font-bold text-sm text-text-sub">${initials}</div>
+                    <span class="absolute -top-1 -right-1 size-5 rounded-full bg-red-600 text-[10px] font-bold flex items-center justify-center text-white border-2 border-surface-dark">${o.count}</span>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-white">${o.name}</p>
+                    <p class="text-[10px] text-text-sub uppercase tracking-wider font-medium">ID: ${o.workerID} • ${o.count} violations</p>
+                </div>
+            </div>
+            <p class="px-5 pt-3 text-[10px] text-text-sub">Click a row for full proof details.</p>
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="text-[10px] uppercase text-text-sub bg-surface-darker/30">
+                        <th class="px-4 py-2">Violation</th>
+                        <th class="px-4 py-2">Date</th>
+                        <th class="px-4 py-2">Severity</th>
+                        <th class="px-4 py-2">Status</th>
+                        <th class="px-4 py-2"></th>
+                    </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+            </table>
+        `;
+        div.querySelectorAll("tr[data-vid]").forEach(tr => {
+            tr.addEventListener("click", () => {
+                const violation = workersData.find(w => w.id === tr.dataset.vid);
+                if (violation) openProofModal(violation);
+            });
+        });
+        container.appendChild(div);
+    });
+    document.getElementById("watchlistScreen").classList.add("active");
+}
+
+// =====================================================================
+// Billing Reconciliation screen
+// =====================================================================
+function openBillingReconScreen() {
+    const map = {};
+    workersData.forEach(w => {
+        if (!map[w.workerID]) map[w.workerID] = { name: w.fullName, workerID: w.workerID, count: 0, fine: 0, high: 0, medium: 0, low: 0 };
+        map[w.workerID].count += 1;
+        map[w.workerID].fine += w.fine;
+        map[w.workerID][w.severity.toLowerCase()] += 1;
+    });
+    const rows = Object.values(map).filter(w => w.fine > 0).sort((a, b) => b.fine - a.fine);
+
+    const totalFines = rows.reduce((s, r) => s + r.fine, 0);
+    document.getElementById("billingTotalFines").textContent = "Rs. " + totalFines.toLocaleString();
+    document.getElementById("billingWorkerCount").textContent = rows.length;
+    document.getElementById("billingAvgFine").textContent = "Rs. " + (rows.length ? Math.round(totalFines / rows.length).toLocaleString() : 0);
+
+    const tbody = document.getElementById("billingTableBody");
+    tbody.innerHTML = rows.map(r => `
+        <tr class="border-t border-border-dark hover:bg-surface-darker/50 cursor-pointer transition-colors" data-workerid="${r.workerID}">
+            <td class="px-6 py-4">
+                <p class="font-semibold text-gray-200 text-sm">${r.name}</p>
+                <p class="text-[10px] text-text-sub">ID: ${r.workerID}</p>
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-300">${r.count}</td>
+            <td class="px-6 py-4 text-xs text-gray-400">${r.high ? r.high + ' High ' : ''}${r.medium ? r.medium + ' Med ' : ''}${r.low ? r.low + ' Low' : ''}</td>
+            <td class="px-6 py-4 text-right font-bold text-white text-sm">Rs. ${r.fine.toLocaleString()}</td>
+            <td class="px-6 py-4 text-right text-text-sub"><span class="material-symbols-outlined text-[16px]">chevron_right</span></td>
+        </tr>
+    `).join("");
+    tbody.querySelectorAll("tr[data-workerid]").forEach(tr => {
+        tr.addEventListener("click", () => openWorkerDetailModal(tr.dataset.workerid));
+    });
+
+    document.getElementById("billingReconScreen").classList.add("active");
+}
+
+// =====================================================================
+// Proof Modal - shows evidence/details for a single violation
+// (now includes a construction-site image sidebar next to worker details)
+// =====================================================================
+function openProofModal(v) {
+    const color = severityColor(v.severity);
+    const initials = v.fullName.split(' ').map(n => n[0]).join('');
+    document.getElementById("proofBody").innerHTML = `
+        <div class="flex items-center gap-3 mb-5">
+            <div class="size-11 rounded-full bg-surface-darker border border-border-dark flex items-center justify-center font-bold text-sm text-text-sub">${initials}</div>
+            <div>
+                <p class="text-sm font-bold text-white">${v.fullName}</p>
+                <p class="text-[10px] text-text-sub">ID: ${v.workerID}</p>
+            </div>
+        </div>
+        <div class="relative aspect-video w-full rounded-lg overflow-hidden border border-border-dark mb-5">
+            <img src="${violationEvidenceImage(v.violationType)}" alt="Evidence: ${v.violationType}" class="w-full h-full object-cover" />
+            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-3 py-2 flex items-center gap-2">
+                <span class="material-symbols-outlined text-white text-[16px]">photo_camera</span>
+                <p class="text-[11px] text-white">Camera evidence snapshot — ${v.violationType}</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 text-xs">
+            <div class="bg-surface-darker rounded-lg p-3 border border-border-dark">
+                <p class="text-text-sub uppercase text-[10px] font-bold mb-1">Violation</p>
+                <p class="text-white font-medium">${v.violationType}</p>
+            </div>
+            <div class="bg-surface-darker rounded-lg p-3 border border-border-dark">
+                <p class="text-text-sub uppercase text-[10px] font-bold mb-1">Severity</p>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-${color}-900/30 text-${color}-500 border border-${color}-900/50">${v.severity}</span>
+            </div>
+            <div class="bg-surface-darker rounded-lg p-3 border border-border-dark">
+                <p class="text-text-sub uppercase text-[10px] font-bold mb-1">Date &amp; Time</p>
+                <p class="text-white font-medium">${v.date}, ${v.time}</p>
+            </div>
+            <div class="bg-surface-darker rounded-lg p-3 border border-border-dark">
+                <p class="text-text-sub uppercase text-[10px] font-bold mb-1">Status</p>
+                <p class="text-white font-medium">${v.status}</p>
+            </div>
+        </div>
+        ${v.fine ? `<div class="mt-3 bg-primary/10 border border-primary/20 rounded-lg p-3 flex items-center justify-between">
+            <span class="text-xs text-orange-300">Fine Amount</span>
+            <span class="text-sm font-bold text-white">Rs. ${v.fine.toLocaleString()}</span>
+        </div>` : ''}
+    `;
+
+    // If the worker detail modal is currently open behind this, remember that,
+    // so closing Proof restores it instead of leaving both hidden.
+    proofOpenedFromWorkerDetail = document.getElementById("workerDetailModal").classList.contains("active");
+
+    document.getElementById("proofModal").classList.add("active");
+}
+function closeProofModal() {
+    document.getElementById("proofModal").classList.remove("active");
+    // Restore the worker detail modal if that's where we came from
+    if (proofOpenedFromWorkerDetail) {
+        document.getElementById("workerDetailModal").classList.add("active");
+    }
+    proofOpenedFromWorkerDetail = false;
+}
+
+// =====================================================================
+// Worker Detail Modal - all violations & fines for one worker
+// =====================================================================
+function openWorkerDetailModal(workerID) {
+    const violations = workersData.filter(w => w.workerID === workerID).sort((a, b) => b.dateObj - a.dateObj);
+    if (violations.length === 0) return;
+    const name = violations[0].fullName;
+    const totalFine = violations.reduce((s, w) => s + w.fine, 0);
+
+    document.getElementById("workerDetailTitle").textContent = `${name} — ${violations.length} violation${violations.length > 1 ? 's' : ''}`;
+
+    const rows = violations.map(v => `
+        <tr class="border-t border-border-dark/60 cursor-pointer hover:bg-white/5 transition-colors" data-vid="${v.id}">
+            <td class="px-4 py-2.5 text-xs text-gray-300">${v.violationType}</td>
+            <td class="px-4 py-2.5 text-xs text-gray-400">${v.date}</td>
+            <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-${severityColor(v.severity)}-900/30 text-${severityColor(v.severity)}-500 border border-${severityColor(v.severity)}-900/50">${v.severity}</span></td>
+            <td class="px-4 py-2.5 text-xs text-right text-gray-300">Rs. ${v.fine.toLocaleString()}</td>
+        </tr>
+    `).join("");
+
+    document.getElementById("workerDetailBody").innerHTML = `
+        <div class="flex items-center justify-between bg-surface-darker border border-border-dark rounded-lg p-4 mb-4">
+            <span class="text-xs text-text-sub">Worker ID: ${workerID}</span>
+            <span class="text-sm font-bold text-white">Total Fine: Rs. ${totalFine.toLocaleString()}</span>
+        </div>
+        <p class="text-[10px] text-text-sub mb-2">Click a row to open full proof details.</p>
+        <table class="w-full text-left rounded-lg overflow-hidden border border-border-dark">
+            <thead>
+                <tr class="text-[10px] uppercase text-text-sub bg-surface-darker">
+                    <th class="px-4 py-2">Violation</th>
+                    <th class="px-4 py-2">Date</th>
+                    <th class="px-4 py-2">Severity</th>
+                    <th class="px-4 py-2 text-right">Fine</th>
+                </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>
+    `;
+    document.getElementById("workerDetailBody").querySelectorAll("tr[data-vid]").forEach(tr => {
+        tr.addEventListener("click", () => {
+            const violation = workersData.find(w => w.id === tr.dataset.vid);
+            if (violation) openProofModal(violation);
+        });
+    });
+
+    document.getElementById("workerDetailModal").classList.add("active");
+}
+function closeWorkerDetailModal() {
+    document.getElementById("workerDetailModal").classList.remove("active");
+}
+
+// =====================================================================
+// Export (CSV) with Daily / Weekly / Monthly / All Time range
+// =====================================================================
+function exportViolations(range) {
+    let cutoff = null;
+    const now = new Date();
+    if (range === "daily") {
+        cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    } else if (range === "weekly") {
+        cutoff = daysAgo(7);
+    } else if (range === "monthly") {
+        cutoff = daysAgo(30);
+    }
+    const rows = cutoff ? workersData.filter(w => w.dateObj >= cutoff) : workersData;
+
+    let csv = "Name,Worker ID,Violation,Date,Time,Severity,Status,Fine (Rs.)\n";
+    rows.forEach(w => {
+        csv += `${w.fullName},${w.workerID},${w.violationType},${w.date},${w.time},${w.severity},${w.status},${w.fine}\n`;
+    });
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `violations-${range}-${now.toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast(`Exported ${rows.length} record(s) (${range})`);
+}
+
+// =====================================================================
+// Small helpers
+// =====================================================================
+function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(() => t.classList.remove("show"), 2500);
+}
+
+function closeAllScreens() {
+    document.querySelectorAll(".screen-overlay").forEach(s => s.classList.remove("active"));
+}
+
+// =====================================================================
+// Firebase - attach live data, fall back to the dummy set above
+// =====================================================================
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+function loadViolationsFromFirebase() {
+    try {
+        if (!window.firebase || !firebase.apps) return;
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        db.collection("violations").orderBy("dateObj", "desc").get()
+            .then(snapshot => {
+                if (snapshot.empty) {
+                    console.warn("Firestore 'violations' collection is empty - keeping dummy data.");
+                    return;
+                }
+                const liveData = [];
+                snapshot.forEach(doc => {
+                    const d = doc.data();
+                    const dateObj = d.dateObj && d.dateObj.toDate ? d.dateObj.toDate() : new Date(d.dateObj || Date.now());
+                    liveData.push({
+                        id: doc.id,
+                        fullName: d.fullName,
+                        workerID: d.workerID,
+                        violationType: d.violationType,
+                        dateObj,
+                        date: fmtDate(dateObj),
+                        time: fmtTime(dateObj),
+                        severity: d.severity,
+                        status: d.status,
+                        fine: d.fine ?? (FINE_TABLE[d.severity] || 0)
+                    });
+                });
+                workersData = liveData;
+                applyFilters();
+                renderSummary();
+                renderRepeatOffenders();
+                showToast("Live data loaded from Firebase");
+            })
+            .catch(err => {
+                console.warn("Firebase fetch failed, using dummy data instead:", err.message);
+            });
+    } catch (err) {
+        console.warn("Firebase not configured, using dummy data instead:", err.message);
+    }
+}
+
+// =====================================================================
+// Event wiring
+// =====================================================================
+document.getElementById("searchInput").addEventListener("input", applyFilters);
+document.getElementById("violationTypeFilter").addEventListener("change", applyFilters);
+
+document.getElementById("prevPageBtn").addEventListener("click", () => {
+    if (currentPage > 1) { currentPage--; renderViolationsTable(); }
+});
+document.getElementById("nextPageBtn").addEventListener("click", () => {
+    const totalPages = Math.max(1, Math.ceil(filteredData.length / PAGE_SIZE));
+    if (currentPage < totalPages) { currentPage++; renderViolationsTable(); }
+});
+
+document.getElementById("exportLogBtn").addEventListener("click", () => {
+    document.getElementById("exportModal").classList.add("active");
+});
+document.getElementById("cancelExportBtn").addEventListener("click", () => {
+    document.getElementById("exportModal").classList.remove("active");
+});
+document.getElementById("confirmExportBtn").addEventListener("click", () => {
+    const range = document.querySelector('input[name="exportRange"]:checked').value;
+    exportViolations(range);
+    document.getElementById("exportModal").classList.remove("active");
+});
+
+document.getElementById("notifBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.getElementById("notifDropdown").classList.toggle("hidden");
+});
+document.getElementById("notifCloseBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.getElementById("notifDropdown").classList.add("hidden");
+});
+document.addEventListener("click", (e) => {
+    const dropdown = document.getElementById("notifDropdown");
+    if (!dropdown.contains(e.target) && e.target.id !== "notifBtn") dropdown.classList.add("hidden");
+});
+document.getElementById("viewAllAlertsBtn").addEventListener("click", () => openNotificationsScreen(-1));
+
+document.getElementById("viewBillingBtn").addEventListener("click", openBillingReconScreen);
+document.getElementById("watchlistBtn").addEventListener("click", openWatchlistScreen);
+
+document.querySelectorAll("[data-close-screen]").forEach(btn => {
+    btn.addEventListener("click", () => document.getElementById(btn.dataset.closeScreen).classList.remove("active"));
+});
+
+// VIEW PROOF buttons in the main violation log
+document.getElementById("violationsTableBody").addEventListener("click", (e) => {
+    const btn = e.target.closest(".js-view-proof");
+    if (!btn) return;
+    const violation = workersData.find(w => w.id === btn.dataset.vid);
+    if (violation) openProofModal(violation);
+});
+
+// Proof modal close controls
+document.getElementById("proofCloseBtn").addEventListener("click", closeProofModal);
+document.getElementById("proofCloseBtn2").addEventListener("click", closeProofModal);
+document.getElementById("proofModal").addEventListener("click", (e) => {
+    if (e.target.id === "proofModal") closeProofModal();
+});
+
+// Worker detail modal close controls
+document.getElementById("workerDetailCloseBtn").addEventListener("click", closeWorkerDetailModal);
+document.getElementById("workerDetailCloseBtn2").addEventListener("click", closeWorkerDetailModal);
+document.getElementById("workerDetailModal").addEventListener("click", (e) => {
+    if (e.target.id === "workerDetailModal") closeWorkerDetailModal();
+});
+
+// Export modal - also closable by clicking the backdrop
+document.getElementById("exportModal").addEventListener("click", (e) => {
+    if (e.target.id === "exportModal") document.getElementById("exportModal").classList.remove("active");
+});
+
+// Escape key closes whichever modal/screen is open (top-most first: proof, then worker detail)
+document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (document.getElementById("proofModal").classList.contains("active")) {
+        closeProofModal();
+        return;
+    }
+    closeWorkerDetailModal();
+    document.getElementById("exportModal").classList.remove("active");
+    closeAllScreens();
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+    window.location.href = "adminloginscreen.html";
+});
+
+// =====================================================================
+// Initial render
+// =====================================================================
+renderViolationsTable();
+renderSummary();
+renderNotifications();
+renderRepeatOffenders();
+loadViolationsFromFirebase();
+
+setInterval(loadViolationsFromFirebase, 10000);
+</script>
+
+</body></html>

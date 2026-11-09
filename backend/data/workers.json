@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1768228186883,
+    "fullName": "sara",
+    "workerID": "WK-00001",
+    "role": "Laborer",
+    "siteAssignment": "Site A - Foundation",
+    "photoURL": "/uploads/photo/photo_1768228186875.jpg",
+    "faceImagePath": "/uploads/face/face_WK-00001.png",
+    "fingerprintRegistered": false,
+    "createdAt": "2026-01-12T14:29:46.883Z"
+  },
+  {
+    "id": 1768228405830,
+    "fullName": "Ali khan",
+    "workerID": "WK-00002",
+    "role": "Laborer",
+    "siteAssignment": "Unassigned",
+    "photoURL": "/uploads/photo/photo_1768228405825.jpg",
+    "faceImagePath": "/uploads/face/face_WK-00002.png",
+    "fingerprintRegistered": false,
+    "createdAt": "2026-01-12T14:33:25.830Z"
+  }
+]

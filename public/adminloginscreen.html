@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Login - Safety Compliance System</title>
+<link rel="icon" type="image/png" href="logo.png">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&amp;family=Spline+Sans:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#FF5722","primary-hover": "#F4511E",
+              "background": "#000000",
+              "surface": "#09090b",
+              "surface-highlight": "#18181b", 
+              "border-dim": "#27272a",
+              "text-main": "#ffffff",
+              "text-muted": "#a1a1aa",
+            },
+            fontFamily: {
+              "display": ["Spline Sans", "Noto Sans", "sans-serif"]
+            },
+            borderRadius: {
+                "DEFAULT": "0.5rem",
+                "lg": "0.75rem",
+                "xl": "1rem",
+                "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 4px;
+        }
+    </style>
+    
+</head>
+<body class="bg-background text-text-main font-display antialiased overflow-x-hidden h-screen">
+<div class="relative flex min-h-screen w-full">
+<div class="flex flex-1 flex-col px-6 py-12 lg:px-20 xl:px-32 relative z-10 bg-background border-r border-border-dim">
+<div class="absolute top-8 left-6 lg:left-20 xl:left-32 flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 border border-primary/20 text-primary">
+  <img 
+  src="/logo.png"
+  alt="SafeSite Logo"
+  class="h-8 w-8 object-contain"
+/>
+
+
+</div>
+<span class="text-xl font-bold tracking-tight text-white">SafeSite <span class="text-primary"></span></span>
+</div>
+<div class="mx-auto w-full max-w-[420px] flex flex-col gap-8 mt-20">
+
+<div class="flex flex-col gap-2">
+<h1 class="text-white text-3xl font-bold leading-tight tracking-tight">Admin Portal</h1>
+
+</div>
+<form id="loginForm" class="space-y-4">
+
+<div class="space-y-2">
+<label class="text-sm font-medium text-white block" for="email">Email </label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-text-muted text-[20px] group-focus-within:text-primary transition-colors">mail</span>
+</div>
+<input class="form-input block w-full pl-10 pr-3 h-12 bg-surface-highlight border border-border-dim rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all sm:text-sm" id="email" placeholder="admin@safecomply.com" type="text" value=""/>
+</div>
+<p id="emailError" class="text-xs text-red-500 mt-1 hidden"></p>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<label class="text-sm font-medium text-white block" for="password">Password</label>
+<a class="text-xs font-medium text-primary hover:text-primary-hover transition-colors" href="#">Forgot password?</a>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-text-muted text-[20px] group-focus-within:text-primary transition-colors">lock</span>
+</div>
+<input class="form-input block w-full pl-10 pr-10 h-12 bg-surface-highlight border border-border-dim rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all sm:text-sm" id="password" placeholder="Enter your password" type="password" value=""/>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-text-muted hover:text-white transition-colors">
+<span 
+  class="material-symbols-outlined text-[20px]"
+  id="eyeIcon"
+  onclick="togglePassword()"
+>
+  visibility
+</span>
+
+</div>
+</div>
+<p id="passwordError" class="text-xs text-red-500 mt-1 hidden"></p>
+</div>
+<div class="pt-2">
+  <button
+    type="submit"
+    class="flex w-full items-center justify-center rounded-lg h-12 px-5 bg-primary hover:bg-primary-hover transition-colors text-white text-sm font-bold tracking-wide shadow-[0_4px_14px_0_rgba(255,87,34,0.39)]">
+    Login
+  </button>
+ <div class="min-h-[20px] mt-2 text-center">
+    <p id="errorMsg" class="text-sm text-red-500 hidden"></p>
+    <p id="successMsg" class="text-sm text-green-500 hidden"></p>
+  </div>
+</div>
+
+</form>
+<div class="flex flex-col items-center justify-center gap-6 mt-4 border-t border-border-dim pt-6">
+<div class="flex items-center gap-2 px-4 py-2 bg-surface-highlight rounded-full border border-border-dim">
+
+</div>
+</div>
+</div>
+<div class="absolute bottom-6 left-0 w-full text-center lg:text-left lg:pl-20 xl:pl-32">
+
+</div>
+</div>
+<div class="hidden lg:flex lg:w-[55%] xl:w-[60%] p-6 h-screen sticky top-0 bg-surface">
+<div class="relative w-full h-full rounded-2xl overflow-hidden bg-background shadow-2xl border border-border-dim">
+<div class="absolute inset-0 w-full h-full bg-cover bg-center grayscale contrast-125" data-alt="Modern construction site with blue sky and steel beams representing safety monitoring environment" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBZHMiR6KWg5r1X2nKffNfOBTS5aZCEzQ4Guzh5RuzlhvJW8ZAg-eZeEnWzZs1Zg_px3TOu1WJhHdmXD2utHqbiPOywnnHzP6Q266APNx96pOOvP3wYTLj0lDvSBZ6IncT4JHygzY-TxQKjo80lQdwdr_4T26SGL2KZ31FPEbZNnt-KPCjtXeQKqsBrO-m4QBxIcKu2CQZXr_mJXq4itELCvTTCQXvUBQo2yTgitAqpO9xvB4GABWgN57rC_x1vVonEFINQaooHEdHD");'>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-background/90 via-transparent to-transparent"></div>
+<div class="absolute inset-0 bg-primary/10 mix-blend-overlay"></div>
+<div class="absolute top-8 right-8 animate-pulse">
+<div class="bg-black/60 backdrop-blur-md border border-white/10 p-2 pr-4 rounded-full flex items-center gap-3 shadow-lg">
+<span class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+</span>
+<span class="text-white text-xs font-bold font-display uppercase tracking-wider">Live Monitoring</span>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-12 flex flex-col justify-end h-full pointer-events-none">
+<div class="max-w-xl">
+<div class="mb-6 inline-flex items-center gap-2 rounded-md bg-primary/20 border border-primary/30 px-3 py-1 backdrop-blur-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">smart_toy</span>
+<span class="text-xs font-bold text-primary uppercase tracking-wider">AI Detection Active</span>
+</div>
+<h2 class="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
+                            Automated Safety <br/>
+<span class="text-primary">Compliance Detection</span>
+</h2>
+<div class="grid grid-cols-2 gap-8 border-t border-white/10 pt-8 mt-4">
+<div>
+<div class="flex items-baseline gap-1">
+<p class="text-3xl font-bold text-white">99.9<span class="text-lg text-primary">%</span></p>
+</div>
+<p class="text-xs uppercase tracking-wider text-zinc-400 mt-1">Accuracy Rate</p>
+</div>
+<div>
+<div class="flex items-baseline gap-1">
+<p class="text-3xl font-bold text-white">24/7<span class="text-lg text-primary"></span></p>
+</div>
+<p class="text-xs uppercase tracking-wider text-zinc-400 mt-1">Real-time Monitoring</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyBjubB9ZrlMKWz1mnZiHTQTWCCTiSA_nSY",
+  authDomain: "safesite-2a067.firebaseapp.com",
+  databaseURL: "https://safesite-2a067-default-rtdb.firebaseio.com",
+  projectId: "safesite-2a067",
+  storageBucket: "safesite-2a067.appspot.com",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const loginForm = document.getElementById("loginForm");
+const errorMsg = document.getElementById("errorMsg");
+const successMsg = document.getElementById("successMsg");
+
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  errorMsg.classList.add("hidden");
+  successMsg.classList.add("hidden");
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  // Basic Validation
+  if (!email || !password) {
+    errorMsg.textContent = "Please enter both Email and Password";
+    errorMsg.classList.remove("hidden");
+    return;
+  }
+
+  try {
+    // 1. Send login request to your Backend
+    const res = await fetch("http://localhost:5000/api/admin/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      // 2. ✅ Success: Set local session
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("adminEmail", email);
+
+      // 3. Log login to Firebase (Optional History)
+      try {
+          await push(ref(db, "admin_logins"), {
+            email,
+            time: new Date().toISOString(),
+            status: "Success"
+          });
+      } catch(e) { console.log("Firebase Log Error", e); }
+
+      successMsg.textContent = "Login successful! Redirecting...";
+      successMsg.classList.remove("hidden");
+
+      // 4. Redirect to dashboard
+      setTimeout(() => {
+        window.location.href = "Admin-Dashboard.html";
+      }, 1000);
+
+    } else {
+      // ❌ Failed Login
+      errorMsg.textContent = data.error || "Invalid Email or Password";
+      errorMsg.classList.remove("hidden");
+    }
+
+  } catch (err) {
+    errorMsg.textContent = "Server is not running! (Check port 5000)";
+    errorMsg.classList.remove("hidden");
+  }
+});
+</script>
+
+<script>
+function togglePassword() {
+  const password = document.getElementById("password");
+  const eyeIcon = document.getElementById("eyeIcon");
+
+  if (password.type === "password") {
+    password.type = "text";
+    eyeIcon.textContent = "visibility_off";
+  } else {
+    password.type = "password";
+    eyeIcon.textContent = "visibility";
+  }
+}
+</script>
+</body></html>
+

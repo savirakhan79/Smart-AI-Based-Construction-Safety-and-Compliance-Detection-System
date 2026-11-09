@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>SafeSite | Face Verification</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Space Grotesk', sans-serif; background: #07090f; color:white; overflow:hidden; }
+        
+        .video-container { 
+            position: relative; width: 100%; height: 100%; 
+            border-radius: 20px; overflow: hidden; 
+            border: 2px solid rgba(34, 197, 94, 0.2); 
+            background: #000; box-shadow: 0 0 40px rgba(0,0,0,0.8);
+        }
+        video { width: 100%; height: 100%; object-fit: cover; }
+
+        .scan-lines { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            pointer-events: none; display: none; z-index: 30; 
+        }
+        .green-bar { 
+            position: absolute; width: 100%; height: 4px; 
+            background: #22c55e; 
+            box-shadow: 0 0 25px #22c55e, 0 0 10px #22c55e; 
+            animation: scanMove 2.5s linear infinite; 
+        }
+        @keyframes scanMove { 0% { top: 0%; } 100% { top: 100%; } }
+
+        /* FACE TARGET FRAME */
+        .ai-target {
+            position: absolute; top: 20%; left: 30%; width: 40%; height: 55%;
+            border: 2px solid #22c55e;
+            border-radius: 30px; display: none; z-index: 25;
+            box-shadow: 0 0 0 2000px rgba(0,0,0,0.6);
+        }
+
+        #faceBtn { 
+            width: 170px; height: 170px; border-radius: 50%; 
+            background: #0f172a; border: 4px solid rgba(34, 197, 94, 0.2); 
+            display: flex; justify-content: center; align-items: center; 
+            cursor: pointer; position: relative; overflow: hidden;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #faceBtn:hover { transform: scale(1.05); border-color: #22c55e; }
+        .scanner-active { box-shadow: 0 0 80px rgba(34, 197, 94, 0.4); border-color: #22c55e !important; }
+        
+        .progress-container { width: 85%; height: 12px; background: #111827; border-radius: 20px; overflow: hidden; margin-top: 40px; }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #22c55e, #4ade80); transition: width 0.1s linear; }
+    </style>
+</head>
+<body class="flex flex-col h-screen">
+
+<header class="flex justify-between items-center p-6 border-b border-white/5 bg-black/40 backdrop-blur-md">
+    <div class="flex items-center gap-3">
+        <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+        <h1 class="text-2xl font-bold tracking-tighter">SAFESITE <span class="text-green-500 italic"></span></h1>
+    </div>
+    <div id="clock" class="text-green-500 font-mono text-xl tracking-widest"></div>
+</header>
+
+<main class="flex-1 flex gap-6 p-8 overflow-hidden">
+    <div class="w-7/12 h-full">
+        <div class="video-container">
+            <video id="webcam" autoplay playsinline></video>
+            <div class="scan-lines" id="cameraScan">
+                <div class="green-bar"></div>
+            </div>
+            <div class="ai-target" id="aiTarget"></div>
+            <div class="absolute bottom-5 left-5 bg-black/60 px-4 py-2 rounded text-xs text-green-400 font-mono">
+                AI_VISION_v3.0: ACTIVE <br> FACE_RECOGNITION: READY
+            </div>
+        </div>
+    </div>
+
+    <div class="w-5/12 h-full flex flex-col items-center justify-center bg-white/[0.02] rounded-3xl border border-white/5 relative">
+        <h2 class="text-sm mb-10 text-slate-500 uppercase tracking-[0.3em] font-bold">Biometric Auth</h2>
+        
+        <div id="faceBtn">
+            <span class="material-symbols-outlined !text-7xl text-green-500">face</span>
+            <div class="scan-lines" id="fingerScan">
+                <div class="green-bar"></div>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="mt-12 text-center">
+            <p id="status-text" class="text-xl font-medium text-slate-400 uppercase tracking-widest">Click to Scan Face</p>
+            <p id="ai-log" class="text-xs text-green-500 mt-3 font-mono opacity-0">ANALYZING_FACIAL_FEATURES...</p>
+        </div>
+    </div>
+</main>
+
+<script>
+setInterval(() => {
+    document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+}, 1000);
+
+// AI Voice function
+function speak(text) { 
+    if ('speechSynthesis' in window) {
+        const u = new SpeechSynthesisUtterance(text);
+        u.rate = 0.9;
+        window.speechSynthesis.speak(u); 
+    }
+}
+
+// Webcam setup
+const video = document.getElementById('webcam');
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(stream => {
+    video.srcObject = stream;
+})
+.catch(err => {
+    console.error("Camera Error:", err);
+    alert("Camera access denied or not available");
+});
+
+const faceBtn = document.getElementById('faceBtn');
+const progressBar = document.getElementById('progressBar');
+const statusText = document.getElementById('status-text');
+const aiLog = document.getElementById('ai-log');
+const cameraScan = document.getElementById('cameraScan');
+
+faceBtn.onclick = runAI;
+
+async function runAI() {
+    if (video.readyState < 2) return alert("Camera not ready");
+
+    statusText.innerText = "Analyzing Face...";
+    aiLog.style.opacity = 1; // show ANALYZING_FACIAL_FEATURES
+    cameraScan.style.display = "block"; // show green bar scanning
+
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 5;
+        progressBar.style.width = progress + "%";
+
+        if (progress >= 100) {
+            clearInterval(interval);
+            aiLog.style.opacity = 0; // hide log
+            cameraScan.style.display = "none"; // hide scanning bar
+            finalizeDetection();
+        }
+    }, 50);
+}
+
+async function finalizeDetection() {
+
+    const video = document.getElementById('webcam');
+
+    // Create canvas from video
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0);
+
+    // ⭐ IMPORTANT — JPEG 8bit
+    const blob = await new Promise(resolve =>
+        canvas.toBlob(resolve, 'image/jpeg', 0.95)
+    );
+
+    const formData = new FormData();
+    formData.append("photo", blob, "capture.jpg");
+
+    const res = await fetch('http://localhost:5001/mark_attendance', {
+        method: 'POST',
+        body: formData
+    });
+
+    const data = await res.json();
+
+    if(data.status === "Success"){
+        statusText.innerText = data.message;
+        statusText.style.color = "#22c55e";
+        speak("Attendance Marked");
+    } else {
+        statusText.innerText = data.message;
+        statusText.style.color = "#ef4444";
+        speak("Access Denied");
+    }
+}
+
+</script>
+
+</body>
+</html>

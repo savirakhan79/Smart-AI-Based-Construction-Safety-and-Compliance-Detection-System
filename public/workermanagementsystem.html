@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Worker Management - Safety Compliance System</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f97316", // Orange-500
+                        "primary-light": "#fdba74", // Orange-300
+                        "primary-dark": "#c2410c", // Orange-700
+                        "accent": "#fb923c", // Orange-400
+                        "background-dark": "#000000",
+                        "surface-dark": "#262626",
+                        "surface-darker": "#171717",
+                        "text-main": "#fafafa",
+                        "text-sub": "#a3a3a3",
+                        "border-dark": "#404040"
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.1)',
+                        'glow': '0 0 15px rgba(249, 115, 22, 0.15)'
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #18181b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3f3f46;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #52525b;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0f0f10;
+            color: #e4e4e7;
+        }
+    </style>
+</head>
+<body class="bg-background-dark font-display text-text-main antialiased overflow-hidden selection:bg-primary selection:text-white">
+<div class="flex h-screen w-full">
+<aside class="w-72 bg-black border-r border-border-dark flex-col hidden lg:flex z-30 flex-shrink-0">
+<div class="h-20 flex items-center px-8 border-b border-border-dark">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg size-8 shadow-sm flex-shrink-0 border border-border-dark relative" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBT4c_9y1DyK0rjWxxGBuWBQAWWLjyanVLXEu2XHl55BQ5P1GXuwHb-XTnzohmN071a_FgGwSMJKj_Y2hToOY3OsQu8FdgmY-5eIoODNAYcEeiEwdOOkzzpXbBdF81ofy4I7sukeYnZkjMzgkFMWkubY02a34czHsPOBo8QpRs-bXQq4rf17N0tIdt8_k2_F7A1s_QIHeGxSJFmouMsu4Ggk0qS7SJW_eAaZk6zr3h-4SGafUZYBRAookTX8APh_OEWPAbSBbnjIdaA");'>
+<div class="size-9 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white shadow-glow">
+    <img src="logo.png" alt="My Logo" class="h-6 w-6 object-contain" />
+  </div>
+</div>
+<h1 class="text-text-main text-lg font-bold leading-tight tracking-wide">SafeSite<span class="text-primary"></span></h1>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+<div class="px-4 mb-2">
+</div>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-sub rounded-lg hover:bg-surface-darker hover:text-white transition-colors group" href="Admin-Dashboard.html">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-white/5 text-white border border-neutral-700 shadow-soft mb-1 group" href="live monitoring.html">
+<span class="material-symbols-outlined text-orange-500">videocam</span>
+<span class="text-sm font-medium">Live Monitoring</span>
+<span class="ml-auto size-2 rounded-full bg-red-500 animate-pulse"></span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-orange-500/10 text-orange-500 shadow-glow-sub border border-orange-500/20 group relative overflow-hidden mb-1" href="attendance report.html">
+<div class="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-500"></div>
+<span class="material-symbols-outlined icon-filled">calendar_month</span>
+<span class="text-sm font-bold relative z-10">Attendance Reports</span>
+<span class="ml-auto bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg">Live</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workermanagementsystem.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">engineering</span>
+<span class="text-sm font-medium">Staff Management</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="live incident.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">crisis_alert</span>
+<span class="text-sm font-medium">Live Incidents</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="safety-compliance-ppe-detection.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">health_and_safety</span>
+<span class="text-sm font-medium">Safety Compliance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="violotion.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">warning_amber</span>
+<span class="text-sm font-medium">Violations</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="salary.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">payments</span>
+<span class="text-sm font-medium">Salary &amp; Rewards</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workerperformance.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">trending_up</span>
+<span class="text-sm font-medium">Performance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="reportandanalysics.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">analytics</span>
+<span class="text-sm font-medium">Reports Center</span>
+</a>
+<div class="mt-auto px-2 pb-4 pt-8">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="systemsettingscreen.html">
+<span class="material-symbols-outlined group-hover:text-neutral-200 transition-colors">settings</span>
+<span class="text-sm font-medium">System Settings</span>
+</a>
+</div>
+
+</nav>
+
+</aside>
+<div class="flex-1 flex flex-col h-screen overflow-hidden bg-background-dark">
+<header class="h-20 flex-shrink-0 flex items-center justify-between px-8 bg-black border-b border-border-dark z-20">
+<div class="flex items-center gap-6">
+<div class="lg:hidden flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg size-9 shadow-sm flex-shrink-0 border border-border-dark relative" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBT4c_9y1DyK0rjWxxGBuWBQAWWLjyanVLXEu2XHl55BQ5P1GXuwHb-XTnzohmN071a_FgGwSMJKj_Y2hToOY3OsQu8FdgmY-5eIoODNAYcEeiEwdOOkzzpXbBdF81ofy4I7sukeYnZkjMzgkFMWkubY02a34czHsPOBo8QpRs-bXQq4rf17N0tIdt8_k2_F7A1s_QIHeGxSJFmouMsu4Ggk0qS7SJW_eAaZk6zr3h-4SGafUZYBRAookTX8APh_OEWPAbSBbnjIdaA");'>
+<div class="absolute inset-0 bg-orange-500/10 rounded-lg"></div>
+</div>
+</div>
+<div>
+<h2 class="text-xl font-bold text-white tracking-tight">Staff Management</h2>
+</div>
+</div>
+
+<div class="flex items-center gap-6">
+<div class="relative hidden md:flex items-center">
+<span class="absolute left-3 text-text-sub material-symbols-outlined text-[20px]">search</span>
+<input 
+    oninput="handleSearchInput(this.value)" 
+    class="pl-10 pr-4 py-2 bg-surface-darker border border-border-dark rounded-lg w-64 text-sm text-text-main focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-600" 
+    placeholder="Search staff, IDs..." 
+    type="text"
+/></div>
+<div class="flex items-center gap-3">
+<div class="relative">
+    <button id="notifBtn" class="relative p-2 rounded-lg text-text-sub hover:bg-surface-darker transition-all">
+        <span class="material-symbols-outlined">notifications</span>
+        <span id="notifDot" class="absolute top-2 right-2 size-2 bg-primary rounded-full shadow-[0_0_10px_rgba(249,115,22,0.5)]"></span>
+    </button>
+
+    <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-72 bg-surface-dark border border-border-dark rounded-xl shadow-2xl z-[100] overflow-hidden">
+        <div class="p-3 border-b border-border-dark flex justify-between items-center bg-surface-darker">
+            <span class="text-xs font-bold text-white">Recent Activity</span>
+            <button onclick="clearNotifications()" class="text-[10px] text-primary hover:underline">Clear All</button>
+        </div>
+        
+        <div id="notifList" class="max-h-60 overflow-y-auto">
+            <div class="p-3 border-b border-border-dark hover:bg-white/[0.02] transition-all cursor-pointer">
+                <p class="text-[11px] text-white font-medium">System Ready</p>
+                <p class="text-[10px] text-text-sub">Staff management database linked successfully.</p>
+                <p class="text-[9px] text-gray-500 mt-1">Just now</p>
+            </div>
+        </div>
+        
+        <div class="p-2 text-center bg-surface-darker">
+            <button class="text-[10px] text-text-sub hover:text-white transition-all">View All Alerts</button>
+        </div>
+    </div>
+</div>
+
+<div class="h-8 w-[1px] bg-border-dark mx-1"></div>
+<button id="logoutBtn" class="flex items-center gap-3 hover:bg-surface-darker p-1.5 pr-3 rounded-full border border-transparent hover:border-border-dark transition-all cursor-pointer">
+<div class="size-9 rounded-full border border-border-dark shadow-sm overflow-hidden bg-surface-darker flex items-center justify-center">
+    <img 
+        src="admin.png" 
+        alt="Admin" 
+        class="w-full h-full object-cover">
+</div>  
+<div class="hidden md:block text-left">
+    <p class="text-sm font-semibold text-gray-200 leading-none">Ali Khan</p>
+  </div>
+  <span class="material-symbols-outlined text-gray-500 text-sm">expand_more</span>
+</button>
+
+<script>
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+
+      window.location.href = "adminloginscreen.html";
+  });
+</script>
+
+</div>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto p-6 lg:p-8 scroll-smooth">
+<div class="max-w-[1600px] mx-auto flex flex-col gap-6">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="bg-surface-dark p-4 rounded-xl border border-border-dark shadow-soft flex items-center justify-between group hover:border-primary/50 transition-colors">
+<div>
+<p class="text-xs font-semibold text-text-sub uppercase tracking-wide">Total Staff</p>
+<p id="stat-total" class="text-2xl font-bold text-white mt-1">0</p>
+</div>
+<div class="size-10 rounded-full bg-surface-darker flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">groups</span>
+</div>
+</div>
+<div class="bg-surface-dark p-4 rounded-xl border border-border-dark shadow-soft flex items-center justify-between group hover:border-emerald-500/50 transition-colors cursor-pointer" onclick="filterByStatus('Incomplete')">
+    <div>
+        <p class="text-xs font-semibold text-text-sub uppercase tracking-wide">Incomplete Profiles</p>
+        <p id="stat-pending" class="text-2xl font-bold text-white mt-1">0</p> </div>
+    <div class="size-10 rounded-full bg-surface-darker flex items-center justify-center text-emerald-500 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+        <span class="material-symbols-outlined">person_alert</span>
+    </div>
+</div>
+<div class="bg-surface-dark p-4 rounded-xl border border-border-dark shadow-soft flex items-center justify-between group hover:border-blue-500/50 transition-colors">
+<div>
+<p class="text-xs font-semibold text-text-sub uppercase tracking-wide">Biometric Registration</p>
+<p id="stat-biometric" class="text-2xl font-bold text-white mt-1">0</p>
+
+</div>
+<div class="size-10 rounded-full bg-surface-darker flex items-center justify-center text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">beach_access</span>
+</div>
+</div>
+<div class="bg-surface-dark p-4 rounded-xl border border-border-dark shadow-soft flex items-center justify-between group hover:border-red-500/50 transition-colors">
+<div>
+<p class="text-xs font-semibold text-text-sub uppercase tracking-wide">Deactivated</p>
+<p id="stat-deactivated" class="text-2xl font-bold text-white mt-1">0</p>
+</div>
+<div class="size-10 rounded-full bg-surface-darker flex items-center justify-center text-red-500 group-hover:bg-red-600 group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">person_off</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+<div class="xl:col-span-2 flex flex-col gap-6">
+<div class="bg-surface-dark rounded-xl border border-border-dark shadow-soft flex flex-col h-full">
+<div class="p-5 border-b border-border-dark flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h3 class="font-bold text-white text-lg flex-shrink-0">Staff Directory</h3>
+        
+        <div class="flex flex-wrap items-center gap-3 ml-auto">
+            <div id="paginationHeader" class="flex items-center gap-1 bg-surface-darker p-1 rounded-lg border border-border-dark">
+            </div>
+            <div class="flex items-center gap-3"></div>
+            <div class="flex items-center gap-2">
+                <button onclick="exportToExcel()" class="p-1.5 text-text-sub border border-border-dark rounded-lg hover:bg-surface-darker flex items-center gap-2 px-3 transition-all" title="Download Staff List">
+            <span class="material-symbols-outlined text-[20px]">download_for_offline</span>
+            <span class="text-[12px] font-medium">Excel Report</span>
+        </button>
+                <select 
+    onchange="filterBySite(this.value)" 
+    class="form-select text-sm bg-surface-darker text-text-main border-border-dark rounded-lg focus:border-primary focus:ring-primary py-1.5">
+    <option value="All">All Sites</option>
+    <option value="Site-A">Site A - Foundation</option>
+    <option value="Site-B">Site B - Structure</option>
+    <option value="Site-C">Site C - Finishing</option>
+</select>
+                <select onchange="filterByStatus(this.value)" 
+                    class="form-select text-sm bg-surface-darker text-text-main border-border-dark rounded-lg focus:border-primary focus:ring-primary py-1.5">
+                    <option value="All">All Staff</option>
+                    <option value="Incomplete">Incomplete</option>
+                    <option value="Biometric">Verified</option>
+                    <option value="Deactivated">Deactivated</option>
+                </select>
+            </div>
+            
+            <button class="p-1.5 text-text-sub border border-border-dark rounded-lg hover:bg-surface-darker">
+                <span class="material-symbols-outlined text-[20px]">filter_list</span>
+            </button>
+        </div>
+    </div>
+<div class="overflow-x-auto">
+<div class="max-h-[520px] overflow-y-auto">
+<table class="w-full text-left border-collapse">
+<thead class="sticky top-0 z-10">
+<tr class="bg-surface-darker text-xs uppercase tracking-wider text-text-sub font-semibold border-b border-border-dark">
+<th class="px-6 py-4">Staff Info</th>
+<th class="px-6 py-4">ID Number</th>
+<th class="px-6 py-4">Site Assignment</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4 text-right">Actions</th>
+</tr>
+</thead>
+<tbody id="workerTableBody"></tbody>
+</table>
+</div>
+<div class="p-4 border-t border-border-dark flex items-center justify-between text-sm text-text-sub">
+<span id="showingText">Showing 0 to 0 staff</span>
+<div class="flex gap-2 items-center" id="paginationBottom">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-6">
+<div class="bg-surface-dark rounded-xl border border-border-dark shadow-soft p-6">
+<div class="flex items-center gap-3 mb-5 text-white">
+<div class="p-2 bg-orange-900/30 text-primary rounded-lg border border-primary/20">
+<span class="material-symbols-outlined">person_add</span>
+</div>
+<h3 class="font-bold text-lg">Add New Staff</h3>
+</div>
+<form action="#" class="space-y-4">
+<div class="flex items-start gap-4 mb-4 pb-4 border-b border-border-dark">
+<div class="relative group">
+<div id="photoPreview"
+     class="size-20 rounded-full bg-surface-darker border-2 border-dashed border-border-dark flex items-center justify-center overflow-hidden hover:border-primary transition-colors cursor-pointer relative bg-center bg-cover">
+  
+  <span id="photoIcon"
+        class="material-symbols-outlined text-text-sub group-hover:text-primary text-2xl">
+        add_a_photo
+  </span>
+
+  <input id="photoInput"
+         accept="image/*"
+         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+         type="file"/>
+</div>
+
+</div>
+<div class="flex-1">
+<label class="block text-xs font-semibold text-text-sub uppercase tracking-wide mb-1">Profile Photo</label>
+<p class="text-[11px] text-text-sub mb-2">Upload a clear face photo. Used for ID cards and facial recognition. Max 2MB.</p>
+<button class="text-xs font-medium text-primary hover:text-primary-light transition-colors" type="button" onclick="document.getElementById('photoInput').click()">Select Image</button>
+</div>
+</div>
+<div>
+<label for="fullName"
+       class="block text-xs font-semibold text-text-sub uppercase tracking-wide mb-1.5">
+  Full Name
+</label>
+<input id="fullName"
+       class="w-full text-sm bg-surface-darker text-white rounded-lg border-border-dark
+              focus:border-primary focus:ring-1 focus:ring-primary shadow-sm
+              placeholder-gray-600"
+       placeholder="e.g. Michael Chen"
+       type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label for="workerID"
+       class="block text-xs font-semibold text-text-sub uppercase tracking-wide mb-1.5">
+  ID's
+</label>
+<input id="workerID"
+       class="w-full text-sm bg-surface-darker text-white rounded-lg border-border-dark
+              focus:border-primary focus:ring-1 focus:ring-primary shadow-sm
+              placeholder-gray-600"
+       placeholder="WK-####"
+       type="text"/>
+
+</div>
+<div>
+  <label class="block text-xs font-semibold text-text-sub uppercase tracking-wide mb-1.5">Assign Role</label>
+            <select id="assignRoleSelect" class="w-full text-sm bg-surface-darker text-white rounded-lg border-border-dark
+                  focus:border-primary focus:ring-1 focus:ring-primary shadow-sm">
+            <option value="" disabled selected>Select Role...</option>
+            <option value="Worker">Worker / Labor</option>
+            <option value="Supervisor">Site Supervisor</option>
+            <option value="Guard">Security Guard</option>
+            <option value="Engineer">Site Engineer</option>
+        </select>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-4">
+    <div>
+        <label class="block text-xs font-semibold text-text-sub uppercase tracking-wide mb-1.5">User Role</label>
+            <select id="userRoleSelect" class="w-full text-sm bg-surface-darker text-white rounded-lg border-border-dark focus:border-primary focus:ring-1 focus:ring-primary shadow-sm">
+            <option value="Worker">Worker (Laborer)</option>
+            <option value="Supervisor">Supervisor</option>
+            <option value="Guard">Security Guard</option>
+        </select>
+    </div>
+    <div>
+        <label class="block text-xs font-semibold text-text-sub uppercase tracking-wide mb-1.5">Payment Cycle</label>
+        <select id="paymentCycle" class="w-full text-sm bg-surface-darker text-white rounded-lg border-border-dark focus:border-primary focus:ring-1 focus:ring-primary shadow-sm">
+            <option value="Daily">Daily Wages</option>
+            <option value="Weekly">Weekly Salary</option>
+            <option value="Monthly">Monthly Fixed</option>
+        </select>
+    </div>
+</div>
+
+<div class="grid grid-cols-2 gap-4 mt-4">
+  <div>
+    <label class="block text-xs font-semibold text-text-sub uppercase tracking-wide mb-1.5">
+      Base Pay (Amount)
+    </label>
+    <input id="basePay" type="number" placeholder="e.g. 1500"
+           class="w-full text-sm bg-surface-darker text-white rounded-lg border-border-dark
+                  focus:border-primary focus:ring-1 focus:ring-primary shadow-sm">
+  </div>
+
+  <div id="shiftWrapper" class="hidden">
+    <label class="block text-xs font-semibold text-text-sub uppercase tracking-wide mb-1.5">
+      Shift Type
+    </label>
+    <select id="shiftType"
+            class="w-full text-sm bg-surface-darker text-white rounded-lg border-border-dark
+                   focus:border-primary focus:ring-1 focus:ring-primary shadow-sm">
+      <option value="">Select Shift</option>
+      <option value="Day">Day Shift</option>
+      <option value="Night">Night Shift</option>
+    </select>
+  </div>
+</div>
+
+
+</div>
+<div>
+<label for="siteSelect"
+       class="block text-xs font-semibold text-text-sub uppercase tracking-wide mb-1.5">
+  Site Assignment
+</label>
+<select id="siteSelect"
+        class="w-full text-sm bg-surface-darker text-white rounded-lg border-border-dark
+                  focus:border-primary focus:ring-1 focus:ring-primary shadow-sm">
+            <option value="" disabled selected>Assign Site...</option>
+            <option value="Site-A">Site A - Foundation</option>
+            <option value="Site-B">Site B - Structural</option>
+            <option value="Site-C">Site C - Finishing</option>
+            <option value="Gate-1">Main Gate 1</option>
+            <option value="Office">Project Office</option>
+</select>
+<div id="workerList"></div>
+</div>
+</div>
+<div class="pt-2 border-t border-border-dark mt-2">
+<div class="bg-surface-darker p-4 rounded-lg border border-dashed border-border-dark relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-5">
+<span class="material-symbols-outlined text-6xl">fingerprint</span>
+</div>
+<div class="flex items-center justify-between mb-3 relative z-10">
+<label class="block text-xs font-semibold text-text-sub uppercase tracking-wide">Biometric Registration</label>
+<span class="flex items-center gap-1.5 bg-yellow-900/30 text-yellow-500 px-2 py-0.5 rounded border border-yellow-900/50 text-[10px] font-medium">
+<span class="size-1.5 rounded-full bg-yellow-500"></span>
+                                                Pending
+                                            </span>
+</div>
+
+<!-- Register Face Button -->
+<div class="grid grid-cols-2 gap-3 relative z-10">
+  <button id="registerFaceBtn" class="group relative flex flex-col items-center justify-center p-3 bg-surface-dark rounded-lg border border-border-dark hover:border-primary hover:shadow-glow transition-all" type="button">
+    <div class="p-2 rounded-full bg-surface-darker text-gray-400 group-hover:text-primary group-hover:bg-orange-900/20 transition-colors mb-2">
+      <span class="material-symbols-outlined">face</span>
+    </div>
+    <span class="text-xs font-medium text-gray-400 group-hover:text-primary">Register Face ID</span>
+<span id="fingerStatus"
+      class="absolute top-2 right-2 size-2 rounded-full bg-gray-600">
+</span>
+  </button>
+<button id="scanWorkerBtn" class="group relative flex flex-col items-center justify-center p-3 bg-surface-dark rounded-lg border border-border-dark hover:border-primary hover:shadow-glow transition-all" type="button">
+  <div class="p-2 rounded-full bg-surface-darker text-gray-400 group-hover:text-primary group-hover:bg-orange-900/20 transition-colors mb-2">
+    <span class="material-symbols-outlined">fingerprint</span>
+  </div>
+  <span class="text-xs font-medium text-gray-400 group-hover:text-primary">Scan Fingerprint</span>
+<span id="workerFingerStatus" class="absolute top-2 right-2 size-2 rounded-full bg-gray-600" title="Not Registered"></span>
+</button>
+
+</div>
+<p class="text-[10px] text-gray-500 mt-2 text-center relative z-10">Securely encrypted &amp; compliant with privacy regulations.</p>
+</div>
+</div>
+<div class="pt-2">
+<button id="createWorkerBtn"
+        onclick="addWorker()"
+        class="w-full flex justify-center items-center gap-2 bg-primary hover:bg-primary-dark text-white font-medium py-2.5 px-4 rounded-lg">
+  <span class="material-symbols-outlined text-[20px]">add_circle</span>
+  Create Worker Profile
+</button>
+
+                        
+</div>
+</form>
+</div>
+
+</main>
+</div>
+</div>
+
+<!-- ===============================
+     Face Capture Modal (popup + live camera + success confirmation)
+================================ -->
+<div id="faceCaptureModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+  <div class="bg-surface-dark border border-border-dark rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+    <div class="p-4 border-b border-border-dark flex items-center justify-between">
+      <h3 class="text-white font-bold text-sm flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">face</span>
+        Face ID Registration
+      </h3>
+      <button type="button" onclick="closeFaceModal()" class="text-text-sub hover:text-white">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="p-5">
+      <div id="faceModalCameraWrap" class="relative rounded-xl overflow-hidden border-2 border-primary bg-black">
+        <video id="modalCamera" autoplay playsinline muted class="w-full aspect-video object-cover"></video>
+        <canvas id="modalCanvas" class="hidden w-full aspect-video object-cover"></canvas>
+      </div>
+      <div id="faceModalSuccess" class="hidden flex-col items-center justify-center py-6 text-center">
+        <div class="size-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-3 mx-auto">
+          <span class="material-symbols-outlined text-emerald-500 text-3xl">check_circle</span>
+        </div>
+        <p class="text-white font-semibold text-sm">Face ID Successfully Added!</p>
+        <p class="text-text-sub text-xs mt-1">You can continue filling the worker profile.</p>
+      </div>
+      <div id="faceModalActions" class="mt-4 flex gap-3">
+        <button id="modalCaptureBtn" onclick="captureModalFace()" type="button" class="flex-1 bg-primary hover:bg-primary-dark text-white text-xs font-bold uppercase tracking-wider py-2.5 rounded-lg">Capture Photo</button>
+      </div>
+      <div id="faceModalOkWrap" class="hidden mt-4">
+        <button type="button" onclick="closeFaceModal()" class="w-full bg-primary hover:bg-primary-dark text-white text-xs font-bold uppercase tracking-wider py-2.5 rounded-lg">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===============================
+     Fingerprint Scan Modal (popup + status + success confirmation)
+================================ -->
+<div id="fingerScanModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+  <div class="bg-surface-dark border border-border-dark rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+    <div class="p-4 border-b border-border-dark flex items-center justify-between">
+      <h3 class="text-white font-bold text-sm flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">fingerprint</span>
+        Fingerprint Registration
+      </h3>
+      <button type="button" onclick="closeFingerModal()" class="text-text-sub hover:text-white">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="p-6 flex flex-col items-center text-center">
+      <div id="fingerModalScanning" class="flex flex-col items-center">
+        <div class="size-20 rounded-full bg-orange-900/20 border-2 border-primary flex items-center justify-center mb-4 animate-pulse">
+          <span class="material-symbols-outlined text-primary text-4xl">fingerprint</span>
+        </div>
+        <p class="text-white text-sm font-semibold">Waiting for fingerprint...</p>
+        <p class="text-text-sub text-xs mt-1">Follow your device's on-screen prompt to scan.</p>
+      </div>
+      <div id="fingerModalSuccess" class="hidden flex-col items-center">
+        <div class="size-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-3">
+          <span class="material-symbols-outlined text-emerald-500 text-3xl">check_circle</span>
+        </div>
+        <p class="text-white font-semibold text-sm">Fingerprint Successfully Added!</p>
+      </div>
+      <div id="fingerModalOkWrap" class="hidden mt-5 w-full">
+        <button type="button" onclick="closeFingerModal()" class="w-full bg-primary hover:bg-primary-dark text-white text-xs font-bold uppercase tracking-wider py-2.5 rounded-lg">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===============================
+     Generic Success Modal (Worker Create / Update)
+================================ -->
+<div id="successModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+  <div class="bg-surface-dark border border-border-dark rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden p-6 flex flex-col items-center text-center">
+    <div class="size-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-3">
+      <span class="material-symbols-outlined text-emerald-500 text-3xl">check_circle</span>
+    </div>
+    <p id="successModalTitle" class="text-white font-semibold text-sm">Success</p>
+    <p id="successModalMsg" class="text-text-sub text-xs mt-1"></p>
+    <button type="button" onclick="closeSuccessModal()" class="w-full mt-5 bg-primary hover:bg-primary-dark text-white text-xs font-bold uppercase tracking-wider py-2.5 rounded-lg">OK</button>
+  </div>
+</div>
+
+<script>
+/* ===============================
+   CONFIG & GLOBAL STATE
+================================ */
+const API_BASE = "http://localhost:5000";
+let fingerprintCredential = null;
+let faceImagePath = null;
+let workersData = [];
+let allWorkersCache = [];   // FIX: used by search so ALL workers can be searched, not just current page
+let isEditMode = false;
+let currentEditId = null;
+let currentPage = 1;
+
+// Security Check: Agar login nahi kiya toh dashboard access nahi hoga
+if (localStorage.getItem("isLoggedIn") !== "true") {
+    window.location.href = "adminloginscreen.html";
+}
+
+/* ===============================
+   HELPERS
+================================ */
+function base64urlToUint8Array(base64url) {
+    const base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
+    const pad = base64.length % 4 === 0 ? "" : "=".repeat(4 - base64.length % 4);
+    const binary = atob(base64 + pad);
+    return Uint8Array.from([...binary].map(c => c.charCodeAt(0)));
+}
+
+/* ===============================
+   SUCCESS MODAL (generic)
+================================ */
+function showSuccessModal(title, msg) {
+    document.getElementById("successModalTitle").innerText = title;
+    document.getElementById("successModalMsg").innerText = msg || "";
+    document.getElementById("successModal").classList.remove("hidden");
+}
+function closeSuccessModal() {
+    document.getElementById("successModal").classList.add("hidden");
+}
+
+/* ===============================
+   IMAGE UPLOAD & PREVIEW
+================================ */
+// Image box par click karne se file selection khulegi
+document.getElementById("photoPreview")?.addEventListener("click", () => {
+    document.getElementById("photoInput").click();
+});
+
+document.getElementById("photoInput").onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+        const preview = document.getElementById("photoPreview");
+        preview.style.backgroundImage = `url(${ev.target.result})`;
+        preview.style.backgroundSize = "cover";
+        preview.style.backgroundPosition = "center";
+        document.getElementById("photoIcon").style.display = "none";
+    };
+    reader.readAsDataURL(file);
+};
+
+/* ===============================
+   FACE ID MODAL (CAMERA POPUP & CAPTURE)
+================================ */
+const modalCamera = document.getElementById("modalCamera");
+const modalCanvas = document.getElementById("modalCanvas");
+let modalStream = null;
+
+async function openFaceModal() {
+    // Reset modal to initial "camera" state every time it's opened
+    document.getElementById("faceModalCameraWrap").classList.remove("hidden");
+    document.getElementById("faceModalSuccess").classList.remove("flex");
+    document.getElementById("faceModalSuccess").classList.add("hidden");
+    document.getElementById("faceModalActions").classList.remove("hidden");
+    document.getElementById("faceModalOkWrap").classList.add("hidden");
+    modalCanvas.classList.add("hidden");
+    modalCamera.classList.remove("hidden");
+
+    document.getElementById("faceCaptureModal").classList.remove("hidden");
+
+    try {
+        modalStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+        modalCamera.srcObject = modalStream;
+        await modalCamera.play();
+    } catch (err) {
+        console.error("Camera Error:", err);
+        alert("❌ Camera access denied! Please allow camera permission in your browser.");
+        closeFaceModal();
+    }
+}
+
+function stopModalCamera() {
+    if (modalStream) {
+        modalStream.getTracks().forEach(track => track.stop());
+        modalStream = null;
+    }
+    modalCamera.srcObject = null;
+}
+
+function closeFaceModal() {
+    stopModalCamera();
+    document.getElementById("faceCaptureModal").classList.add("hidden");
+}
+
+function captureModalFace() {
+    if (!modalStream) return;
+    modalCanvas.width = modalCamera.videoWidth;
+    modalCanvas.height = modalCamera.videoHeight;
+    const ctx = modalCanvas.getContext("2d");
+    ctx.drawImage(modalCamera, 0, 0);
+    faceImagePath = modalCanvas.toDataURL("image/png");
+
+    stopModalCamera();
+
+    // Switch modal to "success" state
+    document.getElementById("faceModalCameraWrap").classList.add("hidden");
+    document.getElementById("faceModalActions").classList.add("hidden");
+    document.getElementById("faceModalSuccess").classList.remove("hidden");
+    document.getElementById("faceModalSuccess").classList.add("flex");
+    document.getElementById("faceModalOkWrap").classList.remove("hidden");
+
+    // Reflect success state on the small "Register Face ID" button too
+    document.getElementById("registerFaceBtn").innerHTML = `
+        <div class="p-2 rounded-full bg-emerald-900/20 text-emerald-500 mb-2">
+            <span class="material-symbols-outlined">check_circle</span>
+        </div>
+        <span class="text-xs font-medium text-emerald-500">Face ID Captured</span>
+        <span id="fingerStatus" class="absolute top-2 right-2 size-2 rounded-full bg-emerald-500"></span>
+    `;
+
+    if (typeof pushNotification === "function") {
+        pushNotification("Face ID Captured", "Face photo captured successfully.");
+    }
+}
+
+document.getElementById("registerFaceBtn").onclick = (e) => {
+    e.preventDefault();
+    openFaceModal();
+};
+
+/* ===============================
+   FINGERPRINT MODAL (SCAN POPUP)
+================================ */
+function openFingerModal() {
+    document.getElementById("fingerModalScanning").classList.remove("hidden");
+    document.getElementById("fingerModalScanning").classList.add("flex");
+    document.getElementById("fingerModalSuccess").classList.remove("flex");
+    document.getElementById("fingerModalSuccess").classList.add("hidden");
+    document.getElementById("fingerModalOkWrap").classList.add("hidden");
+    document.getElementById("fingerScanModal").classList.remove("hidden");
+}
+function closeFingerModal() {
+    document.getElementById("fingerScanModal").classList.add("hidden");
+}
+
+document.getElementById("scanWorkerBtn")?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const workerID = document.getElementById("workerID").value.trim();
+    if (!workerID) return alert("❌ Pehle Worker ID likhein");
+
+    openFingerModal();
+
+    try {
+        const res = await fetch(`${API_BASE}/api/fingerprint/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ workerID })
+        });
+
+        const data = await res.json();
+        const publicKey = data.publicKey;
+        publicKey.challenge = base64urlToUint8Array(publicKey.challenge);
+        publicKey.user.id = base64urlToUint8Array(publicKey.user.id);
+
+        const credential = await navigator.credentials.create({ publicKey });
+
+        fingerprintCredential = {
+            id: credential.id,
+            rawId: Array.from(new Uint8Array(credential.rawId)),
+            response: {
+                clientDataJSON: Array.from(new Uint8Array(credential.response.clientDataJSON)),
+                attestationObject: Array.from(new Uint8Array(credential.response.attestationObject))
+            }
+        };
+
+        document.getElementById("workerFingerStatus").style.background = "#10b981";
+
+        // Switch modal to success state
+        document.getElementById("fingerModalScanning").classList.add("hidden");
+        document.getElementById("fingerModalScanning").classList.remove("flex");
+        document.getElementById("fingerModalSuccess").classList.remove("hidden");
+        document.getElementById("fingerModalSuccess").classList.add("flex");
+        document.getElementById("fingerModalOkWrap").classList.remove("hidden");
+
+        if (typeof pushNotification === "function") {
+            pushNotification("Biometric Captured", `Fingerprint successfully scanned for ID: ${workerID}`);
+        }
+    } catch (err) {
+        if (typeof pushNotification === "function") {
+            pushNotification("Scan Failed", `Biometric registration failed for ID: ${workerID}`);
+        }
+        closeFingerModal();
+        alert("❌ Fingerprint failed: Use localhost or HTTPS, and make sure your device supports biometric scanning.");
+    }
+});
+
+/* ===============================
+   CORE CRUD: LOAD, SUBMIT, DELETE
+================================ */ 
+
+async function loadWorkers(page = 1) {
+    if (page < 1) page = 1;
+    currentPage = page;
+
+    // 1. Pehle LocalStorage se data load karo (agar available ho) — sirf instant preview ke liye
+    const cachedData = localStorage.getItem('cachedWorkers');
+    if (cachedData) {
+        workersData = JSON.parse(cachedData);
+        renderTable(workersData); // Table fauran render hogi
+    }
+
+    try {
+        // 2. API se fresh data mangwao
+        const res = await fetch(`${API_BASE}/api/workers?page=${page}&limit=10`);
+        const result = await res.json();
+        
+        if (result.success) {
+            // 3. Naya data variables aur LocalStorage mein update karo
+            workersData = result.data;
+            currentPage = result.currentPage;
+            
+            // Storage mein save kar do taake next time reload par ghaib na ho
+            localStorage.setItem('cachedWorkers', JSON.stringify(workersData));
+            
+            // 4. UI update karo
+            renderTable(workersData);
+            updatePaginationUI(result);
+            updateSummaryCards(result);
+        }
+    } catch (err) { 
+        console.error("Data load error:", err); 
+        
+        // Agar pehle se data load tha, toh wohi show rehne do
+        if (!cachedData) {
+            const tbody = document.getElementById("workerTableBody");
+            if(tbody) tbody.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-red-400">❌ Server se contact nahi ho pa raha.</td></tr>`;
+        }
+    }
+}
+
+function updatePaginationUI(info) {
+    // 1. Text update (Left Side)
+    const infoContainer = document.getElementById("showingText");
+    if (infoContainer && info) {
+        infoContainer.innerText = `Showing ${info.showingFrom || 0} to ${info.showingTo || 0} of ${info.totalStaff || 0} staff`;
+    }
+
+    // 2. Buttons update (Right Side) — FIX: pehle ye buttons static HTML the aur
+    //    kisi function se connected nahi the, isliye Previous/Next kaam nahi karte the.
+    const btnContainer = document.getElementById("paginationBottom");
+    if (btnContainer && info) {
+        btnContainer.innerHTML = `
+            <button onclick="loadWorkers(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} 
+                class="px-3 py-1 border border-border-dark rounded hover:bg-surface-darker disabled:opacity-50 text-text-sub hover:text-white transition-colors">
+                Previous
+            </button>
+            
+            <span class="px-3 py-1 bg-primary text-white border border-primary rounded font-semibold">
+                ${currentPage} / ${info.totalPages || 1}
+            </span>
+            
+            <button onclick="loadWorkers(${currentPage + 1})" ${currentPage === info.totalPages ? 'disabled' : ''} 
+                class="px-3 py-1 border border-border-dark rounded hover:bg-surface-darker disabled:opacity-50 text-text-sub hover:text-white transition-colors">
+                Next
+            </button>
+        `;
+    }
+
+    // 3. Safety: Agar header mein koi purana pagination div reh gaya hai toh use khali kar dein
+    const headerPag = document.getElementById("paginationHeader");
+    if (headerPag) headerPag.innerHTML = "";
+}
+
+// 2. Render Table with Strict Completion Logic
+function renderTable(data) {
+    const tbody = document.getElementById("workerTableBody");
+    if (!tbody) return;
+
+    if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-gray-500 font-medium">No records found</td></tr>`;
+        return; 
+    }
+
+    tbody.innerHTML = data.map(w => {
+        // --- STRICT COMPLETENESS CHECK ---
+        const hasFace = (w.faceImage || w.faceImagePath || w.photoURL);
+        const hasFinger = (w.fingerprint);
+        // Area check: N/A nahi hona chahiye aur khali nahi hona chahiye
+        const hasArea = (w.siteAssignment && w.siteAssignment !== 'N/A' && w.siteAssignment.trim() !== '');
+        
+        // Teeno cheezein honi chahiye tabhi complete mana jayega
+        const isProfileComplete = hasFace && hasFinger && hasArea;
+
+        // Dynamic Status Badge
+        let statusBadge = '';
+        if (w.status === 'Deactivated') {
+            statusBadge = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold bg-red-500/10 text-red-500 border border-red-500/20 uppercase tracking-wider">
+                            <span class="size-1.5 rounded-full bg-red-500"></span> Deactivated</span>`;
+        } else if (isProfileComplete) {
+            statusBadge = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 uppercase tracking-wider">
+                            <span class="size-1.5 rounded-full bg-emerald-500"></span> Verified</span>`;
+        } else {
+            // Agar Area miss hai ya Biometrics, toh Incomplete dikhayega
+            statusBadge = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20 uppercase tracking-wider">
+                            <span class="size-1.5 rounded-full bg-orange-400"></span> Incomplete</span>`;
+        }
+
+        return `
+        <tr class="group border-b border-gray-800 hover:bg-white/[0.02] transition-all">
+            <td class="px-6 py-4 flex items-center gap-3">
+                <div class="relative">
+                    <img src="${API_BASE}${w.photoURL || '/admin-profile.jpg'}" 
+                         class="w-11 h-11 rounded-xl object-cover border border-gray-700" 
+                         onerror="this.src='admin-profile.jpg'">
+                </div>
+                <div>
+                    <div class="font-bold text-sm text-white">${w.fullName || ''}</div>
+                    <div class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">${w.role || ''}</div>
+                </div>
+            </td>
+            <td class="px-6 py-4 text-sm font-mono text-gray-400">${w.workerID || ''}</td>
+            <td class="px-6 py-4 text-sm text-gray-400">${w.siteAssignment || 'N/A'}</td>
+            <td class="px-6 py-4">${statusBadge}</td>
+            <td class="px-6 py-4 text-right">
+                <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onclick="editWorker('${w.workerID}')" class="size-9 flex items-center justify-center rounded-xl bg-gray-800 text-blue-400 hover:bg-blue-500/10 transition-all" title="Edit Profile">
+                        <span class="material-symbols-outlined text-[18px]">edit_note</span>
+                    </button>
+                    
+                    <button onclick="toggleWorkerStatus('${w.workerID}', '${w.status}')" class="size-9 flex items-center justify-center rounded-xl bg-gray-800 ${w.status === 'Deactivated' ? 'text-emerald-400' : 'text-orange-400'} hover:bg-white/5 transition-all" title="${w.status === 'Deactivated' ? 'Activate' : 'Deactivate'}">
+                        <span class="material-symbols-outlined text-[18px]">${w.status === 'Deactivated' ? 'person_check' : 'person_off'}</span>
+                    </button>
+
+                    <button onclick="deleteWorker('${w.workerID}')" class="size-9 flex items-center justify-center rounded-xl bg-gray-800 text-red-400 hover:bg-red-500/10 transition-all" title="Delete Permanent">
+                        <span class="material-symbols-outlined text-[18px]">delete_forever</span>
+                    </button>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+/* ===============================
+   SEARCH (FIX: ab saare workers mein search hoti hai, sirf current page mein nahi)
+================================ */
+async function fetchAllWorkersForSearch() {
+    try {
+        const res = await fetch(`${API_BASE}/api/workers?page=1&limit=100000`);
+        const result = await res.json();
+        if (result.success) {
+            allWorkersCache = result.data;
+        }
+    } catch (err) {
+        console.error("Search fetch error:", err);
+    }
+    return allWorkersCache;
+}
+
+async function handleSearchInput(query) {
+    if (!query || query.trim() === "") {
+        // Search box khali hui toh normal paginated view par wapas
+        loadWorkers(currentPage);
+        return;
+    }
+    const all = allWorkersCache.length ? allWorkersCache : await fetchAllWorkersForSearch();
+    const q = query.toLowerCase();
+    const filtered = all.filter(w =>
+        (w.fullName || "").toLowerCase().includes(q) ||
+        (w.workerID || "").toLowerCase().includes(q)
+    );
+    renderTable(filtered);
+    const infoContainer = document.getElementById("showingText");
+    if (infoContainer) infoContainer.innerText = `${filtered.length} result(s) found`;
+}
+
+/* ===============================
+   FILTERS
+================================ */
+
+// Site Filter
+async function filterBySite(siteName) {
+    const all = allWorkersCache.length ? allWorkersCache : await fetchAllWorkersForSearch();
+    const filtered = siteName === 'All' ? all : all.filter(w => w.siteAssignment === siteName);
+    renderTable(filtered);
+}
+
+// Status Filter
+async function filterByStatus(statusType) {
+    const all = allWorkersCache.length ? allWorkersCache : await fetchAllWorkersForSearch();
+    let filtered = [];
+    if (statusType === "All") {
+        filtered = all;
+    } else if (statusType === "Incomplete") {
+        filtered = all.filter(w => {
+            if (w.status === 'Deactivated') return false;
+            const hasFace = (w.faceImage || w.faceImagePath || w.photoURL);
+            const hasFinger = (w.fingerprint);
+            const hasArea = (w.siteAssignment && w.siteAssignment !== 'N/A' && w.siteAssignment.trim() !== '');
+            return !(hasFace && hasFinger && hasArea);
+        });
+    } else if (statusType === "Biometric") {
+        filtered = all.filter(w => w.status !== 'Deactivated' && (w.faceImage || w.faceImagePath || w.photoURL) && w.fingerprint);
+    } else if (statusType === "Deactivated") {
+        filtered = all.filter(w => w.status === 'Deactivated');
+    }
+    renderTable(filtered);
+}
+
+/* ===============================
+   SUMMARY CARDS
+   FIX: ab aggregate counts backend se (result.incompleteCount / verifiedCount / deactivatedCount)
+   liye jaate hain, kyunki workersData sirf current page (10 records) rakhta hai.
+=============================== */
+function updateSummaryCards(paginationInfo = null) {
+    if (paginationInfo) {
+        if (document.getElementById('stat-total')) document.getElementById('stat-total').innerText = paginationInfo.totalStaff ?? 0;
+        if (document.getElementById('stat-pending')) document.getElementById('stat-pending').innerText = paginationInfo.incompleteCount ?? 0;
+        if (document.getElementById('stat-biometric')) document.getElementById('stat-biometric').innerText = paginationInfo.verifiedCount ?? 0;
+        if (document.getElementById('stat-deactivated')) document.getElementById('stat-deactivated').innerText = paginationInfo.deactivatedCount ?? 0;
+    }
+}
+
+/* ===============================
+   SUBMIT WORKER (Edit Friendly)
+=============================== */
+async function submitWorker() {
+    const fullName = document.getElementById("fullName").value.trim();
+    const workerID = document.getElementById("workerID").value.trim();
+    
+    // VALIDATION
+    if (!fullName || !workerID) {
+        return alert("❌ Name and ID are required!");
+    }
+
+    // Biometrics check
+    if (!isEditMode) {
+        if (!faceImagePath) return alert("❌ Please capture a Face ID first!");
+        if (!fingerprintCredential) return alert("❌ Please scan a Fingerprint first!");
+    }
+
+    const formData = new FormData();
+    formData.append("fullName", fullName);
+    formData.append("workerID", workerID);
+    formData.append("role", document.getElementById("assignRoleSelect").value);
+    formData.append("siteAssignment", document.getElementById("siteSelect").value);
+    formData.append("userRole", document.getElementById("userRoleSelect").value);
+    formData.append("shiftType", document.getElementById("shiftType").value);
+    formData.append("paymentCycle", document.getElementById("paymentCycle").value);
+    
+    // FIX: pehle field ka naam "basePay" hi tha jabke backend "salary" padhta tha,
+    // isliye Firebase mein hamesha 0 save hota tha. Ab backend bhi "basePay" padhta hai.
+    const basePay = document.getElementById("basePay")?.value.trim();
+    if (basePay) formData.append("basePay", basePay);
+    
+    const photoFile = document.getElementById("photoInput").files[0];
+    if (photoFile) formData.append("photo", photoFile);
+    if (faceImagePath) formData.append("faceImage", faceImagePath);
+    if (fingerprintCredential) formData.append("fingerprint", JSON.stringify(fingerprintCredential));
+
+    try {
+        const url = isEditMode ? `${API_BASE}/api/workers/${currentEditId}` : `${API_BASE}/api/workers/add`;
+        const method = isEditMode ? "PUT" : "POST";
+
+        const res = await fetch(url, { method, body: formData });
+        
+        if (res.ok) {
+            // --- Notification Connection ---
+            const notifTitle = isEditMode ? "Profile Updated" : "New Registration";
+            const notifMsg = isEditMode 
+                ? `${fullName}'s profile has been updated successfully.` 
+                : `${fullName} has been added as a new ${document.getElementById("assignRoleSelect").value}.`;
+            
+            if (typeof pushNotification === "function") {
+                pushNotification(notifTitle, notifMsg);
+            }
+
+            // FIX: ab plain browser alert() ki jagah proper "Successfully Added/Updated" popup aata hai
+            showSuccessModal(
+                isEditMode ? "Worker Successfully Updated!" : "Worker Successfully Added!",
+                isEditMode ? `${fullName}'s profile has been updated.` : `${fullName} has been added to the system.`
+            );
+            
+            clearForm();
+            allWorkersCache = []; // cache ko refresh karne ke liye invalidate
+            loadWorkers(currentPage); 
+        } else {
+            const error = await res.json();
+            alert("❌ Error: " + error.error);
+        }
+    } catch (err) { 
+        console.error("Submit Error:", err);
+        alert("❌ Server connection lost"); 
+    }
+}
+
+// 3. Edit Worker
+function editWorker(id) {
+    const w = workersData.find(x => x.workerID === id) || allWorkersCache.find(x => x.workerID === id);
+    if (!w) return;
+    
+    isEditMode = true;
+    currentEditId = id;
+
+    document.getElementById("fullName").value = w.fullName;
+    document.getElementById("workerID").value = w.workerID;
+    document.getElementById("basePay").value = w.basePay || "";
+    document.getElementById("assignRoleSelect").value = w.role;
+    document.getElementById("siteSelect").value = w.siteAssignment;
+    document.getElementById("userRoleSelect").value = w.userRole || "Worker";
+    if (w.paymentCycle) document.getElementById("paymentCycle").value = w.paymentCycle;
+    if (w.shiftType) document.getElementById("shiftType").value = w.shiftType;
+    
+    // Photo preview for edit
+    if(w.photoURL) {
+        const preview = document.getElementById("photoPreview");
+        preview.style.backgroundImage = `url(${API_BASE}${w.photoURL})`;
+        document.getElementById("photoIcon").style.display = "none";
+    }
+
+    document.getElementById("createWorkerBtn").innerHTML = "Update Worker Profile";
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// 4. Delete Worker
+async function deleteWorker(id) {
+    // 1. Confirm with the user
+    if (!confirm(`Are you sure? Worker ID: ${id} will be permanently removed.`)) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/api/workers/${id}`, { 
+            method: "DELETE" 
+        });
+
+        if (res.ok) {
+            // 2. Push Notification to the bell icon
+            if (typeof pushNotification === "function") {
+                pushNotification("Staff Removed", `Worker ID: ${id} has been deleted from the system.`);
+            }
+
+            // 3. Show success alert
+            showSuccessModal("Worker Deleted", `Worker ID: ${id} has been removed from the system.`);
+
+            // 4. Refresh the table data
+            allWorkersCache = [];
+            loadWorkers(currentPage); 
+        } else {
+            const errorData = await res.json();
+            alert(`❌ Delete failed: ${errorData.message || 'Server error'}`);
+        }
+    } catch (err) { 
+        console.error("Delete Error:", err);
+        alert("❌ Server connection lost. Could not delete worker."); 
+    }
+}
+// 5. Toggle Worker Status (Deactivate/Activate)
+async function toggleWorkerStatus(id, currentStatus) {
+    const newStatus = currentStatus === 'Deactivated' ? 'Active' : 'Deactivated';
+    
+    // User se confirmation lena
+    if (!confirm(`Do you want to change worker ${id} status to ${newStatus}?`)) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/api/workers/${id}/status`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus })
+        });
+
+        if (res.ok) {
+            // --- Notification Connection ---
+            const notifTitle = newStatus === 'Deactivated' ? "Worker Deactivated" : "Worker Activated";
+            const notifMsg = `Worker ID: ${id} has been successfully set to ${newStatus}.`;
+            
+            if (typeof pushNotification === "function") {
+                pushNotification(notifTitle, notifMsg);
+            }
+
+            showSuccessModal(`Worker is now ${newStatus}`, notifMsg);
+            allWorkersCache = [];
+            loadWorkers(currentPage); // Table aur cards refresh karne ke liye
+        } else {
+            alert("❌ Status update failed.");
+        }
+    } catch (err) {
+        console.error("Toggle Status Error:", err);
+        alert("❌ Server connection error!");
+    }
+}
+
+/* ===============================
+   UI & INITIALIZATION
+================================ */
+function clearForm() {
+    isEditMode = false;
+    currentEditId = null;
+    
+    // 1. Saari text fields aur selects reset karein
+    document.querySelector("form").reset();
+    
+    // 2. Profile Photo preview reset karein
+    const photoPreview = document.getElementById("photoPreview");
+    if (photoPreview) {
+        photoPreview.style.backgroundImage = "none";
+        document.getElementById("photoIcon").style.display = "block";
+    }
+    
+    // 3. Face ID reset karein
+    faceImagePath = null; 
+    closeFaceModal();
+
+    // Face ID button ka text aur icon wapas purana karein
+    const faceBtn = document.getElementById("registerFaceBtn");
+    if (faceBtn) {
+        faceBtn.innerHTML = `
+            <div class="p-2 rounded-full bg-surface-darker text-gray-400 mb-2">
+                <span class="material-symbols-outlined">face</span>
+            </div>
+            <span class="text-xs font-medium text-gray-400">Register Face ID</span>
+            <span id="fingerStatus" class="absolute top-2 right-2 size-2 rounded-full bg-gray-600"></span>
+        `;
+    }
+
+    // 4. Fingerprint variables aur status dot reset karein
+    fingerprintCredential = null;
+    const fingerStatus = document.getElementById("workerFingerStatus");
+    if (fingerStatus) {
+        fingerStatus.style.background = "#4b5563"; // Wapas Gray color
+    }
+
+    // 5. Main Create Button ka text reset karein
+    document.getElementById("createWorkerBtn").innerHTML = `
+        <span class="material-symbols-outlined text-[20px]">add_circle</span>
+        Create Worker Profile
+    `;
+}
+
+// Create Button Click Event
+document.getElementById("createWorkerBtn").onclick = (e) => {
+    e.preventDefault();
+    submitWorker();
+};
+
+// Shift Type Visibility (Sirf Guards ke liye)
+document.getElementById("userRoleSelect").addEventListener("change", function() {
+    const shiftWrapper = document.getElementById("shiftWrapper");
+    if (this.value === "Guard") {
+        shiftWrapper.classList.remove("hidden");
+    } else {
+        shiftWrapper.classList.add("hidden");
+    }
+});
+// Load table on start
+loadWorkers();
+/* ===============================
+   EXCEL EXPORT (Optimized)
+================================ */
+function exportToExcel() {
+    // 1. Check if we have data in our global array
+    if (!workersData || workersData.length === 0) {
+        alert("No staff data available to export!");
+        return;
+    }
+
+    // 2. Define CSV Header (Column Names)
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Full Name,Worker ID,Role,Site Assignment,Status,User Role,Shift\n";
+
+    // 3. Loop through the workersData array
+    workersData.forEach(function(w) {
+        // Logic to determine Status text (Same as your renderTable logic)
+        const hasFace = (w.faceImage || w.faceImagePath || w.photoURL);
+        const hasFinger = (w.fingerprint);
+        const hasArea = (w.siteAssignment && w.siteAssignment !== 'N/A' && w.siteAssignment.trim() !== '');
+        
+        let statusText = "Incomplete";
+        if (w.status === 'Deactivated') {
+            statusText = "Deactivated";
+        } else if (hasFace && hasFinger && hasArea) {
+            statusText = "Verified";
+        }
+
+        // Create a clean row of data
+        let row = [
+            `"${w.fullName || ''}"`,
+            `"${w.workerID || ''}"`,
+            `"${w.role || ''}"`,
+            `"${w.siteAssignment || 'N/A'}"`,
+            `"${statusText}"`,
+            `"${w.userRole || 'Worker'}"`,
+            `"${w.shiftType || 'N/A'}"`
+        ];
+        
+        csvContent += row.join(",") + "\n";
+    });
+
+    // 4. Create Download Link
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    
+    // Date formatting for filename
+    const date = new Date().toISOString().split('T')[0];
+    link.setAttribute("download", `SafeSite_Staff_Report_${date}.csv`);
+    
+    // 5. Trigger Download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    if (typeof pushNotification === "function") {
+    pushNotification("Report Generated", `Staff data exported to CSV successfully.`);
+}
+}
+const notifBtn = document.getElementById('notifBtn');
+const notifDropdown = document.getElementById('notifDropdown');
+const notifList = document.getElementById('notifList');
+const notifDot = document.getElementById('notifDot');
+
+// 1. Toggle Dropdown
+notifBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    notifDropdown.classList.toggle('hidden');
+});
+
+// 2. Close when clicking outside
+document.addEventListener('click', () => notifDropdown.classList.add('hidden'));
+
+// 3. Function to add dynamic notifications
+function pushNotification(title, message) {
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const html = `
+        <div class="p-3 border-b border-border-dark hover:bg-white/[0.02] transition-all cursor-pointer animate-fadeIn">
+            <p class="text-[11px] text-white font-medium">${title}</p>
+            <p class="text-[10px] text-text-sub">${message}</p>
+            <p class="text-[9px] text-gray-500 mt-1">${time}</p>
+        </div>
+    `;
+    notifList.insertAdjacentHTML('afterbegin', html);
+    notifDot.classList.remove('hidden'); // Show dot for new message
+}
+
+function clearNotifications() {
+    notifList.innerHTML = '<div class="p-4 text-center text-[10px] text-gray-500">No new notifications</div>';
+    notifDot.classList.add('hidden');
+}
+</script>
+
+</body></html>

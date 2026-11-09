@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Salary and reward - Safety Compliance System</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f97316",
+                        "primary-light": "#fdba74",
+                        "primary-dark": "#c2410c",
+                        "accent": "#fb923c",
+                        "background-dark": "#000000",
+                        "surface-dark": "#262626",
+                        "surface-darker": "#171717",
+                        "text-main": "#fafafa",
+                        "text-sub": "#a3a3a3",
+                        "border-dark": "#404040"
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.1)',
+                        'glow': '0 0 15px rgba(249, 115, 22, 0.15)'
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #18181b; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .icon-filled { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { background-color: #0f0f10; color: #e4e4e7; }
+        .pdf-btn-fix {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 120px !important;
+            height: 36px !important;
+            white-space: nowrap;
+        }
+        .table-scroll-wrap { max-height: 520px; overflow-y: auto; }
+        .table-scroll-wrap thead th { position: sticky; top: 0; z-index: 5; }
+        #workerSuggestions {
+            position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+            max-height: 220px; overflow-y: auto; z-index: 60;
+        }
+        #workerSuggestions .suggestion-item:hover { background: rgba(249,115,22,0.12); }
+        #appModalOverlay { backdrop-filter: blur(4px); }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(.92) translateY(6px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-pop { animation: modalPop .18s ease-out; }
+    </style>
+</head>
+<body class="bg-background-dark font-display text-text-main antialiased overflow-hidden selection:bg-primary selection:text-white">
+<div class="flex h-screen w-full">
+<aside class="w-72 bg-black border-r border-border-dark flex-col hidden lg:flex z-30 flex-shrink-0">
+<div class="h-20 flex items-center px-8 border-b border-border-dark">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg size-8 shadow-sm flex-shrink-0 border border-border-dark relative" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBT4c_9y1DyK0rjWxxGBuWBQAWWLjyanVLXEu2XHl55BQ5P1GXuwHb-XTnzohmN071a_FgGwSMJKj_Y2hToOY3OsQu8FdgmY-5eIoODNAYcEeiEwdOOkzzpXbBdF81ofy4I7sukeYnZkjMzgkFMWkubY02a34czHsPOBo8QpRs-bXQq4rf17N0tIdt8_k2_F7A1s_QIHeGxSJFmouMsu4Ggk0qS7SJW_eAaZk6zr3h-4SGafUZYBRAookTX8APh_OEWPAbSBbnjIdaA");'>
+<div class="size-9 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white shadow-glow">
+    <img src="logo.png" alt="My Logo" class="h-6 w-6 object-contain" />
+  </div>
+</div>
+<h1 class="text-text-main text-lg font-bold leading-tight tracking-wide">SafeSite<span class="text-primary"></span></h1>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+<div class="px-4 mb-2"></div>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-sub rounded-lg hover:bg-surface-darker hover:text-white transition-colors group" href="Admin-Dashboard.html">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-white/5 text-white border border-neutral-700 shadow-soft mb-1 group" href="live monitoring.html">
+<span class="material-symbols-outlined text-orange-500">videocam</span>
+<span class="text-sm font-medium">Live Monitoring</span>
+<span class="ml-auto size-2 rounded-full bg-red-500 animate-pulse"></span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-orange-500/10 text-orange-500 shadow-glow-sub border border-orange-500/20 group relative overflow-hidden mb-1" href="attendance report.html">
+<div class="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-500"></div>
+<span class="material-symbols-outlined icon-filled">calendar_month</span>
+<span class="text-sm font-bold relative z-10">Attendance Reports</span>
+<span class="ml-auto bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg">Live</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workermanagementsystem.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">engineering</span>
+<span class="text-sm font-medium">Staff Management</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="live incident.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">crisis_alert</span>
+<span class="text-sm font-medium">Live Incidents</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="safety-compliance-ppe-detection.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">health_and_safety</span>
+<span class="text-sm font-medium">Safety Compliance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="violotion.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">warning_amber</span>
+<span class="text-sm font-medium">Violations</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-orange-500/10 text-orange-500 shadow-glow-sub border border-orange-500/20 group relative overflow-hidden mb-1" href="salary.html">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-500"></div>
+<span class="material-symbols-outlined icon-filled">payments</span>
+<span class="text-sm font-bold relative z-10">Salary &amp; Rewards</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workerperformance.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">trending_up</span>
+<span class="text-sm font-medium">Performance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="reportandanalysics.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">analytics</span>
+<span class="text-sm font-medium">Reports Center</span>
+</a>
+<div class="mt-auto px-2 pb-4 pt-8">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="systemsettingscreen.html">
+<span class="material-symbols-outlined group-hover:text-neutral-200 transition-colors">settings</span>
+<span class="text-sm font-medium">System Settings</span>
+</a>
+</div>
+
+</nav>
+
+</aside>
+<div class="flex-1 flex flex-col h-screen overflow-hidden bg-background-dark">
+<header class="h-20 flex-shrink-0 flex items-center justify-between px-8 bg-black border-b border-border-dark z-20">
+<div class="flex items-center gap-6">
+<div class="lg:hidden flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg size-9 shadow-sm flex-shrink-0 border border-border-dark relative" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBT4c_9y1DyK0rjWxxGBuWBQAWWLjyanVLXEu2XHl55BQ5P1GXuwHb-XTnzohmN071a_FgGwSMJKj_Y2hToOY3OsQu8FdgmY-5eIoODNAYcEeiEwdOOkzzpXbBdF81ofy4I7sukeYnZkjMzgkFMWkubY02a34czHsPOBo8QpRs-bXQq4rf17N0tIdt8_k2_F7A1s_QIHeGxSJFmouMsu4Ggk0qS7SJW_eAaZk6zr3h-4SGafUZYBRAookTX8APh_OEWPAbSBbnjIdaA");'>
+<div class="absolute inset-0 bg-orange-500/10 rounded-lg"></div>
+</div>
+</div>
+<div>
+<h2 class="text-xl font-bold text-white tracking-tight">Salary & Reward Management</h2>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden md:flex items-center">
+<span class="absolute left-3 text-text-sub material-symbols-outlined text-[20px]">search</span>
+<input 
+    id="headerSearchInput"
+    oninput="applyCurrentFilters()" 
+    class="pl-10 pr-4 py-2 bg-surface-darker border border-border-dark rounded-lg w-64 text-sm text-text-main focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-600" 
+    placeholder="Search payroll, IDs..." 
+    type="text"
+/></div>
+<div class="flex items-center gap-3">
+<div class="relative">
+    <button id="notifBtn" class="relative p-2 rounded-lg text-text-sub hover:bg-surface-darker transition-all">
+        <span class="material-symbols-outlined">notifications</span>
+        <span id="notifDot" class="absolute top-2 right-2 size-2 bg-primary rounded-full shadow-[0_0_10px_rgba(249,115,22,0.5)] hidden"></span>
+    </button>
+
+    <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-72 bg-surface-dark border border-border-dark rounded-xl shadow-2xl z-[100] overflow-hidden">
+        <div class="p-3 border-b border-border-dark flex justify-between items-center bg-surface-darker">
+            <span class="text-xs font-bold text-white">Recent Activity</span>
+            <button onclick="clearNotifications()" class="text-[10px] text-primary hover:underline">Clear All</button>
+        </div>
+        
+        <div id="notifList" class="max-h-60 overflow-y-auto">
+            <div class="p-3 border-b border-border-dark hover:bg-white/[0.02] transition-all cursor-pointer">
+                <p class="text-[11px] text-white font-medium">System Ready</p>
+                <p class="text-[10px] text-text-sub">Staff management database linked successfully.</p>
+                <p class="text-[9px] text-gray-500 mt-1">Just now</p>
+            </div>
+        </div>
+        
+        <div class="p-2 text-center bg-surface-darker">
+            <button class="text-[10px] text-text-sub hover:text-white transition-all">View All Alerts</button>
+        </div>
+    </div>
+</div>
+
+<div class="h-8 w-[1px] bg-border-dark mx-1"></div>
+<button id="logoutBtn" class="flex items-center gap-3 hover:bg-surface-darker p-1.5 pr-3 rounded-full border border-transparent hover:border-border-dark transition-all cursor-pointer">
+<div class="size-9 rounded-full border border-border-dark shadow-sm overflow-hidden bg-surface-darker flex items-center justify-center">
+    <img 
+        src="admin.png" 
+        alt="Admin" 
+        class="w-full h-full object-cover">
+</div>  
+<div class="hidden md:block text-left">
+    <p class="text-sm font-semibold text-gray-200 leading-none">Ali Khan</p>
+  </div>
+  <span class="material-symbols-outlined text-gray-500 text-sm">expand_more</span>
+</button>
+
+<script>
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+      window.location.href = "adminloginscreen.html";
+  });
+</script>
+
+</div>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto p-6 lg:p-8 scroll-smooth">
+<div class="max-w-[1600px] mx-auto flex flex-col gap-6">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="bg-surface-dark p-4 rounded-xl border border-border-dark shadow-soft flex items-center justify-between group hover:border-primary/50 transition-colors">
+<div>
+<p class="text-xs font-semibold text-text-sub uppercase tracking-wide">Total Payroll</p>
+<p id="payrollBtn" class="text-2xl font-bold text-white mt-1">Rs 0</p>
+</div>
+<div class="size-10 rounded-full bg-surface-darker flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</div>
+</div>
+<div class="bg-surface-dark p-4 rounded-xl border border-border-dark shadow-soft flex items-center justify-between group hover:border-emerald-500/50 transition-colors">
+<div>
+<p class="text-xs font-semibold text-text-sub uppercase tracking-wide">Bonuses Issued</p>
+<p id="bonuseBtn" class="text-2xl font-bold text-white mt-1">Rs 0</p>
+</div>
+<div class="size-10 rounded-full bg-surface-darker flex items-center justify-center text-emerald-500 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">celebration</span>
+</div>
+</div>
+<div class="bg-surface-dark p-4 rounded-xl border border-border-dark shadow-soft flex items-center justify-between group hover:border-blue-500/50 transition-colors">
+<div>
+<p class="text-xs font-semibold text-text-sub uppercase tracking-wide">Total Rewards</p>
+<p id="rewardBtn" class="text-2xl font-bold text-white mt-1">0</p>
+</div>
+<div class="size-10 rounded-full bg-surface-darker flex items-center justify-center text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">award_star</span>
+</div>
+</div>
+<div class="bg-surface-dark p-4 rounded-xl border border-border-dark shadow-soft flex items-center justify-between group hover:border-amber-500/50 transition-colors">
+<div>
+<p class="text-xs font-semibold text-text-sub uppercase tracking-wide">Performance Impact</p>
+<p id="performanceBtn" class="text-2xl font-bold text-white mt-1">0%</p>
+</div>
+<div class="size-10 rounded-full bg-surface-darker flex items-center justify-center text-amber-500 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">monitoring</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+<div class="xl:col-span-2 flex flex-col gap-6">
+<div class="bg-surface-dark rounded-xl border border-border-dark shadow-soft flex flex-col h-full">
+<div class="p-5 border-b border-border-dark flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<h3 class="font-bold text-white text-lg">Payroll Directory</h3>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2">
+<select 
+    onchange="filterBySite(this.value)" 
+    class="form-select text-sm bg-surface-darker text-text-main border-border-dark rounded-lg focus:border-primary focus:ring-primary py-1.5">
+    <option value="All">All Sites</option>
+    <option value="Site-A">Site A - Foundation</option>
+    <option value="Site-B">Site B - Structure</option>
+    <option value="Site-C">Site C - Finishing</option>
+</select>
+<select onchange="filterByStatus(this.value)" 
+                    class="form-select text-sm bg-surface-darker text-text-main border-border-dark rounded-lg focus:border-primary focus:ring-primary py-1.5">
+                    <option value="All">All Staff</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Pending">Pending</option>
+                </select>
+</div>
+<button onclick="resetAllFilters()" class="p-2 text-text-sub hover:text-primary transition-colors border border-border-dark rounded-lg hover:bg-surface-darker" title="Reset filters">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+</button>
+</div>
+</div>
+<div class="table-scroll-wrap overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-darker text-xs uppercase tracking-wider text-text-sub font-semibold border-b border-border-dark">
+<th class="px-6 py-4 bg-surface-darker">Worker Info</th>
+<th class="px-6 py-4 bg-surface-darker">ID Number</th>
+<th class="px-6 py-4 bg-surface-darker">Base Salary</th>
+<th class="px-6 py-4 bg-surface-darker">Performance Rewards</th>
+<th class="px-6 py-4 bg-surface-darker">Status</th>
+</tr>
+</thead>
+<tbody id="salaryTableBody"></tbody>
+</table>
+</div>
+<div class="p-4 border-t border-border-dark flex items-center justify-between text-sm text-text-sub mt-auto">
+<span id="showingText">Showing 0 to 0 profiles</span>
+<div class="flex gap-2">
+<button id="prevPageBtn" onclick="goToPrevPage()" class="px-3 py-1 border border-border-dark rounded hover:bg-surface-darker text-text-sub hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed">Previous</button>
+<button class="px-3 py-1 bg-primary text-white border border-primary rounded"><span id="pageIndicator">1</span></button>
+<button id="nextPageBtn" onclick="goToNextPage()" class="px-3 py-1 bg-surface-darker border border-border-dark rounded hover:bg-surface-darker text-text-sub hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed">Next</button>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-6">
+<div class="bg-surface-dark rounded-xl border border-border-dark shadow-soft p-6">
+<div class="flex items-center gap-3 mb-5 text-white">
+<div class="p-2 bg-orange-900/30 text-primary rounded-lg border border-primary/20">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<h3 class="font-bold text-lg">Manage Payroll</h3>
+</div>
+<form onsubmit="event.preventDefault();" class="space-y-6">
+<div class="relative">
+<label class="block text-xs font-semibold text-text-sub uppercase tracking-wide mb-1.5">Select Worker</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-500 text-[18px]">search</span>
+<input id="updateWorkerID" autocomplete="off" oninput="onWorkerSearchInput(this.value)" onfocus="onWorkerSearchInput(this.value)" class="w-full pl-10 text-sm bg-surface-darker text-white rounded-lg border-border-dark focus:border-primary focus:ring-1 focus:ring-primary shadow-sm placeholder-gray-600" placeholder="Type name or ID..." type="text"/>
+</div>
+<input type="hidden" id="selectedWorkerID" value=""/>
+<div id="workerSuggestions" class="hidden bg-surface-darker border border-border-dark rounded-lg shadow-2xl"></div>
+</div>
+<div class="space-y-3">
+<label class="block text-xs font-semibold text-text-sub uppercase tracking-wide">Adjust Salary</label>
+<div class="grid grid-cols-2 gap-3">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">$</span>
+<input id="updateAmount" class="w-full pl-7 text-sm bg-surface-darker text-white rounded-lg border-border-dark focus:border-primary focus:ring-1 focus:ring-primary shadow-sm" placeholder="Amount" type="number"/>
+</div>
+<select id="updatePeriod" class="w-full text-sm bg-surface-darker text-white rounded-lg border-border-dark focus:border-primary focus:ring-1 focus:ring-primary shadow-sm">
+<option>Monthly</option>
+<option>Weekly</option>
+<option>Hourly</option>
+</select>
+</div>
+</div>
+<div class="space-y-3 p-4 bg-surface-darker rounded-lg border border-border-dark">
+<label class="block text-xs font-semibold text-emerald-500 uppercase tracking-wide">Issue Bonus/Reward</label>
+<div class="grid grid-cols-2 gap-3">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">$</span>
+<input id="updateBonus" class="w-full pl-7 text-sm bg-surface-dark text-white rounded-lg border-border-dark focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 shadow-sm" placeholder="Bonus" type="number"/>
+</div>
+<select id="updateBonusType" class="w-full text-sm bg-surface-dark text-white rounded-lg border-border-dark focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 shadow-sm">
+<option>Performance</option>
+<option>Safety Excellence</option>
+<option>Overtime</option>
+<option>Referral</option>
+</select>
+</div>
+<textarea id="rewardReason" class="w-full text-sm bg-surface-dark text-white rounded-lg border-border-dark focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 shadow-sm h-20 resize-none" placeholder="Reason for reward..."></textarea>
+</div>
+<div class="p-4 bg-amber-900/10 rounded-lg border border-amber-900/20">
+<p class="text-xs text-amber-500/80 leading-relaxed">
+<span class="material-symbols-outlined text-[16px] align-middle mr-1">info</span>
+                                        Safety violations are recorded as performance impact scores and do not incur direct salary deductions.
+                                    </p>
+</div>
+<button onclick="updatePayroll()"  class="w-full flex justify-center items-center gap-2 bg-primary hover:bg-primary-dark text-white font-medium py-3 px-4 rounded-lg transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40 uppercase tracking-wide text-sm" type="button">
+                                    Update Payroll Profile
+                                </button>
+</form>
+</div>
+<div class="bg-surface-dark rounded-xl border border-border-dark shadow-soft flex flex-col flex-1 max-h-[400px]">
+<div class="p-5 border-b border-border-dark flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">receipt_long</span>
+<h3 class="font-bold text-white">Recent Payouts</h3>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-2">
+<ul id="recentPayoutsList" class="space-y-1">
+</ul>
+</div>
+<div class="p-3 border-t border-border-dark text-center">
+<button onclick="openTransactionsPanel()" class="text-xs font-semibold text-primary hover:text-primary-light transition-colors">View All Transactions</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- TRANSACTIONS PANEL -->
+<div 
+  id="transactionsPanel"
+  class="hidden fixed inset-0 bg-background-dark z-50 overflow-y-auto"
+>
+</div>
+
+<!-- SUCCESS / INFO MODAL -->
+<div id="appModalOverlay" class="hidden fixed inset-0 bg-black/70 z-[200] flex items-center justify-center p-4">
+  <div class="modal-pop w-full max-w-sm bg-surface-dark border border-border-dark rounded-2xl shadow-2xl p-6 text-center">
+    <div id="appModalIconWrap" class="mx-auto mb-4 size-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
+      <span id="appModalIcon" class="material-symbols-outlined text-emerald-400 text-3xl">check_circle</span>
+    </div>
+    <h3 id="appModalTitle" class="text-white font-bold text-lg mb-1">Success</h3>
+    <p id="appModalMessage" class="text-text-sub text-sm mb-6">Action completed successfully.</p>
+    <button onclick="closeAppModal()" class="w-full bg-primary hover:bg-primary-dark text-white font-medium py-2.5 rounded-lg transition-all uppercase text-sm tracking-wide">OK</button>
+  </div>
+</div>
+
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+/* ======================
+    GLOBAL STATE
+====================== */
+let workersData = [];
+let currentFilteredData = [];
+let currentPage = 1;
+const PAGE_SIZE = 10;
+let activeSiteFilter = "All";
+let activeStatusFilter = "All";
+let txStatusFilter = "All";
+let txSearchKeyword = "";
+
+const notifBtn = document.getElementById("notifBtn");
+const notifDropdown = document.getElementById("notifDropdown");
+
+notifBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    notifDropdown.classList.toggle("hidden");
+});
+
+document.addEventListener("click", (e) => {
+    if (!notifBtn.contains(e.target)) notifDropdown.classList.add("hidden");
+    const sugg = document.getElementById("workerSuggestions");
+    const input = document.getElementById("updateWorkerID");
+    if (sugg && input && !sugg.contains(e.target) && e.target !== input) {
+        sugg.classList.add("hidden");
+    }
+});
+
+function clearNotifications() {
+    document.getElementById("notifList").innerHTML = `
+        <div class="p-4 text-center text-xs text-gray-400">
+            No Notifications
+        </div>
+    `;
+    document.getElementById("notifDot").classList.add("hidden");
+}
+
+/* ======================
+    SUCCESS / INFO MODAL HELPERS
+====================== */
+function showAppModal(title, message, type) {
+    const iconWrap = document.getElementById("appModalIconWrap");
+    const icon = document.getElementById("appModalIcon");
+    document.getElementById("appModalTitle").innerText = title;
+    document.getElementById("appModalMessage").innerText = message;
+
+    if (type === "error") {
+        iconWrap.className = "mx-auto mb-4 size-14 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center";
+        icon.className = "material-symbols-outlined text-red-400 text-3xl";
+        icon.innerText = "error";
+    } else {
+        iconWrap.className = "mx-auto mb-4 size-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center";
+        icon.className = "material-symbols-outlined text-emerald-400 text-3xl";
+        icon.innerText = "check_circle";
+    }
+    document.getElementById("appModalOverlay").classList.remove("hidden");
+}
+function closeAppModal() {
+    document.getElementById("appModalOverlay").classList.add("hidden");
+}
+
+/* ======================
+    LOAD WORKERS & INIT
+====================== */
+
+// Paints the last-known cached data the instant the page loads — before
+// any network request happens — so navigating between screens never
+// shows an empty table while Firebase is still responding.
+function renderFromCacheInstantly() {
+    const cache = localStorage.getItem("workersCache");
+    if (!cache) return;
+    try {
+        const cached = JSON.parse(cache);
+        if (Array.isArray(cached) && cached.length > 0) {
+            workersData = cached;
+            updateStats(workersData);
+            applyCurrentFilters();
+            renderRecentPayouts(workersData);
+        }
+    } catch (e) {
+        // corrupted cache — ignore, loadWorkers() will refetch from server
+        console.warn("Cached data unreadable, will refetch from server:", e.message);
+    }
+}
+
+async function loadWorkers() {
+    hideLoadError();
+    try {
+        const res = await fetch("http://localhost:5000/api/workers?page=1&limit=1000");
+
+        if (!res.ok) {
+            throw new Error(`Server replied with HTTP ${res.status} ${res.statusText}`);
+        }
+
+        const json = await res.json();
+        if (!json.success) throw new Error(json.message || "Backend returned success:false");
+
+        workersData = Array.isArray(json.data) ? json.data : [];
+
+        // Cache is a nice-to-have fallback only — if it fails (e.g. quota
+        // exceeded because worker photos are stored as base64), that must
+        // NEVER stop us from rendering the data we already fetched.
+        try {
+            // Store a lightweight copy: drop large base64 image fields so
+            // the cache stays well under the browser's storage limit.
+            const lightweight = workersData.map(w => {
+                const { fingerprint, ...rest } = w;
+                return rest;
+            });
+            localStorage.setItem("workersCache", JSON.stringify(lightweight));
+        } catch (cacheErr) {
+            console.warn("Skipping local cache (storage quota exceeded):", cacheErr.message);
+            try { localStorage.removeItem("workersCache"); } catch (e2) {}
+        }
+
+        if (workersData.length === 0) {
+            showLoadError("Connected to server successfully, but Firebase 'workers' has 0 records. Add a worker first from Staff Management, then reload this page.", false);
+        }
+
+        updateStats(workersData);
+        applyCurrentFilters();
+        renderRecentPayouts(workersData);
+
+    } catch (err) {
+        console.error("loadWorkers failed:", err);
+
+        const cache = localStorage.getItem("workersCache");
+        if (cache) {
+            workersData = JSON.parse(cache);
+            updateStats(workersData);
+            applyCurrentFilters();
+            renderRecentPayouts(workersData);
+            showLoadError(`Could not reach the server just now (${err.message}). Showing last saved data instead — this may be outdated.`, true);
+        } else {
+            workersData = [];
+            updateStats([]);
+            applyDataset([]);
+            showLoadError(`Could not load worker data: ${err.message}. Make sure the backend server (node index.js) is running on http://localhost:5000 and reachable from this browser.`, true);
+        }
+    }
+}
+
+/* ======================
+    LOAD ERROR BANNER (helps diagnose blank-screen issues)
+====================== */
+function showLoadError(message, isError) {
+    let banner = document.getElementById("loadErrorBanner");
+    if (!banner) {
+        banner = document.createElement("div");
+        banner.id = "loadErrorBanner";
+        const main = document.querySelector(".max-w-\\[1600px\\]");
+        if (main) main.prepend(banner);
+    }
+    banner.className = `mb-2 px-4 py-3 rounded-lg text-sm border flex items-start gap-2 ${
+        isError
+            ? "bg-red-500/10 border-red-500/30 text-red-300"
+            : "bg-amber-500/10 border-amber-500/30 text-amber-300"
+    }`;
+    banner.innerHTML = `<span class="material-symbols-outlined text-[18px] mt-0.5">${isError ? "error" : "info"}</span><span>${message}</span>`;
+}
+function hideLoadError() {
+    const banner = document.getElementById("loadErrorBanner");
+    if (banner) banner.remove();
+}
+
+/* ======================
+    PAGINATION CORE
+====================== */
+function applyDataset(data) {
+    currentFilteredData = data;
+    currentPage = 1;
+    renderPage();
+}
+
+function applyCurrentFilters() {
+    let data = workersData;
+    if (activeSiteFilter !== "All") {
+        data = data.filter(w => w.site === activeSiteFilter);
+    }
+    if (activeStatusFilter !== "All") {
+        data = data.filter(w => {
+            const pStatus = (Number(w.basePay ?? w.salary) > 0) ? "Paid" : "Pending";
+            return pStatus === activeStatusFilter;
+        });
+    }
+    const kw = (document.getElementById("headerSearchInput")?.value || "").toLowerCase();
+    if (kw) {
+        data = data.filter(w => (w.fullName || "").toLowerCase().includes(kw) || (w.workerID || "").toLowerCase().includes(kw));
+    }
+    applyDataset(data);
+}
+
+function resetAllFilters() {
+    activeSiteFilter = "All";
+    activeStatusFilter = "All";
+    const headerInput = document.getElementById("headerSearchInput");
+    if (headerInput) headerInput.value = "";
+    document.querySelectorAll("select.form-select").forEach(s => s.value = "All");
+    applyCurrentFilters();
+}
+
+function renderPage() {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
+    const pageData = currentFilteredData.slice(start, end);
+    renderTable(pageData);
+    updatePaginationUI();
+}
+
+function updatePaginationUI() {
+    const total = currentFilteredData.length;
+    const start = total === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1;
+    const end = Math.min(currentPage * PAGE_SIZE, total);
+
+    document.getElementById("showingText").innerText = `Showing ${start} to ${end} of ${total} profiles`;
+    document.getElementById("pageIndicator").innerText = currentPage;
+
+    const prevBtn = document.getElementById("prevPageBtn");
+    const nextBtn = document.getElementById("nextPageBtn");
+    prevBtn.disabled = currentPage === 1;
+    nextBtn.disabled = end >= total;
+}
+
+function goToPrevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        renderPage();
+    }
+}
+
+function goToNextPage() {
+    const total = currentFilteredData.length;
+    if (currentPage * PAGE_SIZE < total) {
+        currentPage++;
+        renderPage();
+    }
+}
+
+/* ======================
+    STATS UPDATE (Top Cards)
+====================== */
+function updateStats(data) {
+    let totalPayroll = 0;
+    let totalBonuses = 0;
+    let totalRewards = 0;
+    let performance = 0;
+
+    data.forEach(w => {
+        const salary = Number(w.basePay ?? w.salary ?? 0);
+        const manualReward = Number(w.manualReward ?? w.reward ?? 0);
+        const violations = Number(w.violationCount ?? 0);
+        const calc = calculateBonus(w, salary);
+
+        totalPayroll += salary + manualReward + calc.bonusAmount;
+        totalBonuses += manualReward + calc.bonusAmount;
+
+        if (manualReward > 0 || calc.bonusAmount > 0) totalRewards++;
+        if (violations === 0) performance++;
+    });
+
+    document.getElementById("payrollBtn").innerText = "Rs " + totalPayroll.toLocaleString();
+    document.getElementById("bonuseBtn").innerText = "Rs " + totalBonuses.toLocaleString();
+    document.getElementById("rewardBtn").innerText = totalRewards;
+    document.getElementById("performanceBtn").innerText =
+        data.length ? Math.round((performance / data.length) * 100) + "%" : "0%";
+}
+
+/* ======================
+    RENDER PAYROLL TABLE
+====================== */
+function renderTable(data) {
+    const tbody = document.getElementById("salaryTableBody");
+    tbody.innerHTML = "";
+
+    if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-text-sub text-sm">No workers found</td></tr>`;
+        return;
+    }
+
+    data.forEach(w => {
+        const baseSal = Number(w.basePay ?? w.salary) || 0;
+        const manualRew = Number(w.manualReward ?? w.reward) || 0;
+        const calc = calculateBonus(w, baseSal);
+
+        const isPaid = baseSal > 0;
+
+        tbody.innerHTML += `
+            <tr class="border-b border-border-dark hover:bg-white/[0.02] transition-colors">
+                <td class="px-6 py-5 font-bold text-white uppercase text-sm">${w.fullName || "-"}</td>
+                <td class="px-6 py-5 text-text-sub font-mono text-xs">${w.workerID || "-"}</td>
+                <td class="px-6 py-5 text-white font-medium">Rs ${baseSal.toLocaleString()}</td>
+                <td class="px-6 py-5">
+                    <div class="flex flex-col">
+                        <span class="text-emerald-400 font-bold text-[11px]">${calc.status}</span>
+                        <span class="text-blue-400 text-[9px] opacity-80 font-bold">Manual: +Rs ${manualRew.toLocaleString()}</span>
+                    </div>
+                </td>
+                <td class="px-6 py-5">
+                  <div class="flex items-center justify-between gap-4">
+${
+isPaid
+?
+`<span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+RECEIVED
+</span>`
+:
+`<button
+onclick="markAsPaid('${w.workerID}')"
+class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-primary hover:text-white transition-all">
+PENDING
+</button>`
+}
+                    ${isPaid ? `
+                        <button onclick="downloadReceipt('${w.workerID}')" 
+                                class="flex items-center bg-primary hover:bg-primary-dark text-white rounded-lg overflow-hidden transition-all shadow-md group/btn scale-90">
+                            <div class="px-2 py-1.5 bg-black/20 border-r border-white/10 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[16px]">download</span>
+                            </div>
+                            <span class="px-3 py-1.5 text-[9px] font-black uppercase tracking-tighter">PDF SLIP</span>
+                        </button>
+                    ` : ''}
+                  </div>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+/* ======================
+    AI BONUS LOGIC
+====================== */
+function calculateBonus(worker, baseSal) {
+    let salary = baseSal !== undefined ? baseSal : (Number(worker.basePay ?? worker.salary) || 0);
+    let violations = Number(worker.violationCount) || 0;
+
+    if (violations === 0 && salary > 0) {
+        let bonus = salary * 0.20;
+        return { total: salary + bonus, status: "20% Safety Bonus", bonusAmount: bonus };
+    } else {
+        return { total: salary, status: violations >= 5 ? "Penalty (0% Bonus)" : "Standard (No Bonus)", bonusAmount: 0 };
+    }
+}
+
+function markAsPaid(workerID) {
+    const worker = workersData.find(w => w.workerID === workerID);
+    if (!worker) return;
+
+    selectWorkerForUpdate(worker);
+    document.getElementById("updateAmount").scrollIntoView({ behavior: "smooth", block: "center" });
+    setTimeout(() => document.getElementById("updateAmount").focus(), 300);
+}
+
+/* ======================
+    WORKER SEARCH / SELECT (Manage Payroll form)
+====================== */
+function onWorkerSearchInput(val) {
+    const box = document.getElementById("workerSuggestions");
+    const keyword = (val || "").toLowerCase().trim();
+
+    document.getElementById("selectedWorkerID").value = "";
+
+    if (!keyword) {
+        box.classList.add("hidden");
+        box.innerHTML = "";
+        return;
+    }
+
+    const matches = workersData.filter(w =>
+        (w.fullName || "").toLowerCase().includes(keyword) ||
+        (w.workerID || "").toLowerCase().includes(keyword)
+    ).slice(0, 8);
+
+    if (matches.length === 0) {
+        box.innerHTML = `<div class="px-4 py-3 text-xs text-text-sub">No matching worker</div>`;
+        box.classList.remove("hidden");
+        return;
+    }
+
+    box.innerHTML = matches.map((w, i) => `
+        <div class="suggestion-item px-4 py-2.5 cursor-pointer border-b border-border-dark last:border-b-0"
+             data-idx="${i}">
+            <p class="text-sm text-white font-semibold">${w.fullName || "Unnamed"}</p>
+            <p class="text-[10px] text-text-sub font-mono">${w.workerID}</p>
+        </div>
+    `).join("");
+
+    box.querySelectorAll(".suggestion-item").forEach((el, i) => {
+        el.addEventListener("click", () => selectWorkerForUpdate(matches[i]));
+    });
+
+    box.classList.remove("hidden");
+}
+
+function selectWorkerForUpdate(worker) {
+    document.getElementById("updateWorkerID").value = `${worker.fullName} (${worker.workerID})`;
+    document.getElementById("selectedWorkerID").value = worker.workerID;
+    document.getElementById("workerSuggestions").classList.add("hidden");
+}
+
+/* ======================
+    FILTERS
+====================== */
+function filterBySite(site) {
+    activeSiteFilter = site;
+    applyCurrentFilters();
+}
+
+function filterByStatus(status) {
+    activeStatusFilter = status;
+    applyCurrentFilters();
+}
+
+/* ======================
+    UPDATE PAYROLL ACTION
+====================== */
+async function updatePayroll() {
+    const typedValue = document.getElementById("updateWorkerID").value.trim();
+    const selectedID = document.getElementById("selectedWorkerID").value.trim();
+    const salary = document.getElementById("updateAmount").value;
+    const bonus = document.getElementById("updateBonus").value;
+    const reason = document.getElementById("rewardReason").value;
+
+    let workerID = selectedID;
+    if (!workerID) {
+        const match = workersData.find(w =>
+            (w.workerID || "").toLowerCase() === typedValue.toLowerCase() ||
+            (w.fullName || "").toLowerCase() === typedValue.toLowerCase()
+        );
+        if (match) workerID = match.workerID;
+    }
+
+    if (!workerID) {
+        showAppModal("Worker Not Selected", "Please search and pick a worker from the suggestions list before updating.", "error");
+        return;
+    }
+    if (!salary && !bonus) {
+        showAppModal("Nothing To Update", "Enter a salary amount or a bonus amount first.", "error");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:5000/api/update-payroll", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                workerID: workerID,
+                salary: salary ? Number(salary) : 0,
+                reward: bonus ? Number(bonus) : 0,
+                reason: reason || "Standard Update"
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            await loadWorkers();
+
+            showNotification("Payroll Updated", `${workerID} payroll updated successfully.`, "success");
+            showAppModal("Update Successful", "The payroll profile was updated successfully.", "success");
+
+            document.getElementById("updateWorkerID").value = "";
+            document.getElementById("selectedWorkerID").value = "";
+            document.getElementById("updateAmount").value = "";
+            document.getElementById("updateBonus").value = "";
+            document.getElementById("rewardReason").value = "";
+        } else {
+            showAppModal("Update Failed", result.message || "Something went wrong while updating payroll.", "error");
+        }
+    } catch (e) {
+        showAppModal("Update Failed", "Could not reach the server. Please check your connection and try again.", "error");
+    }
+}
+
+/* ======================
+    TRANSACTIONS PANEL
+====================== */
+function openTransactionsPanel() {
+    const panel = document.getElementById("transactionsPanel");
+    panel.classList.remove("hidden");
+    panel.className = "fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex items-center justify-center p-4 lg:p-10";
+
+    panel.innerHTML = `
+        <div class="w-full max-w-6xl h-[85vh] bg-[#0a0a0a] border border-primary/40 rounded-3xl shadow-[0_0_50px_rgba(249,115,22,0.1)] flex flex-col overflow-hidden">
+            
+            <div class="flex items-center justify-between p-6 border-b border-white/10 bg-surface-darker/50">
+                <div class="flex items-center gap-4">
+                    <div class="size-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-glow">
+                        <span class="material-symbols-outlined text-primary text-3xl">receipt_long</span>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-white tracking-tight">Financial Ledger</h2>
+                        <p class="text-text-sub text-xs">Complete payroll history and transaction logs</p>
+                    </div>
+                </div>
+                <button onclick="closeTransactionsPanel()" class="size-10 rounded-full hover:bg-white/10 flex items-center justify-center text-text-sub hover:text-white transition-all border border-transparent hover:border-white/10">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            
+            <div class="px-8 py-5 bg-black/40 border-b border-white/5 flex flex-col sm:flex-row gap-3 sm:items-center">
+                <div class="relative max-w-md flex-1">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-sub text-[18px]">search</span>
+                    <input id="txSearchInput" oninput="searchTransaction(this.value)" 
+                           class="w-full bg-surface-darker border border-border-dark rounded-xl pl-12 pr-4 py-3 text-sm text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-gray-600" 
+                           placeholder="Search by worker name or employee ID...">
+                </div>
+                <select onchange="filterTransactionStatus(this.value)" class="bg-surface-darker border border-border-dark rounded-xl px-4 py-3 text-sm text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+                    <option value="All">All Status</option>
+                    <option value="Paid">Received</option>
+                    <option value="Pending">Pending</option>
+                </select>
+            </div>
+
+            <div class="flex-1 overflow-y-auto custom-scrollbar bg-black/20">
+                <table class="w-full text-left border-separate border-spacing-0">
+                    <thead class="sticky top-0 z-10 bg-[#0f0f0f] text-text-sub text-[11px] uppercase font-bold tracking-widest border-b border-white/10">
+                        <tr>
+                            <th class="px-8 py-4 border-b border-white/5 bg-[#0f0f0f]">Worker Identity</th>
+                            <th class="px-8 py-4 border-b border-white/5 bg-[#0f0f0f]">Reference ID</th>
+                            <th class="px-8 py-4 border-b border-white/5 bg-[#0f0f0f]">Base Salary</th>
+                            <th class="px-8 py-4 border-b border-white/5 bg-[#0f0f0f]">AI Bonus</th>
+                            <th class="px-8 py-4 border-b border-white/5 bg-[#0f0f0f]">Status</th>
+                            <th class="px-8 py-4 border-b border-white/5 bg-[#0f0f0f] text-center">Documentation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionTableBody" class="text-sm text-text-main"></tbody>
+                </table>
+            </div>
+            
+            <div class="p-4 border-t border-white/10 bg-surface-darker/30 flex justify-between items-center px-8">
+                <p id="ledgerCount" class="text-xs text-text-sub font-medium"></p>
+                <p class="text-[10px] text-gray-600 italic">Confidential Payroll Data - SafeSite AI Management</p>
+            </div>
+        </div>
+    `;
+
+    txStatusFilter = "All";
+    txSearchKeyword = "";
+    renderTransactions();
+}
+
+/* ======================
+    RENDER TRANSACTIONS
+====================== */
+function renderTransactions() {
+    const tbody = document.getElementById("transactionTableBody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+
+    let data = workersData;
+
+    if (txSearchKeyword) {
+        data = data.filter(w =>
+            (w.fullName || "").toLowerCase().includes(txSearchKeyword) ||
+            (w.workerID || "").toLowerCase().includes(txSearchKeyword)
+        );
+    }
+    if (txStatusFilter !== "All") {
+        data = data.filter(w => {
+            const base = Number(w.basePay ?? w.salary) || 0;
+            const status = base > 0 ? "Paid" : "Pending";
+            return status === txStatusFilter;
+        });
+    }
+
+    const countEl = document.getElementById("ledgerCount");
+    if (countEl) countEl.innerText = `${data.length} record${data.length === 1 ? "" : "s"} found`;
+
+    if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="px-8 py-10 text-center text-text-sub text-sm">No matching transactions</td></tr>`;
+        return;
+    }
+
+    data.forEach(w => {
+        const base = Number(w.basePay ?? w.salary) || 0;
+        const manual = Number(w.manualReward ?? w.reward) || 0;
+        const isPaid = base > 0;
+
+        tbody.innerHTML += `
+            <tr class="hover:bg-white/[0.03] transition-colors border-b border-white/5">
+                <td class="px-8 py-4 font-bold text-white">${w.fullName || "-"}</td>
+                <td class="px-8 py-4 font-mono text-xs text-text-sub">${w.workerID || "-"}</td>
+                <td class="px-8 py-4 font-semibold text-white">Rs ${base.toLocaleString()}</td>
+                <td class="px-8 py-4 text-emerald-400 font-bold">+Rs ${manual.toLocaleString()}</td>
+                <td class="px-8 py-4">
+                    <span class="text-[10px] font-black tracking-widest ${isPaid ? 'text-emerald-400' : 'text-amber-500'}">
+                        ${isPaid ? 'RECEIVED' : 'PENDING'}
+                    </span>
+                </td>
+                <td class="px-8 py-4">
+                    <div class="flex justify-center items-center w-full">
+                        ${isPaid ? `
+                        <button onclick="downloadReceipt('${w.workerID}')" 
+                                class="pdf-btn-fix bg-primary hover:bg-primary-dark text-white rounded-lg gap-1.5 text-[10px] font-black uppercase tracking-tighter">
+                            <span class="material-symbols-outlined text-[15px]">download</span> PDF
+                        </button>
+                        ` : '<span class="text-gray-600 text-xs italic">-</span>'}
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function closeTransactionsPanel() {
+    document.getElementById("transactionsPanel").classList.add("hidden");
+}
+
+function searchTransaction(val) {
+    txSearchKeyword = (val || "").toLowerCase();
+    renderTransactions();
+}
+
+function filterTransactionStatus(val) {
+    txStatusFilter = val;
+    renderTransactions();
+}
+
+/* ======================
+    PDF GENERATOR
+====================== */
+function downloadReceipt(workerID) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const worker = workersData.find(w => w.workerID === workerID);
+    if (!worker) return;
+
+    const base = Number(worker.basePay ?? worker.salary) || 0;
+    const calc = calculateBonus(worker, base);
+    const manual = Number(worker.manualReward ?? worker.reward) || 0;
+
+    doc.setFillColor(249, 115, 22);
+    doc.rect(0, 0, 210, 40, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(22);
+    doc.text("SafeSite Salary Slip", 20, 25);
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    doc.text(`Worker: ${worker.fullName}`, 20, 60);
+    doc.text(`Worker ID: ${worker.workerID}`, 20, 70);
+    doc.text(`Base Salary: Rs ${base.toLocaleString()}`, 20, 90);
+    doc.text(`AI Bonus: Rs ${calc.bonusAmount.toLocaleString()}`, 20, 100);
+    doc.text(`Manual Rewards: Rs ${manual.toLocaleString()}`, 20, 110);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Grand Total: Rs ${(base + calc.bonusAmount + manual).toLocaleString()}`, 20, 130);
+
+    doc.save(`${worker.fullName}_SalarySlip.pdf`);
+}
+
+/* ======================
+    UI HELPERS
+====================== */
+function showNotification(title, message, type) {
+    const list = document.getElementById("notifList");
+    const dot = document.getElementById("notifDot");
+    dot.classList.remove("hidden");
+    const item = `
+        <div class="p-3 border-b border-border-dark hover:bg-white/5 transition-all">
+            <p class="text-[11px] text-white font-bold uppercase">${title}</p>
+            <p class="text-[10px] text-text-sub">${message}</p>
+        </div>`;
+    list.insertAdjacentHTML('afterbegin', item);
+}
+
+/* ======================
+    RECENT PAYOUTS
+====================== */
+function renderRecentPayouts(data) {
+    const list = document.getElementById("recentPayoutsList");
+    list.innerHTML = "";
+
+    const paidOnes = data.filter(w => (Number(w.basePay ?? w.salary) || 0) > 0).slice(0, 6);
+
+    if (paidOnes.length === 0) {
+        list.innerHTML = '<p class="text-center text-text-sub text-xs py-10 opacity-50">No recent payouts detected</p>';
+        return;
+    }
+
+    paidOnes.forEach(w => {
+        list.innerHTML += `
+            <li class="p-4 bg-white/[0.03] rounded-xl border border-white/5 mb-3 flex justify-between items-center group shadow-sm relative">
+                <div class="pointer-events-none">
+                    <p class="text-sm font-bold text-white group-hover:text-primary transition-colors">${w.fullName}</p>
+                    <p class="text-[10px] text-emerald-400 font-black tracking-widest uppercase">Received</p>
+                </div>
+                
+                <button 
+                    type="button"
+                    onclick="downloadReceipt('${w.workerID}')" 
+                    style="cursor: pointer !important; position: relative; z-index: 9999;"
+                    class="flex items-center bg-primary hover:bg-primary-dark text-white rounded-lg overflow-hidden transition-all shadow-lg active:scale-95 border-none outline-none">
+                    
+                    <div class="px-2 py-2 bg-black/20 border-r border-white/10 flex items-center justify-center pointer-events-none">
+                        <span class="material-symbols-outlined text-[18px]">download</span>
+                    </div>
+                    <span class="px-3 py-2 text-[10px] font-black uppercase tracking-tighter pointer-events-none">PDF SLIP</span>
+                </button>
+            </li>
+        `;
+    });
+}
+
+// Global initialization
+// 1) Paint instantly from whatever we have cached, so switching screens
+//    never shows a blank flash while the network request is in flight.
+renderFromCacheInstantly();
+// 2) Then fetch the live data from Firebase and update in the background.
+loadWorkers();
+</script>
+
+
+</body></html>

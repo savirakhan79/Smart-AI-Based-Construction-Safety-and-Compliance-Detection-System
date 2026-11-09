@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>System Setting - System Settings</title>
+<link rel="icon" type="image/png" href="logo.png">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f27f0d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#0a0a0a",
+                        "card-dark": "#1a1a1a",
+                        "border-dark": "#2a2a2a"
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .custom-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: #2a2a2a;
+            border-radius: 2px;
+            outline: none;
+        }
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #f27f0d;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        /* Sidebar Scrollbar Custom Styling */
+.sidebar-scroll::-webkit-scrollbar {
+    width: 4px; /* Scrollbar ki width */
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+    background: transparent; /* Track ko invisible rakha hai */
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+    background: #2a2a2a; /* Scrollbar ka color dark grey */
+    border-radius: 10px;
+}
+
+.sidebar-scroll:hover::-webkit-scrollbar-thumb {
+    background: #f27f0d; /* Hover karne par orange ho jayega */
+}
+
+/* --- Added functional UI styles --- */
+.fade-in { animation: fadeIn .15s ease-out; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(-4px);} to { opacity:1; transform: translateY(0);} }
+.modal-overlay { animation: overlayIn .15s ease-out; }
+@keyframes overlayIn { from { opacity:0;} to { opacity:1;} }
+.modal-panel { animation: panelIn .18s ease-out; }
+@keyframes panelIn { from { opacity:0; transform: translateY(12px) scale(.98);} to { opacity:1; transform: translateY(0) scale(1);} }
+.toast-in { animation: toastIn .2s ease-out; }
+@keyframes toastIn { from { opacity:0; transform: translateY(10px);} to { opacity:1; transform: translateY(0);} }
+.hidden-item { display: none !important; }
+.toggle-btn { transition: background-color .15s ease; }
+.toggle-dot { transition: left .15s ease, right .15s ease; }
+/* Success popup */
+.success-pop { animation: popIn .18s ease-out; }
+@keyframes popIn { from { opacity:0; transform: translateY(10px) scale(.96);} to { opacity:1; transform: translateY(0) scale(1);} }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased h-screen overflow-hidden">
+<div class="flex h-screen w-full">
+<!-- Sidebar Navigation -->
+<aside class="w-64 flex flex-col border-r border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark shrink-0">
+<div class="h-20 flex items-center px-8 border-b border-border-dark">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg size-8 shadow-sm flex-shrink-0 border border-border-dark relative" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBT4c_9y1DyK0rjWxxGBuWBQAWWLjyanVLXEu2XHl55BQ5P1GXuwHb-XTnzohmN071a_FgGwSMJKj_Y2hToOY3OsQu8FdgmY-5eIoODNAYcEeiEwdOOkzzpXbBdF81ofy4I7sukeYnZkjMzgkFMWkubY02a34czHsPOBo8QpRs-bXQq4rf17N0tIdt8_k2_F7A1s_QIHeGxSJFmouMsu4Ggk0qS7SJW_eAaZk6zr3h-4SGafUZYBRAookTX8APh_OEWPAbSBbnjIdaA");'>
+<div class="size-9 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white shadow-glow">
+    <img src="logo.png" alt="My Logo" class="h-6 w-6 object-contain" />
+  </div>
+</div>
+<h1 class="text-text-main text-lg font-bold leading-tight tracking-wide">SafeSite<span class="text-primary"></span></h1>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto sidebar-scroll py-6 px-4 space-y-1">
+<div class="px-4 mb-2">
+</div>
+<div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-3 mb-2"></div>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-card-dark rounded-lg group" href="Admin-Dashboard.html">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-white/5 text-white border border-neutral-700 shadow-soft mb-1 group" href="live monitoring.html">
+<span class="material-symbols-outlined text-orange-500">videocam</span>
+<span class="text-sm font-medium">Live Monitoring</span>
+<span class="ml-auto size-2 rounded-full bg-red-500 animate-pulse"></span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-orange-500/10 text-orange-500 shadow-glow-sub border border-orange-500/20 group relative overflow-hidden mb-1" href="attendance report.html">
+<div class="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-500"></div>
+<span class="material-symbols-outlined icon-filled">calendar_month</span>
+<span class="text-sm font-bold relative z-10">Attendance Reports</span>
+<span class="ml-auto bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg">Live</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workermanagementsystem.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">engineering</span>
+<span class="text-sm font-medium">Staff Management</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="live incident.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">crisis_alert</span>
+<span class="text-sm font-medium">Live Incidents</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="safety-compliance-ppe-detection.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">health_and_safety</span>
+<span class="text-sm font-medium">Safety Compliance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="violotion.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">warning_amber</span>
+<span class="text-sm font-medium">Violations</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="salary.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">payments</span>
+<span class="text-sm font-medium">Salary &amp; Rewards</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workerperformance.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">trending_up</span>
+<span class="text-sm font-medium">Performance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="reportandanalysics.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">analytics</span>
+<span class="text-sm font-medium">Reports Center</span>
+</a>
+<div class="mt-auto px-2 pb-4 pt-8">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="systemsettingscreen.html">
+<span class="material-symbols-outlined group-hover:text-neutral-200 transition-colors">settings</span>
+<span class="text-sm font-medium">System Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark">
+<!-- Header -->
+<header class="h-16 border-b border-slate-200 dark:border-border-dark flex items-center justify-between px-8 shrink-0 bg-white dark:bg-background-dark/50 backdrop-blur-md relative">
+<div class="flex-1 max-w-xl">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input id="settingsSearch" class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-card-dark border-none rounded-lg text-sm focus:ring-1 focus:ring-primary transition-all" placeholder="Search system settings..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<button id="notifBtn" class="relative p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-card-dark rounded-lg">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-primary rounded-full border-2 border-white dark:border-background-dark"></span>
+</button>
+<div id="notifPanel" class="hidden-item fade-in absolute right-0 top-12 w-80 bg-white dark:bg-card-dark border border-slate-200 dark:border-border-dark rounded-xl shadow-2xl z-50 overflow-hidden">
+<div class="px-4 py-3 border-b border-slate-200 dark:border-border-dark flex items-center justify-between">
+<span class="text-xs font-bold uppercase tracking-widest text-slate-400">Notifications</span>
+<button id="notifClearBtn" class="text-primary text-[11px] font-bold hover:underline">Mark all read</button>
+</div>
+<div class="max-h-72 overflow-y-auto">
+<div class="px-4 py-3 border-b border-slate-100 dark:border-border-dark hover:bg-slate-50 dark:hover:bg-white/5">
+<p class="text-xs font-semibold">Backup overdue</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Last backup failed to sync 1h ago.</p>
+</div>
+<div class="px-4 py-3 border-b border-slate-100 dark:border-border-dark hover:bg-slate-50 dark:hover:bg-white/5">
+<p class="text-xs font-semibold">Camera 04 offline</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Zone B entrance camera lost signal.</p>
+</div>
+<div class="px-4 py-3 hover:bg-slate-50 dark:hover:bg-white/5">
+<p class="text-xs font-semibold">Rule updated</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Hard Hat Detection sensitivity changed to 85%.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative">
+<button id="helpBtn" class="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-card-dark rounded-lg">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div id="helpPanel" class="hidden-item fade-in absolute right-0 top-12 w-72 bg-white dark:bg-card-dark border border-slate-200 dark:border-border-dark rounded-xl shadow-2xl z-50 p-4">
+<p class="text-xs font-bold mb-1">Need a hand?</p>
+<p class="text-[11px] text-slate-500 leading-relaxed">Use the Quick Rules Editor on the right to tune detection modules, or open any category card below for full settings.</p>
+</div>
+</div>
+<div class="h-6 w-px bg-slate-200 dark:border-border-dark"></div>
+<button id="systemHealthBtn" class="flex items-center gap-2 px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-bold hover:bg-orange-600 transition-colors">
+<span id="systemHealthIcon" class="material-symbols-outlined text-sm">sync</span>
+<span id="systemHealthLabel">System Health</span>
+</button>
+</div>
+</header>
+<!-- Scrollable Content Section -->
+<div class="flex-1 overflow-y-auto p-8 scrollbar-hide">
+<!-- Top Metric Cards -->
+<div class="grid grid-cols-4 gap-6 mb-8">
+<div class="bg-white dark:bg-card-dark border border-slate-200 dark:border-border-dark p-5 rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">System Uptime</span>
+<span class="material-symbols-outlined text-green-500 text-lg">check_circle</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span id="metricUptime" class="text-2xl font-bold dark:text-white">99.9%</span>
+<span class="text-xs font-medium text-green-500">+0.1%</span>
+</div>
+</div>
+<div class="bg-white dark:bg-card-dark border border-slate-200 dark:border-border-dark p-5 rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Cameras</span>
+<span class="material-symbols-outlined text-primary text-lg">videocam</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span id="metricCameras" class="text-2xl font-bold dark:text-white">24</span>
+<span class="text-xs font-medium text-primary">+2</span>
+</div>
+</div>
+<div class="bg-white dark:bg-card-dark border border-slate-200 dark:border-border-dark p-5 rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">AI Accuracy</span>
+<span class="material-symbols-outlined text-blue-500 text-lg">neurology</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span id="metricAccuracy" class="text-2xl font-bold dark:text-white">96.4%</span>
+<span class="text-xs font-medium text-green-500">+1.2%</span>
+</div>
+</div>
+<div class="bg-white dark:bg-card-dark border border-slate-200 dark:border-border-dark p-5 rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Last Backup</span>
+<span class="material-symbols-outlined text-slate-400 text-lg">history</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span id="metricBackup" class="text-2xl font-bold dark:text-white">3h ago</span>
+<span class="text-xs font-medium text-red-500">-1h</span>
+</div>
+</div>
+</div>
+<!-- Configuration Categories Grid -->
+<div class="mb-6">
+<h2 class="text-lg font-bold dark:text-white mb-6">Configuration Categories</h2>
+<div id="categoriesGrid" class="grid grid-cols-2 gap-6">
+<!-- AI Detection Rules -->
+<div data-title="AI Detection Rules" data-keywords="ai detection rules helmet vest glove zone proximity ppe" data-category="ai" class="category-card bg-white dark:bg-card-dark border border-slate-200 dark:border-border-dark p-6 rounded-xl hover:border-primary transition-all group flex gap-4 cursor-pointer shadow-sm">
+<div class="size-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shrink-0">
+<span class="material-symbols-outlined text-2xl">visibility</span>
+</div>
+<div class="flex-1">
+<h3 class="text-sm font-bold mb-1">AI Detection Rules</h3>
+<p class="text-xs text-slate-500 leading-relaxed">Configure sensitivity for Helmets, Vests, Gloves, and dangerous zone proximity detection.</p>
+<div class="mt-4 flex items-center gap-2">
+<span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-[10px] font-medium text-slate-600 dark:text-slate-400 tracking-tight">8 Modules Active</span>
+<span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-[10px] font-medium text-slate-600 dark:text-slate-400 tracking-tight">High Sensitivity</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-300 self-start">chevron_right</span>
+</div>
+<!-- Site Gate Control -->
+<div data-title="Site Gate Control" data-keywords="site gate control entry exit biometric override lock" data-category="gate" class="category-card bg-white dark:bg-card-dark border border-slate-200 dark:border-border-dark p-6 rounded-xl hover:border-primary transition-all group flex gap-4 cursor-pointer shadow-sm">
+<div class="size-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shrink-0">
+<span class="material-symbols-outlined text-2xl">door_front</span>
+</div>
+<div class="flex-1">
+<h3 class="text-sm font-bold mb-1">Site Gate Control</h3>
+<p class="text-xs text-slate-500 leading-relaxed">Adjust entry/exit permissions, biometric integration, and manual override for gate locks.</p>
+<div class="mt-4 flex items-center gap-2">
+<span id="gateStatusBadge" class="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 rounded text-[10px] font-medium text-green-600 dark:text-green-400 tracking-tight text-center">Gates Locked</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-300 self-start">chevron_right</span>
+</div>
+<!-- Shift & Schedule -->
+<div data-title="Shift &amp; Schedule Management" data-keywords="shift schedule management working hours break grace period late entries" data-category="shift" class="category-card bg-white dark:bg-card-dark border border-slate-200 dark:border-border-dark p-6 rounded-xl hover:border-primary transition-all group flex gap-4 cursor-pointer shadow-sm">
+<div class="size-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shrink-0">
+<span class="material-symbols-outlined text-2xl">schedule</span>
+</div>
+<div class="flex-1">
+<h3 class="text-sm font-bold mb-1">Shift &amp; Schedule Management</h3>
+<p class="text-xs text-slate-500 leading-relaxed">Define standard working hours, break times, and grace period for late entries.</p>
+<div class="mt-4 flex items-center gap-2">
+<span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-[10px] font-medium text-slate-600 dark:text-slate-400 tracking-tight">3 Shift Patterns</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-300 self-start">chevron_right</span>
+</div>
+<!-- Notification Settings -->
+<div data-title="Notification Settings" data-keywords="notification settings alert severity emergency protocol escalation email sms webhook" data-category="notify" class="category-card bg-white dark:bg-card-dark border border-slate-200 dark:border-border-dark p-6 rounded-xl hover:border-primary transition-all group flex gap-4 cursor-pointer shadow-sm">
+<div class="size-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shrink-0">
+<span class="material-symbols-outlined text-2xl">notifications_active</span>
+</div>
+<div class="flex-1">
+<h3 class="text-sm font-bold mb-1">Notification Settings</h3>
+<p class="text-xs text-slate-500 leading-relaxed">Define alert severity, emergency protocol escalations, and recipient email/SMS lists.</p>
+<div class="mt-4 flex items-center gap-2">
+<span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-[10px] font-medium text-slate-600 dark:text-slate-400 tracking-tight">SMS Active</span>
+<span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-[10px] font-medium text-slate-600 dark:text-slate-400 tracking-tight">Webhook Enabled</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-300 self-start">chevron_right</span>
+</div>
+<!-- Database & Storage -->
+<div data-title="Database &amp; Storage" data-keywords="database storage backup frequency cloud sync log retention" data-category="database" class="category-card bg-white dark:bg-card-dark border border-slate-200 dark:border-border-dark p-6 rounded-xl hover:border-primary transition-all group flex gap-4 cursor-pointer shadow-sm col-span-2">
+<div class="size-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shrink-0">
+<span class="material-symbols-outlined text-2xl">database</span>
+</div>
+<div class="flex-1">
+<h3 class="text-sm font-bold mb-1">Database &amp; Storage</h3>
+<p class="text-xs text-slate-500 leading-relaxed">Configure automatic backup frequencies, cloud synchronization endpoints, and log retention periods (90-day default).</p>
+</div>
+<span class="material-symbols-outlined text-slate-300 self-start">chevron_right</span>
+</div>
+</div>
+<p id="noResults" class="hidden-item text-center text-sm text-slate-400 py-10">No settings match your search.</p>
+</div>
+</div>
+</main>
+<!-- Right Panel: Quick Rules Editor -->
+<aside class="w-80 border-l border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark/80 p-6 flex flex-col shrink-0">
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">Quick Rules Editor</h2>
+<button id="resetRulesBtn" class="text-primary text-xs font-bold hover:underline">Reset</button>
+</div>
+<div class="flex-1 space-y-8">
+<!-- Module Selection -->
+<div>
+<label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Module Selection</label>
+<div class="relative">
+<select id="moduleSelect" class="w-full bg-slate-100 dark:bg-card-dark border-none rounded-lg text-sm appearance-none py-2.5 pl-3 pr-10 focus:ring-1 focus:ring-primary">
+<option>Hard Hat Detection</option>
+<option>Reflective Vest Detection</option>
+<option>Fall Protection Gear</option>
+<option>Zone Intrusions</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Sensitivity Sliders -->
+<div>
+<label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">Sensitivity Sliders</label>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-[11px] mb-2 font-medium">
+<span class="text-slate-500">Confidence Threshold</span>
+<span id="confidenceValue" class="text-primary">85%</span>
+</div>
+<input id="confidenceSlider" class="custom-slider" max="100" min="0" type="range" value="85"/>
+</div>
+<div>
+<div class="flex justify-between text-[11px] mb-2 font-medium">
+<span class="text-slate-500">Environmental Noise Filter</span>
+<span id="noiseValue" class="text-primary">42%</span>
+</div>
+<input id="noiseSlider" class="custom-slider" max="100" min="0" type="range" value="42"/>
+</div>
+<div>
+<div class="flex justify-between text-[11px] mb-2 font-medium">
+<span class="text-slate-500">Motion Sensitivity</span>
+<span id="motionValue" class="text-primary">60%</span>
+</div>
+<input id="motionSlider" class="custom-slider" max="100" min="0" type="range" value="60"/>
+</div>
+</div>
+</div>
+<!-- Alert Toggles -->
+<div>
+<label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Alert Toggles</label>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-xs font-medium text-slate-400">Audio Alarm (On-Site)</span>
+<button data-toggle="audio" class="toggle-btn w-10 h-5 bg-primary rounded-full relative">
+<span class="toggle-dot absolute right-1 top-1 size-3 bg-white rounded-full"></span>
+</button>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xs font-medium text-slate-400">Mobile Push Alerts</span>
+<button data-toggle="push" class="toggle-btn w-10 h-5 bg-primary rounded-full relative">
+<span class="toggle-dot absolute right-1 top-1 size-3 bg-white rounded-full"></span>
+</button>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xs font-medium text-slate-400">Auto-Log Event</span>
+<button data-toggle="autolog" class="toggle-btn w-10 h-5 bg-slate-200 dark:bg-border-dark rounded-full relative">
+<span class="toggle-dot absolute left-1 top-1 size-3 bg-white rounded-full"></span>
+</button>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xs font-medium text-slate-400">Supervisor Email</span>
+<button data-toggle="supervisor" class="toggle-btn w-10 h-5 bg-primary rounded-full relative">
+<span class="toggle-dot absolute right-1 top-1 size-3 bg-white rounded-full"></span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-slate-200 dark:border-border-dark">
+<button id="saveConfigBtn" class="w-full bg-primary hover:bg-orange-600 text-white font-bold py-3 rounded-lg text-sm shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">save</span>
+                Save Configuration
+            </button>
+<p id="lastAppliedText" class="text-[10px] text-center text-slate-500 mt-3 italic leading-tight">Last applied by Admin at 09:14 AM Today</p>
+</div>
+</aside>
+</div>
+
+<!-- Category Detail Modal -->
+<div id="categoryModalOverlay" class="hidden-item modal-overlay fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-6">
+<div class="modal-panel bg-white dark:bg-card-dark border border-slate-200 dark:border-border-dark rounded-2xl w-full max-w-lg shadow-2xl">
+<div class="flex items-center justify-between px-6 py-5 border-b border-slate-200 dark:border-border-dark">
+<h3 id="categoryModalTitle" class="text-base font-bold">Category</h3>
+<button id="categoryModalClose" class="p-1.5 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div id="categoryModalBody" class="px-6 py-5 space-y-4 text-sm max-h-[60vh] overflow-y-auto"></div>
+<div class="px-6 py-4 border-t border-slate-200 dark:border-border-dark flex justify-end gap-3">
+<button id="categoryModalCancel" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5">Cancel</button>
+<button id="categoryModalSave" class="px-4 py-2 rounded-lg text-xs font-bold bg-primary text-white hover:bg-orange-600">Apply</button>
+</div>
+</div>
+</div>
+
+<!-- System Health Modal -->
+<div id="healthModalOverlay" class="hidden-item modal-overlay fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-6">
+<div class="modal-panel bg-white dark:bg-card-dark border border-slate-200 dark:border-border-dark rounded-2xl w-full max-w-md shadow-2xl">
+<div class="flex items-center justify-between px-6 py-5 border-b border-slate-200 dark:border-border-dark">
+<h3 class="text-base font-bold">System Health Check</h3>
+<button id="healthModalClose" class="p-1.5 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div id="healthModalBody" class="px-6 py-5 space-y-3 text-sm"></div>
+</div>
+</div>
+
+<!-- Success Popup (confirms Save Configuration worked, backend or not) -->
+<div id="successModalOverlay" class="hidden-item modal-overlay fixed inset-0 bg-black/60 z-[150] flex items-center justify-center p-6">
+<div class="success-pop bg-white dark:bg-card-dark border border-slate-200 dark:border-border-dark rounded-2xl w-full max-w-sm shadow-2xl p-8 text-center">
+<div class="mx-auto mb-4 size-14 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-green-500 text-3xl">check_circle</span>
+</div>
+<h3 class="text-base font-bold mb-1">Changes Saved Successfully</h3>
+<p id="successModalDetail" class="text-xs text-slate-500 leading-relaxed mb-6">Your configuration has been applied.</p>
+<button id="successModalOk" class="w-full bg-primary hover:bg-orange-600 text-white font-bold py-2.5 rounded-lg text-sm transition-all">OK</button>
+</div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="hidden-item toast-in fixed bottom-6 right-6 z-[200] bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 rounded-xl shadow-2xl text-sm font-medium flex items-center gap-2">
+<span id="toastIcon" class="material-symbols-outlined text-lg text-primary">check_circle</span>
+<span id="toastMessage">Saved</span>
+</div>
+
+<script>
+(function () {
+  // Backend base URL — same origin as this page when served by Express
+  // (http://localhost:5000). Change this if the page is hosted elsewhere.
+  const API_BASE = window.location.origin.startsWith('http') && window.location.protocol !== 'file:'
+    ? ''
+    : 'http://localhost:5000';
+
+  const LS_KEY = 'safesite_quick_rules';
+  const LS_LAST_APPLIED_KEY = 'safesite_last_applied';
+
+  async function apiGet(path) {
+    const res = await fetch(API_BASE + path);
+    if (!res.ok) throw new Error('Request failed: ' + path);
+    return res.json();
+  }
+  async function apiPost(path, body) {
+    const res = await fetch(API_BASE + path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body || {})
+    });
+    if (!res.ok) throw new Error('Request failed: ' + path);
+    return res.json();
+  }
+  async function apiPut(path, body) {
+    const res = await fetch(API_BASE + path, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body || {})
+    });
+    if (!res.ok) throw new Error('Request failed: ' + path);
+    return res.json();
+  }
+
+  // ---------- Toast helper ----------
+  let toastTimer;
+  function showToast(message, icon) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastMessage').textContent = message;
+    document.getElementById('toastIcon').textContent = icon || 'check_circle';
+    toast.classList.remove('hidden-item');
+    toast.classList.remove('toast-in'); void toast.offsetWidth; toast.classList.add('toast-in');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.add('hidden-item'), 2800);
+  }
+
+  // ---------- Success popup helper ----------
+  const successOverlay = document.getElementById('successModalOverlay');
+  const successDetail = document.getElementById('successModalDetail');
+  function showSuccessPopup(detailText) {
+    successDetail.textContent = detailText || 'Your configuration has been applied.';
+    successOverlay.classList.remove('hidden-item');
+  }
+  function hideSuccessPopup() {
+    successOverlay.classList.add('hidden-item');
+  }
+  document.getElementById('successModalOk').addEventListener('click', hideSuccessPopup);
+  successOverlay.addEventListener('click', (e) => { if (e.target === successOverlay) hideSuccessPopup(); });
+
+  // ---------- Dropdown panels (notifications / help) ----------
+  function setupDropdown(btnId, panelId) {
+    const btn = document.getElementById(btnId);
+    const panel = document.getElementById(panelId);
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = !panel.classList.contains('hidden-item');
+      closeAllDropdowns();
+      if (!isOpen) panel.classList.remove('hidden-item');
+    });
+    panel.addEventListener('click', (e) => e.stopPropagation());
+  }
+  function closeAllDropdowns() {
+    document.getElementById('notifPanel').classList.add('hidden-item');
+    document.getElementById('helpPanel').classList.add('hidden-item');
+  }
+  document.addEventListener('click', closeAllDropdowns);
+  setupDropdown('notifBtn', 'notifPanel');
+  setupDropdown('helpBtn', 'helpPanel');
+
+  function severityIcon(sev) {
+    return sev === 'critical' ? 'error' : sev === 'warning' ? 'warning' : 'info';
+  }
+  function timeAgo(ts) {
+    const mins = Math.floor((Date.now() - ts) / 60000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return mins + 'm ago';
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return hrs + 'h ago';
+    return Math.floor(hrs / 24) + 'd ago';
+  }
+
+  async function loadNotifications() {
+    try {
+      const res = await apiGet('/api/notifications');
+      const list = document.querySelector('#notifPanel .max-h-72');
+      const dot = document.querySelector('#notifBtn > span.absolute');
+      if (!res.data || res.data.length === 0) {
+        list.innerHTML = '<div class="px-4 py-6 text-center text-xs text-slate-400">No notifications yet.</div>';
+      } else {
+        list.innerHTML = res.data.map(n => `
+          <div class="px-4 py-3 border-b border-slate-100 dark:border-border-dark hover:bg-slate-50 dark:hover:bg-white/5">
+            <p class="text-xs font-semibold">${n.title}</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">${n.message}</p>
+            <p class="text-[10px] text-slate-400 mt-1">${timeAgo(n.createdAt)}</p>
+          </div>`).join('');
+      }
+      if (dot) dot.classList.toggle('hidden-item', res.unreadCount === 0);
+    } catch (e) {
+      console.error('Failed to load notifications', e);
+    }
+  }
+  document.getElementById('notifBtn').addEventListener('click', loadNotifications);
+
+  // Mark all read -> backend + UI
+  document.getElementById('notifClearBtn').addEventListener('click', async (e) => {
+    e.stopPropagation();
+    try {
+      await apiPost('/api/notifications/mark-all-read');
+    } catch (err) { console.error(err); }
+    const dot = document.querySelector('#notifBtn > span.absolute');
+    if (dot) dot.classList.add('hidden-item');
+    document.querySelector('#notifPanel .max-h-72').innerHTML =
+      '<div class="px-4 py-6 text-center text-xs text-slate-400">You are all caught up.</div>';
+  });
+
+  // ---------- Search bar filtering ----------
+  const searchInput = document.getElementById('settingsSearch');
+  const cards = Array.from(document.querySelectorAll('.category-card'));
+  const noResults = document.getElementById('noResults');
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    let visibleCount = 0;
+    cards.forEach(card => {
+      const haystack = (card.dataset.keywords || '') + ' ' + (card.dataset.title || '');
+      const match = q === '' || haystack.toLowerCase().includes(q);
+      card.classList.toggle('hidden-item', !match);
+      if (match) visibleCount++;
+    });
+    noResults.classList.toggle('hidden-item', visibleCount !== 0);
+  });
+
+  // ---------- System Health button ----------
+  const healthBtn = document.getElementById('systemHealthBtn');
+  const healthIcon = document.getElementById('systemHealthIcon');
+  const healthLabel = document.getElementById('systemHealthLabel');
+  const healthOverlay = document.getElementById('healthModalOverlay');
+  const healthBody = document.getElementById('healthModalBody');
+
+  function healthRow(label, ok, detail) {
+    return `<div class="flex items-center justify-between px-3 py-2.5 rounded-lg bg-slate-50 dark:bg-white/5">
+      <div>
+        <p class="text-xs font-semibold">${label}</p>
+        <p class="text-[11px] text-slate-500">${detail}</p>
+      </div>
+      <span class="material-symbols-outlined text-lg ${ok ? 'text-green-500' : 'text-red-500'}">${ok ? 'check_circle' : 'error'}</span>
+    </div>`;
+  }
+
+  healthBtn.addEventListener('click', async () => {
+    healthIcon.classList.add('animate-spin');
+    healthLabel.textContent = 'Checking...';
+    healthBtn.disabled = true;
+
+    try {
+      const res = await apiGet('/api/settings/health');
+      healthBody.innerHTML = res.checks.map(c => healthRow(c.label, c.ok, c.detail)).join('');
+      healthOverlay.classList.remove('hidden-item');
+      showToast(res.allOk ? 'All systems operational' : 'Health check complete — issues found', res.allOk ? 'check_circle' : 'warning');
+    } catch (err) {
+      showToast('Could not reach backend for health check', 'error');
+    } finally {
+      healthIcon.classList.remove('animate-spin');
+      healthLabel.textContent = 'System Health';
+      healthBtn.disabled = false;
+    }
+  });
+  document.getElementById('healthModalClose').addEventListener('click', () => healthOverlay.classList.add('hidden-item'));
+  healthOverlay.addEventListener('click', (e) => { if (e.target === healthOverlay) healthOverlay.classList.add('hidden-item'); });
+
+  // ---------- Category cards -> detail modal (the "next screen") ----------
+  const categoryModalOverlay = document.getElementById('categoryModalOverlay');
+  const categoryModalTitle = document.getElementById('categoryModalTitle');
+  const categoryModalBody = document.getElementById('categoryModalBody');
+  const categoryModalSave = document.getElementById('categoryModalSave');
+
+  const categoryContent = {
+    ai: `
+      <p class="text-slate-500 text-xs leading-relaxed">Fine-tune which PPE items are enforced on site and how strictly.</p>
+      <label class="flex items-center justify-between text-xs font-medium"><span>Helmet detection</span><input type="checkbox" checked class="size-4 accent-orange-500"></label>
+      <label class="flex items-center justify-between text-xs font-medium"><span>Reflective vest detection</span><input type="checkbox" checked class="size-4 accent-orange-500"></label>
+      <label class="flex items-center justify-between text-xs font-medium"><span>Glove detection</span><input type="checkbox" class="size-4 accent-orange-500"></label>
+      <label class="flex items-center justify-between text-xs font-medium"><span>Danger zone proximity alerts</span><input type="checkbox" checked class="size-4 accent-orange-500"></label>`,
+    gate: `
+      <p class="text-slate-500 text-xs leading-relaxed">Control how workers and visitors pass through the site gates.</p>
+      <label class="flex items-center justify-between text-xs font-medium"><span>Biometric entry required</span><input type="checkbox" checked class="size-4 accent-orange-500"></label>
+      <label class="flex items-center justify-between text-xs font-medium"><span>Visitor manual override</span><input type="checkbox" class="size-4 accent-orange-500"></label>
+      <div class="flex items-center justify-between text-xs font-medium"><span>Gate state</span>
+        <select id="gateStateSelect" class="bg-slate-100 dark:bg-white/10 rounded-lg text-xs py-1.5 px-2">
+          <option>Locked</option>
+          <option>Unlocked</option>
+          <option>Scheduled</option>
+        </select>
+      </div>`,
+    shift: `
+      <p class="text-slate-500 text-xs leading-relaxed">Standard hours applied across all active shift patterns.</p>
+      <div class="flex items-center justify-between text-xs font-medium"><span>Shift start</span><input type="time" value="08:00" class="bg-slate-100 dark:bg-white/10 rounded-lg text-xs py-1.5 px-2"></div>
+      <div class="flex items-center justify-between text-xs font-medium"><span>Shift end</span><input type="time" value="17:00" class="bg-slate-100 dark:bg-white/10 rounded-lg text-xs py-1.5 px-2"></div>
+      <div class="flex items-center justify-between text-xs font-medium"><span>Grace period (minutes)</span><input type="number" value="10" min="0" class="bg-slate-100 dark:bg-white/10 rounded-lg text-xs py-1.5 px-2 w-16"></div>`,
+    notify: `
+      <p class="text-slate-500 text-xs leading-relaxed">Choose how the team is alerted when a violation is detected.</p>
+      <label class="flex items-center justify-between text-xs font-medium"><span>SMS alerts</span><input type="checkbox" checked class="size-4 accent-orange-500"></label>
+      <label class="flex items-center justify-between text-xs font-medium"><span>Email alerts</span><input type="checkbox" checked class="size-4 accent-orange-500"></label>
+      <label class="flex items-center justify-between text-xs font-medium"><span>Webhook to external system</span><input type="checkbox" checked class="size-4 accent-orange-500"></label>
+      <div class="flex items-center justify-between text-xs font-medium"><span>Minimum severity</span>
+        <select class="bg-slate-100 dark:bg-white/10 rounded-lg text-xs py-1.5 px-2">
+          <option>Low</option>
+          <option selected>Medium</option>
+          <option>High</option>
+        </select>
+      </div>`,
+    database: `
+      <p class="text-slate-500 text-xs leading-relaxed">Manage backup cadence, cloud sync, and how long logs are kept.</p>
+      <div class="flex items-center justify-between text-xs font-medium"><span>Backup frequency</span>
+        <select class="bg-slate-100 dark:bg-white/10 rounded-lg text-xs py-1.5 px-2">
+          <option>Every hour</option>
+          <option selected>Every 6 hours</option>
+          <option>Daily</option>
+        </select>
+      </div>
+      <label class="flex items-center justify-between text-xs font-medium"><span>Cloud synchronization</span><input type="checkbox" checked class="size-4 accent-orange-500"></label>
+      <div class="flex items-center justify-between text-xs font-medium"><span>Log retention (days)</span><input type="number" value="90" min="1" class="bg-slate-100 dark:bg-white/10 rounded-lg text-xs py-1.5 px-2 w-16"></div>`
+  };
+
+  document.querySelectorAll('.category-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const cat = card.dataset.category;
+      categoryModalTitle.textContent = card.dataset.title;
+      categoryModalBody.innerHTML = categoryContent[cat] || '<p class="text-xs text-slate-500">No settings available.</p>';
+      categoryModalOverlay.classList.remove('hidden-item');
+      categoryModalOverlay.dataset.activeCategory = cat;
+    });
+  });
+
+  function closeCategoryModal() { categoryModalOverlay.classList.add('hidden-item'); }
+  document.getElementById('categoryModalClose').addEventListener('click', closeCategoryModal);
+  document.getElementById('categoryModalCancel').addEventListener('click', closeCategoryModal);
+  categoryModalOverlay.addEventListener('click', (e) => { if (e.target === categoryModalOverlay) closeCategoryModal(); });
+
+  function readCategoryForm(cat) {
+    // Reads every checkbox/select/input inside the modal body into a plain object
+    const data = {};
+    categoryModalBody.querySelectorAll('input[type="checkbox"]').forEach((el, i) => {
+      data['field_' + i] = el.checked;
+    });
+    if (cat === 'gate') {
+      const state = document.getElementById('gateStateSelect');
+      if (state) data.state = state.value;
+    }
+    categoryModalBody.querySelectorAll('select, input:not([type="checkbox"])').forEach((el, i) => {
+      if (el.id !== 'gateStateSelect') data['value_' + i] = el.value;
+    });
+    return data;
+  }
+
+  categoryModalSave.addEventListener('click', async () => {
+    const cat = categoryModalOverlay.dataset.activeCategory;
+    const payload = readCategoryForm(cat);
+    let backendOk = true;
+
+    try {
+      await apiPost('/api/settings/category/' + cat, payload);
+    } catch (err) {
+      // No backend available (or it's down) — still apply the change locally
+      // so the change is visibly reflected and confirmed to the user.
+      backendOk = false;
+      console.warn('Backend unreachable, saved locally only:', err);
+    }
+
+    if (cat === 'gate') {
+      const state = document.getElementById('gateStateSelect');
+      const badge = document.getElementById('gateStatusBadge');
+      if (state && badge) {
+        badge.textContent = state.value === 'Locked' ? 'Gates Locked' : state.value === 'Unlocked' ? 'Gates Unlocked' : 'Gates Scheduled';
+        badge.className = state.value === 'Locked'
+          ? 'px-2 py-0.5 bg-green-100 dark:bg-green-900/30 rounded text-[10px] font-medium text-green-600 dark:text-green-400 tracking-tight text-center'
+          : 'px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 rounded text-[10px] font-medium text-orange-600 dark:text-orange-400 tracking-tight text-center';
+      }
+    }
+
+    const title = categoryModalTitle.textContent;
+    closeCategoryModal();
+    showToast(title + ' updated');
+    showSuccessPopup(title + ' has been saved' + (backendOk ? '.' : ' locally (backend not reachable, changes are not synced to the server yet).'));
+  });
+
+  // ---------- Sliders ----------
+  function bindSlider(sliderId, valueId) {
+    const slider = document.getElementById(sliderId);
+    const value = document.getElementById(valueId);
+    slider.addEventListener('input', () => { value.textContent = slider.value + '%'; });
+  }
+  bindSlider('confidenceSlider', 'confidenceValue');
+  bindSlider('noiseSlider', 'noiseValue');
+  bindSlider('motionSlider', 'motionValue');
+
+  // Module selection swaps which sensitivity profile is shown
+  const moduleProfiles = {
+    'Hard Hat Detection': { confidence: 85, noise: 42, motion: 60 },
+    'Reflective Vest Detection': { confidence: 78, noise: 35, motion: 55 },
+    'Fall Protection Gear': { confidence: 90, noise: 20, motion: 70 },
+    'Zone Intrusions': { confidence: 65, noise: 50, motion: 80 }
+  };
+  document.getElementById('moduleSelect').addEventListener('change', (e) => {
+    const profile = moduleProfiles[e.target.value];
+    if (!profile) return;
+    document.getElementById('confidenceSlider').value = profile.confidence;
+    document.getElementById('confidenceValue').textContent = profile.confidence + '%';
+    document.getElementById('noiseSlider').value = profile.noise;
+    document.getElementById('noiseValue').textContent = profile.noise + '%';
+    document.getElementById('motionSlider').value = profile.motion;
+    document.getElementById('motionValue').textContent = profile.motion + '%';
+  });
+
+  // ---------- Alert toggles ----------
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const isOn = btn.classList.contains('bg-primary');
+      const dot = btn.querySelector('.toggle-dot');
+      if (isOn) {
+        btn.classList.remove('bg-primary');
+        btn.classList.add('bg-slate-200', 'dark:bg-border-dark');
+        dot.classList.remove('right-1');
+        dot.classList.add('left-1');
+      } else {
+        btn.classList.add('bg-primary');
+        btn.classList.remove('bg-slate-200', 'dark:bg-border-dark');
+        dot.classList.remove('left-1');
+        dot.classList.add('right-1');
+      }
+    });
+  });
+
+  function applyQuickRulesToUI(qr) {
+    document.getElementById('moduleSelect').value = qr.moduleSelect || 'Hard Hat Detection';
+    document.getElementById('confidenceSlider').value = qr.confidence;
+    document.getElementById('confidenceValue').textContent = qr.confidence + '%';
+    document.getElementById('noiseSlider').value = qr.noise;
+    document.getElementById('noiseValue').textContent = qr.noise + '%';
+    document.getElementById('motionSlider').value = qr.motion;
+    document.getElementById('motionValue').textContent = qr.motion + '%';
+
+    const toggleMap = { audio: qr.toggles?.audio, push: qr.toggles?.push, autolog: qr.toggles?.autolog, supervisor: qr.toggles?.supervisor };
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+      const key = btn.dataset.toggle;
+      const on = !!toggleMap[key];
+      const dot = btn.querySelector('.toggle-dot');
+      btn.classList.toggle('bg-primary', on);
+      btn.classList.toggle('bg-slate-200', !on);
+      btn.classList.toggle('dark:bg-border-dark', !on);
+      dot.classList.toggle('right-1', on);
+      dot.classList.toggle('left-1', !on);
+    });
+  }
+
+  function readQuickRulesFromUI() {
+    const toggles = {};
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+      toggles[btn.dataset.toggle] = btn.classList.contains('bg-primary');
+    });
+    return {
+      moduleSelect: document.getElementById('moduleSelect').value,
+      confidence: Number(document.getElementById('confidenceSlider').value),
+      noise: Number(document.getElementById('noiseSlider').value),
+      motion: Number(document.getElementById('motionSlider').value),
+      toggles
+    };
+  }
+
+  function saveQuickRulesLocally(qr, lastApplied) {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify(qr));
+      localStorage.setItem(LS_LAST_APPLIED_KEY, JSON.stringify(lastApplied));
+    } catch (e) {
+      console.warn('localStorage unavailable, changes will not persist after reload:', e);
+    }
+  }
+
+  function loadQuickRulesLocally() {
+    try {
+      const qr = localStorage.getItem(LS_KEY);
+      const la = localStorage.getItem(LS_LAST_APPLIED_KEY);
+      return {
+        quickRules: qr ? JSON.parse(qr) : null,
+        lastApplied: la ? JSON.parse(la) : null
+      };
+    } catch (e) {
+      return { quickRules: null, lastApplied: null };
+    }
+  }
+
+  function updateLastAppliedText(lastApplied) {
+    const time = new Date(lastApplied.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('lastAppliedText').textContent = 'Last applied by ' + lastApplied.by + ' at ' + time + ' Today';
+  }
+
+  // ---------- Reset ----------
+  document.getElementById('resetRulesBtn').addEventListener('click', async () => {
+    const defaults = {
+      moduleSelect: 'Hard Hat Detection',
+      confidence: 85, noise: 42, motion: 60,
+      toggles: { audio: true, push: true, autolog: false, supervisor: true }
+    };
+    try {
+      const res = await apiPost('/api/settings/reset');
+      applyQuickRulesToUI(res.quickRules);
+      saveQuickRulesLocally(res.quickRules, res.lastApplied || { by: 'Admin', at: Date.now() });
+      if (res.lastApplied) updateLastAppliedText(res.lastApplied);
+      showToast('Quick rules reset to defaults', 'restart_alt');
+    } catch (err) {
+      // Backend not reachable — reset locally anyway so the UI still works
+      applyQuickRulesToUI(defaults);
+      const lastApplied = { by: 'Admin', at: Date.now() };
+      saveQuickRulesLocally(defaults, lastApplied);
+      updateLastAppliedText(lastApplied);
+      showToast('Quick rules reset to defaults (offline)', 'restart_alt');
+    }
+  });
+
+  // ---------- Save configuration ----------
+  document.getElementById('saveConfigBtn').addEventListener('click', async () => {
+    const payload = readQuickRulesFromUI();
+    let lastApplied = { by: 'Admin', at: Date.now() };
+    let backendOk = true;
+
+    try {
+      const res = await apiPost('/api/settings/quick-rules', payload);
+      if (res && res.lastApplied) lastApplied = res.lastApplied;
+    } catch (err) {
+      // Backend unreachable — this used to silently fail and do nothing.
+      // Now we still apply and confirm the change locally, so the user
+      // always sees a clear success confirmation.
+      backendOk = false;
+      console.warn('Backend unreachable, configuration saved locally only:', err);
+    }
+
+    saveQuickRulesLocally(payload, lastApplied);
+    updateLastAppliedText(lastApplied);
+    showToast('Configuration saved');
+    showSuccessPopup(
+      backendOk
+        ? 'Your Quick Rules configuration has been saved and applied.'
+        : 'Your Quick Rules configuration has been saved on this device. Backend server was not reachable, so it has not synced yet.'
+    );
+  });
+
+  // ---------- Initial load: pull real metrics + quick rules from backend, fall back to local ----------
+  async function loadInitialSettings() {
+    try {
+      const res = await apiGet('/api/settings');
+      document.getElementById('metricUptime').textContent = res.metrics.systemUptime;
+      document.getElementById('metricCameras').textContent = res.metrics.activeCameras;
+      document.getElementById('metricAccuracy').textContent = res.metrics.aiAccuracy;
+      document.getElementById('metricBackup').textContent = res.metrics.lastBackup;
+      applyQuickRulesToUI(res.quickRules);
+      saveQuickRulesLocally(res.quickRules, res.lastApplied || { by: 'Admin', at: Date.now() });
+      if (res.lastApplied) updateLastAppliedText(res.lastApplied);
+    } catch (err) {
+      console.warn('Could not load settings from backend, falling back to locally saved settings', err);
+      const local = loadQuickRulesLocally();
+      if (local.quickRules) {
+        applyQuickRulesToUI(local.quickRules);
+      }
+      if (local.lastApplied) {
+        updateLastAppliedText(local.lastApplied);
+      }
+    }
+  }
+  loadInitialSettings();
+})();
+</script>
+</body></html>

@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SafeSite - Live Site Monitoring</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0a0a0a",
+                        "primary-light": "#171717",
+                        "surface": "#262626",
+                        "accent": "#f97316",
+                        "accent-hover": "#ea580c",
+                        "accent-light": "#fed7aa",
+                        "success": "#10b981",
+                        "warning": "#f59e0b",
+                        "danger": "#ef4444",
+                        "background": "#000000",
+                        "text-main": "#fafafa",
+                        "text-sub": "#a3a3a3",
+                        "border-sub": "#404040",
+                    },
+                    fontFamily: {
+                        "sans": ["Inter", "sans-serif"]
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.5)',
+                        'glow': '0 0 20px rgba(249, 115, 22, 0.25)',
+                        'glow-sub': '0 0 10px rgba(249, 115, 22, 0.1)',
+                        'glow-red': '0 0 15px rgba(239, 68, 68, 0.25)'
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #000000; color: #fafafa; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .icon-filled { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #171717; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #404040; border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #f97316; }
+        .animate-pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(249, 115, 22, 0.1), transparent);
+            animation: scanline 2s linear infinite;
+            pointer-events: none;
+        }
+        #triggerAlarmBtn, #layoutBtn, #configBtn {
+            position: relative !important;
+            z-index: 999 !important;
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+        .cam-overlay {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            z-index: 99 !important;
+            pointer-events: none;
+            display: block !important;
+        }
+        .relative { position: relative !important; }
+
+        /* FIX: blank/broken-looking screen while heavy video buffers.
+           Video starts invisible + a skeleton/spinner shows on top; once the
+           browser reports it can actually play, we fade the video in and hide
+           the skeleton. This replaces the ~10s of frozen/blank frame with a
+           clean, obviously-loading state. */
+        .cam-video { opacity: 0; transition: opacity .5s ease; }
+        .cam-video.is-ready { opacity: var(--cam-opacity, 0.8); }
+        .cam-skeleton {
+            position: absolute; inset: 0; z-index: 40;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 8px;
+            background: radial-gradient(ellipse at center, #1a1a1a 0%, #000 100%);
+            transition: opacity .4s ease;
+        }
+        .cam-skeleton.hidden-fade { opacity: 0; pointer-events: none; }
+        .cam-spinner {
+            width: 26px; height: 26px; border-radius: 50%;
+            border: 2.5px solid rgba(249,115,22,0.25);
+            border-top-color: #f97316;
+            animation: spin 0.9s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .cam-skeleton span { font-size: 10px; color: #737373; font-family: monospace; letter-spacing: .05em; }
+
+        /* Config modal + notif dropdown */
+        .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 200; }
+        .modal-card { background: #0a0a0a; border: 1px solid #262626; }
+    </style>
+</head>
+<body class="bg-background text-text-main antialiased overflow-hidden h-screen flex selection:bg-orange-500 selection:text-white">
+<aside class="w-72 bg-black flex-shrink-0 hidden lg:flex flex-col border-r border-border-dark z-30 transition-all duration-300">
+<div class="h-20 flex items-center px-6 border-b border-neutral-800 gap-3">
+<div class="size-9 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white shadow-glow">
+    <img src="logo.png" alt="My Logo" class="h-6 w-6 object-contain" />
+  </div>
+<div>
+<h1 class="font-bold text-white text-lg tracking-tight leading-tight">Safesite</h1>
+<p class="text-[11px] text-neutral-500 font-medium">Admin Panel </p>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1 custom-scroll">
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group mb-1 border border-transparent" href="Admin-Dashboard.html">
+<span class="material-symbols-outlined group-hover:text-orange-500 transition-colors">dashboard</span>
+<span class="text-sm font-medium relative z-10">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-white/5 text-white border border-neutral-700 shadow-soft mb-1 group" href="live monitoring.html">
+<span class="material-symbols-outlined text-orange-500">videocam</span>
+<span class="text-sm font-medium">Live Monitoring</span>
+<span class="ml-auto size-2 rounded-full bg-red-500 animate-pulse"></span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-orange-500/10 text-orange-500 shadow-glow-sub border border-orange-500/20 group relative overflow-hidden mb-1" href="attendance report.html">
+<div class="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-500"></div>
+<span class="material-symbols-outlined icon-filled">calendar_month</span>
+<span class="text-sm font-bold relative z-10">Attendance Reports</span>
+<span class="ml-auto bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg">Live</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workermanagementsystem.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">engineering</span>
+<span class="text-sm font-medium">Staff Management</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="live incident.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">crisis_alert</span>
+<span class="text-sm font-medium">Live Incidents</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="safety-compliance-ppe-detection.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">health_and_safety</span>
+<span class="text-sm font-medium">Safety Compliance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="violotion.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">warning_amber</span>
+<span class="text-sm font-medium">Violations</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="salary.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">payments</span>
+<span class="text-sm font-medium">Salary &amp; Rewards</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workerperformance.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">trending_up</span>
+<span class="text-sm font-medium">Performance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="reportandanalysics.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">analytics</span>
+<span class="text-sm font-medium">Reports Center</span>
+</a>
+<div class="mt-auto px-2 pb-4 pt-8">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="systemsettingscreen.html">
+<span class="material-symbols-outlined group-hover:text-neutral-200 transition-colors">settings</span>
+<span class="text-sm font-medium">System Settings</span>
+</a>
+</nav>
+</aside>
+<main class="flex-1 flex flex-col relative overflow-hidden bg-black">
+<div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none z-0"></div>
+<div class="px-6 py-4 flex items-center justify-between z-10 shrink-0 border-b border-neutral-900 bg-black/50 backdrop-blur-sm">
+<div class="flex items-center gap-4">
+<button class="lg:hidden text-neutral-400 hover:text-white"><span class="material-symbols-outlined">menu</span></button>
+<div>
+<h2 class="text-xl font-bold text-white tracking-tight flex items-center gap-3">
+                    Live Site Monitoring
+                    <span class="px-2 py-0.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-[10px] font-bold tracking-wide uppercase flex items-center gap-1.5 shadow-glow-sub">
+<span class="relative flex h-1.5 w-1.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-500 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-orange-500"></span>
+</span>
+                        Real-Time Feed
+                    </span>
+</h2>
+<p class="text-neutral-500 text-xs mt-0.5 hidden md:block">Monitoring active on 4 high-risk zones</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button id="layoutBtn" class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-neutral-900/80 text-neutral-400 text-xs font-semibold rounded-lg hover:bg-neutral-800 hover:text-white border border-neutral-800 transition-colors">
+<span class="material-symbols-outlined text-[16px]">grid_view</span> Layout
+</button>
+
+<button id="configBtn" class="flex items-center gap-2 px-3 py-1.5 bg-neutral-900/80 text-neutral-300 text-xs font-bold rounded-lg hover:bg-neutral-800 hover:text-white border border-neutral-700 transition-colors">
+<span class="material-symbols-outlined text-[16px]">settings_input_component</span> Configure
+                </button>
+<button id="triggerAlarmBtn" class="flex items-center gap-2 px-4 py-1.5 bg-orange-600 text-white text-xs font-bold rounded-lg hover:bg-orange-500 transition-colors shadow-lg shadow-orange-500/20 animate-pulse-slow">
+<span class="material-symbols-outlined text-[16px]">warning</span> Trigger Alarm
+</button>
+<div class="flex items-center gap-3">
+<div class="relative">
+    <button id="notifBtn" class="relative p-2 rounded-lg text-text-sub hover:bg-surface-darker transition-all">
+        <span class="material-symbols-outlined">notifications</span>
+        <span id="notifDot" class="absolute top-2 right-2 size-2 bg-primary rounded-full shadow-[0_0_10px_rgba(249,115,22,0.5)]"></span>
+    </button>
+
+    <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-72 bg-surface-dark border border-border-dark rounded-xl shadow-2xl z-[100] overflow-hidden">
+        <div class="p-3 border-b border-border-dark flex justify-between items-center bg-surface-darker">
+            <span class="text-xs font-bold text-white">Recent Activity</span>
+            <button onclick="clearNotifications()" class="text-[10px] text-primary hover:underline">Clear All</button>
+        </div>
+
+        <div id="notifList" class="max-h-60 overflow-y-auto">
+            <div class="p-3 border-b border-border-dark hover:bg-white/[0.02] transition-all cursor-pointer">
+                <p class="text-[11px] text-white font-medium">System Ready</p>
+                <p class="text-[10px] text-text-sub">Staff management database linked successfully.</p>
+                <p class="text-[9px] text-gray-500 mt-1">Just now</p>
+            </div>
+        </div>
+
+        <div class="p-2 text-center bg-surface-darker">
+            <button class="text-[10px] text-text-sub hover:text-white transition-all">View All Alerts</button>
+        </div>
+    </div>
+</div>
+
+<div class="h-8 w-[1px] bg-border-dark mx-1"></div>
+<button id="logoutBtn" class="flex items-center gap-3 hover:bg-surface-darker p-1.5 pr-3 rounded-full border border-transparent hover:border-border-dark transition-all cursor-pointer">
+<div class="size-9 rounded-full border border-border-dark shadow-sm overflow-hidden bg-surface-darker flex items-center justify-center">
+    <img
+        src="admin.png"
+        alt="Admin"
+        class="w-full h-full object-cover">
+</div>
+<div class="hidden md:block text-left">
+    <p class="text-sm font-semibold text-gray-200 leading-none">Ali Khan</p>
+  </div>
+  <span class="material-symbols-outlined text-gray-500 text-sm">expand_more</span>
+</button>
+
+</div>
+</div>
+</div>
+</div>
+<div class="flex-1 p-4 lg:p-6 overflow-hidden z-10">
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6 h-full">
+    <div class="lg:col-span-3 relative bg-neutral-900 rounded-2xl border-2 border-orange-500 overflow-hidden shadow-glow-sub flex flex-col group h-full" data-cam-box="02">
+        <div class="cam-overlay" data-cam="02"></div>
+        <div class="cam-skeleton"><div class="cam-spinner"></div><span>CONNECTING CAM-02…</span></div>
+
+        <video class="cam-video absolute inset-0 w-full h-full object-cover" style="--cam-opacity:0.8" autoplay muted loop playsinline preload="auto">
+            <source src="constructioncopy.mp4" type="video/mp4">
+        </video>
+
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-neutral-800 via-neutral-900 to-black opacity-40 pointer-events-none"></div>
+        <div class="scanline opacity-20"></div>
+
+        <div class="absolute top-4 left-4 flex items-center gap-3 z-30">
+            <span class="px-2 py-1 bg-orange-600/90 backdrop-blur text-white text-xs font-bold rounded animate-pulse flex items-center gap-1 shadow-lg">
+                <span class="material-symbols-outlined text-[14px]">fiber_manual_record</span> LIVE
+            </span>
+            <div class="bg-black/60 backdrop-blur px-3 py-1 rounded-lg border border-white/10 flex items-center gap-2">
+                <span class="material-symbols-outlined text-neutral-400 text-[16px]">videocam</span>
+                <span class="text-sm font-mono text-white tracking-wide">CAM-02 • Zone B Scaffolding</span>
+            </div>
+        </div>
+
+        <div class="absolute top-4 right-4 z-20">
+            <div class="bg-black/60 backdrop-blur px-3 py-1 rounded-lg border border-white/10 text-xs font-mono text-neutral-400">
+                REC • <span id="realTimeClock" class="text-white">--:--:--</span>
+            </div>
+        </div>
+
+        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent z-20 flex items-end justify-between">
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 text-green-500 text-xs font-mono font-bold">
+                    <span class="material-symbols-outlined text-[14px]">wifi</span> SIGNAL: 98%
+                </div>
+                <div class="flex items-center gap-2 text-neutral-400 text-xs font-mono">
+                    <span class="material-symbols-outlined text-[14px]">compress</span> H.265 / 4K
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="p-2 hover:bg-white/10 rounded-lg text-white transition-colors"><span class="material-symbols-outlined">zoom_in</span></button>
+                <button class="p-2 hover:bg-white/10 rounded-lg text-white transition-colors"><span class="material-symbols-outlined">photo_camera</span></button>
+                <button class="p-2 hover:bg-white/10 rounded-lg text-white transition-colors"><span class="material-symbols-outlined">mic</span></button>
+                <button class="p-2 hover:bg-white/10 rounded-lg text-white transition-colors"><span class="material-symbols-outlined">fullscreen</span></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="lg:col-span-1 flex flex-col gap-4 h-full overflow-hidden">
+
+        <div class="flex-1 relative bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden group hover:border-neutral-600 transition-colors shadow-soft" data-cam-box="01">
+            <div class="cam-overlay" data-cam="01"></div>
+            <div class="cam-skeleton"><div class="cam-spinner"></div><span>CAM-01</span></div>
+            <video class="cam-video absolute inset-0 w-full h-full object-cover" style="--cam-opacity:0.6" autoplay muted loop playsinline preload="auto">
+                <source src="cnstructionside.mp4" type="video/mp4">
+            </video>
+            <div class="absolute top-2 left-2 flex items-center gap-2 z-30">
+                <span class="size-2 bg-red-600 rounded-full animate-pulse"></span>
+                <span class="text-[10px] font-mono text-white bg-black/50 px-1.5 py-0.5 rounded">CAM-01 • Main Gate</span>
+            </div>
+        </div>
+
+        <div class="flex-1 relative bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden group hover:border-neutral-600 transition-colors shadow-soft" data-cam-box="03">
+            <div class="cam-overlay" data-cam="03"></div>
+            <div class="cam-skeleton"><div class="cam-spinner"></div><span>CAM-03</span></div>
+            <video class="cam-video absolute inset-0 w-full h-full object-cover" style="--cam-opacity:0.6" autoplay muted loop playsinline preload="auto">
+                <source src="cnstructionside.mp4" type="video/mp4">
+            </video>
+            <div class="absolute top-2 left-2 flex items-center gap-2 z-30">
+                <span class="size-2 bg-red-600 rounded-full animate-pulse"></span>
+                <span class="text-[10px] font-mono text-white bg-black/50 px-1.5 py-0.5 rounded">CAM-03 • Storage</span>
+            </div>
+        </div>
+
+        <div class="flex-1 relative bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden group hover:border-neutral-600 transition-colors shadow-soft" data-cam-box="04">
+            <div class="cam-overlay" data-cam="04"></div>
+            <div class="cam-skeleton"><div class="cam-spinner"></div><span>CAM-04</span></div>
+            <video class="cam-video absolute inset-0 w-full h-full object-cover" style="--cam-opacity:0.6" autoplay muted loop playsinline preload="auto">
+                <source src="constructioncopy.mp4" type="video/mp4">
+            </video>
+            <div class="absolute top-2 left-2 flex items-center gap-2 z-30">
+                <span class="size-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span class="text-[10px] font-mono text-white bg-black/50 px-1.5 py-0.5 rounded">CAM-04 • East Perimeter</span>
+            </div>
+        </div>
+
+        <div class="h-1/3 min-h-[160px] bg-neutral-900/80 backdrop-blur border border-neutral-800 rounded-xl flex flex-col shadow-soft overflow-hidden">
+            <div class="px-3 py-2 border-b border-neutral-800 flex justify-between items-center bg-black/20">
+                <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-orange-500 text-[14px]">notifications_active</span> AI Alerts
+                </h3>
+                <span id="violationCount" class="bg-red-500 text-white text-[9px] font-bold px-1.5 rounded-full">0</span>
+            </div>
+            <div id="alertsContainer" class="flex-1 overflow-y-auto custom-scroll p-2 space-y-2">
+                <p class="text-[10px] text-neutral-600 text-center mt-4">Waiting for AI detections...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateLiveClock() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const clockElement = document.getElementById('realTimeClock');
+        if (clockElement) clockElement.textContent = timeStr;
+    }
+    setInterval(updateLiveClock, 1000);
+    updateLiveClock();
+</script>
+</main>
+
+<!-- Configure modal -->
+<div id="configModalBackdrop" class="modal-backdrop hidden items-center justify-center">
+    <div class="modal-card w-[420px] rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white font-bold text-sm">Monitoring Configuration</h3>
+            <button id="configCloseBtn" class="text-neutral-500 hover:text-white"><span class="material-symbols-outlined text-[18px]">close</span></button>
+        </div>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <span class="text-xs text-neutral-300">Voice alerts</span>
+                <input id="cfgVoice" type="checkbox" checked class="accent-orange-500 size-4">
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-xs text-neutral-300">Auto-email on emergency</span>
+                <input id="cfgEmail" type="checkbox" checked class="accent-orange-500 size-4">
+            </div>
+            <div>
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs text-neutral-300">Detection sensitivity</span>
+                    <span id="cfgSensitivityVal" class="text-[10px] text-orange-500 font-mono">0.50</span>
+                </div>
+                <input id="cfgSensitivity" type="range" min="0.2" max="0.9" step="0.05" value="0.5" class="w-full accent-orange-500">
+            </div>
+        </div>
+        <button id="configSaveBtn" class="mt-5 w-full bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold py-2.5 rounded-lg transition-colors">Save Settings</button>
+    </div>
+</div>
+
+<div id="fullscreenOverlay" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[100] hidden flex-col animate-fadeIn">
+
+    <div class="flex justify-between items-center p-5 border-b border-neutral-800 bg-black/40">
+        <div class="flex items-center gap-4">
+            <div class="relative flex h-3 w-3">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-600 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
+            </div>
+            <div>
+                <h2 class="text-white font-bold text-lg tracking-wider uppercase leading-none">SafeSite AI: Command Center</h2>
+                <div class="flex items-center gap-3 mt-1">
+                    <span class="text-[10px] text-orange-500 font-mono font-bold tracking-widest uppercase">System: Active</span>
+                    <span class="text-[10px] text-neutral-400 font-mono" id="liveTimeDisplay"></span>
+                </div>
+            </div>
+        </div>
+
+        <button id="closeOverlay" class="group flex items-center gap-2 px-5 py-2.5 bg-neutral-900 border border-neutral-800 rounded-xl hover:bg-red-600 transition-all duration-300">
+            <span class="text-[10px] font-bold text-neutral-300 group-hover:text-white">EXIT MONITOR</span>
+            <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+    </div>
+
+    <div id="cameraGrid" class="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 p-6 overflow-y-auto bg-black/20 custom-scroll">
+        <!-- CAM-01 .. CAM-10, each with its OWN data-cam (no duplicate DOM ids) -->
+        <div class="camera-box relative aspect-video bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800 group shadow-2xl hover:scale-[1.02] transition-transform cursor-pointer" data-cam-box="fs-01">
+            <div class="cam-overlay" data-cam="01"></div>
+            <div class="cam-skeleton"><div class="cam-spinner"></div></div>
+            <video class="cam-video absolute inset-0 w-full h-full object-cover" style="--cam-opacity:0.8" autoplay muted loop playsinline preload="auto"><source src="cnstructionside.mp4" type="video/mp4"></video>
+            <span class="absolute top-2 left-2 text-[9px] font-mono text-white bg-black/60 px-2 py-0.5 rounded border border-white/10 z-30">CAM-01</span>
+        </div>
+
+        <div class="camera-box relative aspect-video bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800 group shadow-2xl hover:scale-[1.02] transition-transform cursor-pointer" data-cam-box="fs-02">
+            <div class="cam-overlay" data-cam="02"></div>
+            <div class="cam-skeleton"><div class="cam-spinner"></div></div>
+            <video class="cam-video absolute inset-0 w-full h-full object-cover" style="--cam-opacity:0.8" autoplay muted loop playsinline preload="auto"><source src="constructioncopy.mp4" type="video/mp4"></video>
+            <span class="absolute top-2 left-2 text-[9px] font-mono text-white bg-black/60 px-2 py-0.5 rounded border border-white/10 z-30">CAM-02</span>
+        </div>
+
+        <div class="camera-box relative aspect-video bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800 group shadow-2xl hover:scale-[1.02] transition-transform cursor-pointer" data-cam-box="fs-03">
+            <div class="cam-overlay" data-cam="03"></div>
+            <div class="cam-skeleton"><div class="cam-spinner"></div></div>
+            <video class="cam-video absolute inset-0 w-full h-full object-cover" style="--cam-opacity:0.8" autoplay muted loop playsinline preload="auto"><source src="cnstructionside.mp4" type="video/mp4"></video>
+            <span class="absolute top-2 left-2 text-[9px] font-mono text-white bg-black/60 px-2 py-0.5 rounded border border-white/10 z-30">CAM-03</span>
+        </div>
+
+        <div class="camera-box relative aspect-video bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800 group shadow-2xl hover:scale-[1.02] transition-transform cursor-pointer" data-cam-box="fs-04">
+            <div class="cam-overlay" data-cam="04"></div>
+            <div class="cam-skeleton"><div class="cam-spinner"></div></div>
+            <video class="cam-video absolute inset-0 w-full h-full object-cover" style="--cam-opacity:0.8" autoplay muted loop playsinline preload="auto"><source src="constructioncopy.mp4" type="video/mp4"></video>
+            <span class="absolute top-2 left-2 text-[9px] font-mono text-white bg-black/60 px-2 py-0.5 rounded border border-white/10 z-30">CAM-04</span>
+        </div>
+
+        <div class="camera-box relative aspect-video bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800 group shadow-2xl hover:scale-[1.02] transition-transform cursor-pointer" data-cam-box="fs-05">
+            <div class="cam-overlay" data-cam="05"></div>
+            <div class="cam-skeleton"><div class="cam-spinner"></div></div>
+            <video class="cam-video absolute inset-0 w-full h-full object-cover" style="--cam-opacity:0.8" autoplay muted loop playsinline preload="auto"><source src="constructioncopy.mp4" type="video/mp4"></video>
+            <span class="absolute top-2 left-2 text-[9px] font-mono text-white bg-black/60 px-2 py-0.5 rounded border border-white/10 z-30">CAM-05</span>
+        </div>
+
+        <div class="camera-box relative aspect-video bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800 group shadow-2xl hover:scale-[1.02] transition-transform cursor-pointer" data-cam-box="fs-06">
+            <div class="cam-overlay" data-cam="06"></div>
+            <div class="cam-skeleton"><div class="cam-spinner"></div></div>
+            <video class="cam-video absolute inset-0 w-full h-full object-cover" style="--cam-opacity:0.8" autoplay muted loop playsinline preload="auto"><source src="cnstructionside.mp4" type="video/mp4"></video>
+            <span class="absolute top-2 left-2 text-[9px] font-mono text-white bg-black/60 px-2 py-0.5 rounded border border-white/10 z-30">CAM-06</span>
+        </div>
+
+        <div class="camera-box relative aspect-video bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800 group shadow-2xl hover:scale-[1.02] transition-transform cursor-pointer" data-cam-box="fs-07">
+            <div class="cam-overlay" data-cam="07"></div>
+            <div class="cam-skeleton"><div class="cam-spinner"></div></div>
+            <video class="cam-video absolute inset-0 w-full h-full object-cover" style="--cam-opacity:0.8" autoplay muted loop playsinline preload="auto"><source src="constructioncopy.mp4" type="video/mp4"></video>
+            <span class="absolute top-2 left-2 text-[9px] font-mono text-white bg-black/60 px-2 py-0.5 rounded border border-white/10 z-30">CAM-07</span>
+        </div>
+
+        <div class="camera-box relative aspect-video bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800 group shadow-2xl hover:scale-[1.02] transition-transform cursor-pointer" data-cam-box="fs-08">
+            <div class="cam-overlay" data-cam="08"></div>
+            <div class="cam-skeleton"><div class="cam-spinner"></div></div>
+            <video class="cam-video absolute inset-0 w-full h-full object-cover" style="--cam-opacity:0.8" autoplay muted loop playsinline preload="auto"><source src="cnstructionside.mp4" type="video/mp4"></video>
+            <span class="absolute top-2 left-2 text-[9px] font-mono text-white bg-black/60 px-2 py-0.5 rounded border border-white/10 z-30">CAM-08</span>
+        </div>
+
+        <div class="camera-box relative aspect-video bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800 group shadow-2xl hover:scale-[1.02] transition-transform cursor-pointer" data-cam-box="fs-09">
+            <div class="cam-overlay" data-cam="09"></div>
+            <div class="cam-skeleton"><div class="cam-spinner"></div></div>
+            <video class="cam-video absolute inset-0 w-full h-full object-cover" style="--cam-opacity:0.8" autoplay muted loop playsinline preload="auto"><source src="constructioncopy.mp4" type="video/mp4"></video>
+            <span class="absolute top-2 left-2 text-[9px] font-mono text-white bg-black/60 px-2 py-0.5 rounded border border-white/10 z-30">CAM-09</span>
+        </div>
+
+        <div class="camera-box relative aspect-video bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800 group shadow-2xl hover:scale-[1.02] transition-transform cursor-pointer" data-cam-box="fs-10">
+            <div class="cam-overlay" data-cam="10"></div>
+            <div class="cam-skeleton"><div class="cam-spinner"></div></div>
+            <video class="cam-video absolute inset-0 w-full h-full object-cover" style="--cam-opacity:0.8" autoplay muted loop playsinline preload="auto"><source src="cnstructionside.mp4" type="video/mp4"></video>
+            <span class="absolute top-2 left-2 text-[9px] font-mono text-white bg-black/60 px-2 py-0.5 rounded border border-white/10 z-30">CAM-10</span>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const socket = io("http://127.0.0.1:5001");
+        let isEmergency = false; // FIX: was undeclared before, caused broken toggle
+
+        // --- 0. FIX: staggered "ready" reveal instead of blank/broken screen ---
+        // Har video ko turant autoplay se dikhane ki koshish karne ke bajaye,
+        // hum video 'opacity:0' rakhte hain jab tak 'canplay' fire na ho, tab
+        // tak spinner overlay dikhta hai. Videos ko thora stagger bhi karte
+        // hain taake sab ek sath decode start na karein (jo freeze ki wajah
+        // ban sakta tha).
+        // FIX v2: pehli version mein bhi ~10s lag rahi thi kyunke hum
+        // 'canplay' ka wait kar rahe thay (poora buffer ready hone tak) aur
+        // har video ko 150ms artificial stagger deke pehle pause() bhi kar
+        // rahe thay — dono cheezein reveal ko unnecessarily deir se laati
+        // hain. Ab: (1) 'loadeddata' (sirf pehla frame) par hi reveal karo,
+        // (2) video ko turant play() karo, koi pause/stagger nahi, (3)
+        // safety-net sirf 1.2s ka taake missing/corrupt file case mein bhi
+        // UI zyada deir tak frozen na dikhe.
+        const videos = Array.from(document.querySelectorAll('video.cam-video'));
+        videos.forEach((video) => {
+            const box = video.closest('[data-cam-box]');
+            const skeleton = box ? box.querySelector('.cam-skeleton') : null;
+            let revealed = false;
+
+            const reveal = () => {
+                if (revealed) return;
+                revealed = true;
+                video.classList.add('is-ready');
+                if (skeleton) skeleton.classList.add('hidden-fade');
+            };
+
+            if (video.readyState >= 2) {
+                reveal();
+            } else {
+                video.addEventListener('loadeddata', reveal, { once: true });
+                video.addEventListener('playing', reveal, { once: true });
+            }
+            setTimeout(reveal, 1200);
+
+            video.play().catch(() => reveal());
+        });
+
+        // --- 1. CAMERA SWAP LOGIC (Click to Front) ---
+        function enableCameraSwap() {
+            const cameras = document.querySelectorAll('[data-cam-box]');
+            cameras.forEach(cam => {
+                cam.style.cursor = 'pointer';
+                cam.onclick = function () {
+                    const mainBox = document.querySelector('[data-cam-box="02"]');
+                    if (!mainBox || mainBox === this) return;
+                    const mainVideo = mainBox.querySelector('video');
+                    const clickedVideo = this.querySelector('video');
+                    if (clickedVideo && mainVideo) {
+                        const tempSrc = mainVideo.querySelector('source').src;
+                        mainVideo.querySelector('source').src = clickedVideo.querySelector('source').src;
+                        clickedVideo.querySelector('source').src = tempSrc;
+                        mainVideo.load();
+                        clickedVideo.load();
+                        mainVideo.play().catch(() => {});
+                        clickedVideo.play().catch(() => {});
+                    }
+                };
+            });
+        }
+        enableCameraSwap();
+
+        // --- 2. DETECTION ENGINE ---
+        // FIX: overlays ab data-cam attribute se select hote hain — isse main
+        // grid AND fullscreen grid dono ke overlays ek hi event se update ho
+        // jaate hain, chahe duplicate id ka masla ho ya na ho.
+        socket.on('ppe_detections', (data) => {
+            const camId = String(data.cam_id).padStart(2, '0');
+            const targets = document.querySelectorAll(`.cam-overlay[data-cam="${camId}"]`);
+            if (!targets.length) return;
+
+            const label = String(data.label || '').toLowerCase();
+            const isViolation = ['no-helmet', 'no-vest', 'no-mask', 'without', 'fall-detected', 'accident'].some(v => label.includes(v));
+            const boxColor = isViolation ? '#ef4444' : (label === 'person' ? '#3b82f6' : '#10b981');
+
+            targets.forEach(targetOverlay => {
+                const box = document.createElement('div');
+                box.style.cssText = `position:absolute; left:${data.x * 100}%; top:${data.y * 100}%; width:${data.w * 100}%; height:${data.h * 100}%; border:2px solid ${boxColor}; z-index:50; pointer-events:none;`;
+
+                const labelTag = document.createElement('div');
+                labelTag.innerText = label.toUpperCase();
+                labelTag.style.cssText = `position:absolute; top:-18px; left:-2px; background:${boxColor}; color:white; font-size:9px; padding:1px 4px; font-weight:bold; white-space:nowrap;`;
+
+                box.appendChild(labelTag);
+                targetOverlay.appendChild(box);
+                setTimeout(() => box.remove(), 400);
+            });
+
+            if (isViolation) {
+                triggerSidebarAlert(label, camId);
+            }
+        });
+
+        socket.on('emergency_status', (data) => {
+            if (data && data.active) {
+                setAlarmVisualState(true);
+            }
+        });
+
+        // --- 3. ALERTS & VOICE ---
+        function triggerSidebarAlert(label, cam) {
+            const alertsBox = document.getElementById('alertsContainer');
+            const vCount = document.getElementById('violationCount');
+            if (vCount) vCount.innerText = parseInt(vCount.innerText || 0, 10) + 1;
+
+            const placeholder = alertsBox.querySelector('p');
+            if (placeholder) placeholder.remove();
+
+            const div = document.createElement('div');
+            div.className = "p-2 bg-red-500/10 border-l-2 border-red-500 rounded-r-lg mb-2 text-white text-[10px]";
+            div.innerHTML = `<strong>DANGER</strong><br>CAM-${cam}: ${label.toUpperCase()}`;
+            alertsBox.prepend(div);
+
+            if (alertsBox.children.length > 6) alertsBox.lastElementChild.remove();
+
+            addNotification(`CAM-${cam}`, `${label.toUpperCase()} detected`);
+        }
+
+        function setAlarmVisualState(active) {
+            const btn = document.getElementById('triggerAlarmBtn');
+            btn.classList.toggle('bg-red-700', active);
+            btn.classList.toggle('animate-pulse', active);
+            isEmergency = active;
+        }
+
+        // --- 4. TRIGGER ALARM (manual) ---
+        document.getElementById('triggerAlarmBtn').onclick = function () {
+            setAlarmVisualState(!isEmergency);
+            if (settings.voice) {
+                window.speechSynthesis.speak(new SpeechSynthesisUtterance(
+                    isEmergency ? "Emergency Alert Activated" : "Emergency Alert Cleared"
+                ));
+            }
+            addNotification('Manual Trigger', isEmergency ? 'Alarm activated by operator' : 'Alarm cleared by operator');
+        };
+
+        // --- 5. LAYOUT (fullscreen grid) ---
+        if (document.getElementById('layoutBtn')) {
+            document.getElementById('layoutBtn').onclick = () => {
+                document.getElementById('fullscreenOverlay').classList.remove('hidden');
+                document.getElementById('fullscreenOverlay').classList.add('flex');
+            };
+        }
+        document.getElementById('closeOverlay').onclick = () => {
+            document.getElementById('fullscreenOverlay').classList.add('hidden');
+            document.getElementById('fullscreenOverlay').classList.remove('flex');
+        };
+
+        // --- 6. CONFIGURE modal ---
+        const settings = { voice: true, email: true, sensitivity: 0.5 };
+        const configBackdrop = document.getElementById('configModalBackdrop');
+        document.getElementById('configBtn').onclick = () => {
+            configBackdrop.classList.remove('hidden');
+            configBackdrop.classList.add('flex');
+        };
+        document.getElementById('configCloseBtn').onclick = closeConfig;
+        configBackdrop.addEventListener('click', (e) => { if (e.target === configBackdrop) closeConfig(); });
+        function closeConfig() {
+            configBackdrop.classList.add('hidden');
+            configBackdrop.classList.remove('flex');
+        }
+        const sensSlider = document.getElementById('cfgSensitivity');
+        const sensVal = document.getElementById('cfgSensitivityVal');
+        sensSlider.addEventListener('input', () => { sensVal.textContent = parseFloat(sensSlider.value).toFixed(2); });
+        document.getElementById('configSaveBtn').onclick = () => {
+            settings.voice = document.getElementById('cfgVoice').checked;
+            settings.email = document.getElementById('cfgEmail').checked;
+            settings.sensitivity = parseFloat(sensSlider.value);
+            addNotification('Settings', `Saved — sensitivity ${settings.sensitivity.toFixed(2)}, voice ${settings.voice ? 'on' : 'off'}`);
+            closeConfig();
+        };
+
+        // --- 7.5 DEMO / DUMMY DETECTION SIMULATOR ---
+        // Yeh sirf UI ko "zinda" dikhane ke liye hai — asli Python/YOLO
+        // backend jab available ho, real 'ppe_detections' events isi socket
+        // handler ko milte rahenge (upar wala handler unchanged hai). Yeh
+        // dummy simulator sirf backend na hone/na milne ki soorat mein bhi
+        // boxes + alerts dikhata rehta hai taake demo mein "kuch ho raha hai"
+        // nazar aaye. Backend connect ho jaye to isay band karne ke liye
+        // neeche DEMO_MODE ko false kar dein.
+        const DEMO_MODE = true;
+        const DEMO_CAM_IDS = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"];
+        // FIX: color scheme ab clear hai — blue = person tracked, green = PPE
+        // compliant (helmet/vest theek hai), red = violation (no-helmet/no-vest).
+        const DEMO_LABELS = [
+            { label: "person", color: "#3b82f6", violation: false },
+            { label: "helmet-ok", color: "#10b981", violation: false },
+            { label: "vest-ok", color: "#10b981", violation: false },
+            { label: "no-helmet", color: "#ef4444", violation: true },
+            { label: "no-vest", color: "#ef4444", violation: true }
+        ];
+
+        function fakeDetectionBox() {
+            const camId = DEMO_CAM_IDS[Math.floor(Math.random() * DEMO_CAM_IDS.length)];
+            const targets = document.querySelectorAll(`.cam-overlay[data-cam="${camId}"]`);
+            if (!targets.length) return;
+
+            const pick = DEMO_LABELS[Math.floor(Math.random() * DEMO_LABELS.length)];
+            const x = 0.1 + Math.random() * 0.55;
+            const y = 0.15 + Math.random() * 0.5;
+            const w = 0.18 + Math.random() * 0.12;
+            const h = 0.3 + Math.random() * 0.15;
+
+            targets.forEach(targetOverlay => {
+                const box = document.createElement('div');
+                box.style.cssText = `position:absolute; left:${x * 100}%; top:${y * 100}%; width:${w * 100}%; height:${h * 100}%; border:2px solid ${pick.color}; z-index:50; pointer-events:none;`;
+
+                const labelTag = document.createElement('div');
+                labelTag.innerText = pick.label.toUpperCase();
+                labelTag.style.cssText = `position:absolute; top:-18px; left:-2px; background:${pick.color}; color:white; font-size:9px; padding:1px 4px; font-weight:bold; white-space:nowrap;`;
+
+                box.appendChild(labelTag);
+                targetOverlay.appendChild(box);
+                setTimeout(() => box.remove(), 900);
+            });
+
+            if (pick.violation) {
+                triggerSidebarAlert(pick.label, camId);
+            }
+        }
+
+        // FIX: ab har 0.4-0.9 second mein ek nayi box aati hai (kai cameras par
+        // "ek sath" detection ka feel), pehle 2.5-4.5s bohot slow tha.
+        function scheduleDemoBox() {
+            if (!DEMO_MODE) return;
+            fakeDetectionBox();
+            setTimeout(scheduleDemoBox, 400 + Math.random() * 500);
+        }
+        setTimeout(scheduleDemoBox, 800);
+        // Ek extra parallel timer taake ek hi waqt mein multiple cameras par
+        // boxes aik saath dikhein, sirf ek queue ka wait na ho.
+        setInterval(fakeDetectionBox, 700);
+
+        function fakeHeartbeatAlert() {
+            if (!DEMO_MODE) return;
+            const camId = DEMO_CAM_IDS[Math.floor(Math.random() * DEMO_CAM_IDS.length)];
+            addNotification(`CAM-${camId}`, "System check: monitoring active, no issues");
+        }
+        setInterval(fakeHeartbeatAlert, 12000);
+
+        // --- 7. NOTIFICATION dropdown ---
+        const notifBtn = document.getElementById('notifBtn');
+        const notifDropdown = document.getElementById('notifDropdown');
+        const notifDot = document.getElementById('notifDot');
+        notifBtn.onclick = (e) => {
+            e.stopPropagation();
+            notifDropdown.classList.toggle('hidden');
+            if (notifDot) notifDot.classList.add('hidden');
+        };
+        document.addEventListener('click', (e) => {
+            if (!notifDropdown.classList.contains('hidden') && !notifDropdown.contains(e.target) && e.target !== notifBtn) {
+                notifDropdown.classList.add('hidden');
+            }
+        });
+        function addNotification(title, detail) {
+            const list = document.getElementById('notifList');
+            const item = document.createElement('div');
+            item.className = "p-3 border-b border-border-dark hover:bg-white/[0.02] transition-all cursor-pointer";
+            item.innerHTML = `<p class="text-[11px] text-white font-medium">${title}</p>
+                <p class="text-[10px] text-text-sub">${detail}</p>
+                <p class="text-[9px] text-gray-500 mt-1">Just now</p>`;
+            list.prepend(item);
+            if (notifDot) notifDot.classList.remove('hidden');
+            if (list.children.length > 10) list.lastElementChild.remove();
+        }
+        window.clearNotifications = function () {
+            document.getElementById('notifList').innerHTML = '';
+            if (notifDot) notifDot.classList.add('hidden');
+        };
+    });
+</script>
+</body>
+</html>

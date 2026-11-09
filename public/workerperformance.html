@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Worker Performance- Safety Compliance System</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f97316",
+                        "primary-light": "#fdba74",
+                        "primary-dark": "#c2410c",
+                        "accent": "#fb923c",
+                        "background-dark": "#000000",
+                        "surface-dark": "#262626",
+                        "surface-darker": "#171717",
+                        "card-dark": "#1c1c1e",
+                        "text-main": "#fafafa",
+                        "text-sub": "#a3a3a3",
+                        "text-muted": "#8b8b8f",
+                        "border-dark": "#404040"
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.1)',
+                        'glow': '0 0 15px rgba(249, 115, 22, 0.15)'
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #18181b; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .icon-filled { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { background-color: #0f0f10; color: #e4e4e7; }
+        .pdf-btn-fix {
+            display: flex !important; align-items: center !important; justify-content: center !important;
+            width: 120px !important; height: 36px !important; white-space: nowrap;
+        }
+        .tier-Elite { color:#22c55e; background:rgba(34,197,94,0.1); border-color:rgba(34,197,94,0.25); }
+        .tier-Good { color:#38bdf8; background:rgba(56,189,248,0.1); border-color:rgba(56,189,248,0.25); }
+        .tier-Average { color:#f59e0b; background:rgba(245,158,11,0.1); border-color:rgba(245,158,11,0.25); }
+        .tier-Improvement-Needed { color:#ef4444; background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.25); }
+    </style>
+</head>
+<body class="bg-background-dark font-display text-text-main antialiased overflow-hidden selection:bg-primary selection:text-white">
+<div class="flex h-screen w-full">
+<aside class="w-72 bg-black border-r border-border-dark flex-col hidden lg:flex z-30 flex-shrink-0">
+<div class="h-20 flex items-center px-8 border-b border-border-dark">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg size-8 shadow-sm flex-shrink-0 border border-border-dark relative">
+<div class="size-9 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white shadow-glow">
+    <img src="logo.png" alt="My Logo" class="h-6 w-6 object-contain" />
+  </div>
+</div>
+<h1 class="text-text-main text-lg font-bold leading-tight tracking-wide">SafeSite<span class="text-primary"></span></h1>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-sub rounded-lg hover:bg-surface-darker hover:text-white transition-colors group" href="Admin-Dashboard.html">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-white/5 text-white border border-neutral-700 shadow-soft mb-1 group" href="live monitoring.html">
+<span class="material-symbols-outlined text-orange-500">videocam</span>
+<span class="text-sm font-medium">Live Monitoring</span>
+<span class="ml-auto size-2 rounded-full bg-red-500 animate-pulse"></span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-orange-500/10 text-orange-500 shadow-glow-sub border border-orange-500/20 group relative overflow-hidden mb-1" href="attendance report.html">
+<div class="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-500"></div>
+<span class="material-symbols-outlined icon-filled">calendar_month</span>
+<span class="text-sm font-bold relative z-10">Attendance Reports</span>
+<span class="ml-auto bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg">Live</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workermanagementsystem.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">engineering</span>
+<span class="text-sm font-medium">Staff Management</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="live incident.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">crisis_alert</span>
+<span class="text-sm font-medium">Live Incidents</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="safety-compliance-ppe-detection.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">health_and_safety</span>
+<span class="text-sm font-medium">Safety Compliance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="violotion.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">warning_amber</span>
+<span class="text-sm font-medium">Violations</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="salary.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">payments</span>
+<span class="text-sm font-medium">Salary &amp; Rewards</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-orange-500/10 text-orange-500 border border-orange-500/20 group mb-1" href="workerperformance.html">
+<span class="material-symbols-outlined icon-filled">trending_up</span>
+<span class="text-sm font-bold">Performance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="reportandanalysics.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">analytics</span>
+<span class="text-sm font-medium">Reports Center</span>
+</a>
+<div class="mt-auto px-2 pb-4 pt-8">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="systemsettingscreen.html">
+<span class="material-symbols-outlined group-hover:text-neutral-200 transition-colors">settings</span>
+<span class="text-sm font-medium">System Settings</span>
+</a>
+</div>
+</nav>
+</aside>
+<div class="flex-1 flex flex-col h-screen overflow-hidden bg-background-dark">
+<header class="h-20 flex-shrink-0 flex items-center justify-between px-8 bg-black border-b border-border-dark z-20">
+<div class="flex items-center gap-6">
+<div>
+<h2 class="text-xl font-bold text-white tracking-tight">Performance</h2>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden md:flex items-center">
+<span class="absolute left-3 text-text-sub material-symbols-outlined text-[20px]">search</span>
+<input
+    id="performanceSearch"
+    class="pl-10 pr-4 py-2 bg-surface-darker border border-border-dark rounded-lg w-64 text-sm text-text-main focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-600"
+    placeholder="Search workers, sites, or IDs..."
+    type="text"
+/></div>
+<div class="flex items-center gap-3">
+<div class="relative">
+    <button id="notifBtn" class="relative p-2 rounded-lg text-text-sub hover:bg-surface-darker transition-all">
+        <span class="material-symbols-outlined">notifications</span>
+        <span id="notifDot" class="absolute top-2 right-2 size-2 bg-primary rounded-full shadow-[0_0_10px_rgba(249,115,22,0.5)]"></span>
+    </button>
+    <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-72 bg-surface-dark border border-border-dark rounded-xl shadow-2xl z-[100] overflow-hidden">
+        <div class="p-3 border-b border-border-dark flex justify-between items-center bg-surface-darker">
+            <span class="text-xs font-bold text-white">Recent Activity</span>
+            <button onclick="clearNotifications()" class="text-[10px] text-primary hover:underline">Clear All</button>
+        </div>
+        <div id="notifList" class="max-h-60 overflow-y-auto">
+            <div class="p-3 border-b border-border-dark hover:bg-white/[0.02] transition-all cursor-pointer">
+                <p class="text-[11px] text-white font-medium">System Ready</p>
+                <p class="text-[10px] text-text-sub">Performance module linked to live worker data.</p>
+                <p class="text-[9px] text-gray-500 mt-1">Just now</p>
+            </div>
+        </div>
+        <div class="p-2 text-center bg-surface-darker">
+            <button class="text-[10px] text-text-sub hover:text-white transition-all">View All Alerts</button>
+        </div>
+    </div>
+</div>
+<div class="h-8 w-[1px] bg-border-dark mx-1"></div>
+<button id="logoutBtn" class="flex items-center gap-3 hover:bg-surface-darker p-1.5 pr-3 rounded-full border border-transparent hover:border-border-dark transition-all cursor-pointer">
+<div class="size-9 rounded-full border border-border-dark shadow-sm overflow-hidden bg-surface-darker flex items-center justify-center">
+    <img src="admin.png" alt="Admin" class="w-full h-full object-cover">
+</div>
+<div class="hidden md:block text-left">
+    <p class="text-sm font-semibold text-gray-200 leading-none">Ali Khan</p>
+  </div>
+  <span class="material-symbols-outlined text-gray-500 text-sm">expand_more</span>
+</button>
+</div>
+</div>
+</header>
+
+<main class="flex-1 overflow-y-auto p-8">
+<div class="flex flex-col gap-8 max-w-[1400px] mx-auto">
+
+<!-- Metrics Row (now populated live from /api/performance) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-card-dark border border-border-dark p-5 rounded-xl flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<span class="text-[11px] font-bold text-text-muted uppercase tracking-wider">Avg Performance Score</span>
+<span class="material-symbols-outlined text-primary text-lg">trending_up</span>
+</div>
+<div class="flex items-baseline gap-2">
+<p id="metricAvgScore" class="text-3xl font-bold">0</p>
+<span class="text-xs text-text-sub font-medium">/ 100</span>
+</div>
+</div>
+<div class="bg-card-dark border border-border-dark p-5 rounded-xl flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<span class="text-[11px] font-bold text-text-muted uppercase tracking-wider">Top Performers</span>
+<span class="material-symbols-outlined text-primary text-lg">workspace_premium</span>
+</div>
+<div class="flex items-baseline gap-2">
+<p id="metricTopPerformers" class="text-3xl font-bold">0</p>
+<span class="text-xs text-text-sub font-medium">Elite Tier</span>
+</div>
+</div>
+<div class="bg-card-dark border border-border-dark p-5 rounded-xl flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<span class="text-[11px] font-bold text-text-muted uppercase tracking-wider">Avg Attendance %</span>
+<span class="material-symbols-outlined text-primary text-lg">verified_user</span>
+</div>
+<div class="flex items-baseline gap-2">
+<p id="metricAvgAttendance" class="text-3xl font-bold">0</p>
+<span class="text-xs text-text-sub font-medium">%</span>
+</div>
+</div>
+<div class="bg-card-dark border border-border-dark p-5 rounded-xl flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<span class="text-[11px] font-bold text-text-muted uppercase tracking-wider">Active Violations</span>
+<span class="material-symbols-outlined text-red-500 text-lg">warning</span>
+</div>
+<div class="flex items-baseline gap-2">
+<p id="metricViolations" class="text-3xl font-bold">0</p>
+<span class="text-xs text-text-sub font-medium">Total</span>
+</div>
+</div>
+</div>
+
+<div class="flex flex-col lg:flex-row gap-8">
+<!-- Table Section (Center) -->
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-xl font-bold">Performance Analytics</h2>
+<div class="flex items-center gap-3">
+<div class="relative">
+<select id="siteFilter" class="appearance-none bg-border-dark border-none rounded-lg pl-4 pr-10 py-2 text-xs font-semibold text-white focus:ring-primary cursor-pointer">
+<option value="All Sites">All Sites</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none text-sm">expand_more</span>
+</div>
+<div class="relative">
+<select id="tierFilter" class="appearance-none bg-border-dark border-none rounded-lg pl-4 pr-10 py-2 text-xs font-semibold text-white focus:ring-primary cursor-pointer">
+<option value="All">Rating Tier</option>
+<option value="Elite">Elite</option>
+<option value="Good">Good</option>
+<option value="Average">Average</option>
+<option value="Improvement Needed">Improvement</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none text-sm">expand_more</span>
+</div>
+</div>
+</div>
+<div class="bg-card-dark border border-border-dark rounded-xl overflow-x-auto">
+<table class="min-w-[1050px] w-full text-left border-collapse"><thead>
+<tr class="bg-border-dark/30 border-b border-border-dark">
+
+    <th class="w-[340px] px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400">
+        Worker Info
+    </th>
+
+    <th class="w-[150px] px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400 whitespace-nowrap">
+        ID Number
+    </th>
+
+    <th class="w-[150px] px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400 whitespace-nowrap">
+        Attendance
+    </th>
+
+    <th class="w-[150px] px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-400 whitespace-nowrap">
+        Safety Score
+    </th>
+
+    <th class="w-[220px] px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-gray-400 whitespace-nowrap">
+        Overall Rating
+    </th>
+
+</tr>
+</thead>
+<tbody id="performanceTableBody">
+<tr><td colspan="5" class="px-6 py-10 text-center text-xs text-text-sub">Loading worker performance…</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Action Panel (Right) -->
+<div class="w-full lg:w-80 shrink-0">
+<div class="bg-card-dark border border-border-dark rounded-xl p-6 flex flex-col gap-6 h-fit sticky top-0">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary">assignment_ind</span>
+<h3 class="font-bold">Evaluate Worker</h3>
+</div>
+<p id="evalWorkerLabel" class="text-[11px] text-text-sub -mt-3">Select a worker from the table to evaluate.</p>
+<div class="space-y-4">
+<div class="space-y-2">
+<label class="text-[10px] font-bold text-text-muted uppercase tracking-widest">Adjust Performance Rating</label>
+<div class="relative">
+<select id="ratingAction" class="w-full bg-background-dark border border-border-dark rounded-lg py-2 pl-3 pr-10 text-xs focus:ring-primary focus:border-primary appearance-none transition-all">
+<option>Maintain Current Tier</option>
+<option>Promote to Elite</option>
+<option>Mark for Coaching</option>
+<option>Probation Review</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none text-sm">unfold_more</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-bold text-text-muted uppercase tracking-widest">Log Positive Behavior</label>
+<textarea id="evalNote" class="w-full bg-background-dark border border-border-dark rounded-lg p-3 text-xs focus:ring-primary focus:border-primary placeholder:text-text-muted resize-none transition-all" placeholder="Describe commendable safety practices..." rows="3"></textarea>
+</div>
+<div class="space-y-3">
+<label class="text-[10px] font-bold text-text-muted uppercase tracking-widest">View Violation Impact</label>
+<div id="violationImpactBox" class="space-y-2">
+<div class="bg-primary/5 border border-primary/20 rounded-lg p-3 flex gap-3">
+<span class="material-symbols-outlined text-primary text-lg">info</span>
+<div>
+<p class="text-[11px] font-bold">No worker selected</p>
+<p class="text-[9px] text-text-muted leading-tight">Click a row in the table to load violation impact.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<button id="updateProfileBtn" class="w-full py-3 bg-primary text-background-dark font-bold text-sm rounded-lg hover:bg-primary/90 transition-all flex items-center justify-center gap-2 group shadow-lg shadow-primary/10">
+                                    Update Performance Profile
+                                    <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">send</span>
+</button>
+<p class="text-[9px] text-center text-text-muted">
+                                    Performance reports are computed live from attendance and violation records in Firebase.
+                                </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+<script>
+// =====================================================================
+// Worker Performance frontend - talks to backend /api/performance
+// =====================================================================
+const API_BASE = window.location.origin;
+let performanceData = [];
+let selectedWorkerID = null;
+
+// ===============================
+// Dummy Worker Data
+// ===============================
+const dummyPerformanceData = [
+{
+    workerID: "WK-001",
+    fullName: "Ahmed Khan",
+    siteAssignment: "Site A",
+    attendancePct: 96,
+    safetyScore: 94,
+    overall: 95,
+    tier: "Elite",
+    violationCount: 0,
+    photoURL: ""
+},
+{
+    workerID: "WK-002",
+    fullName: "Ali Raza",
+    siteAssignment: "Site B",
+    attendancePct: 82,
+    safetyScore: 76,
+    overall: 79,
+    tier: "Average",
+    violationCount: 3,
+    photoURL: ""
+}
+];
+
+function tierClass(tier) {
+    return "tier-" + tier.replace(/\s+/g, "-");
+}
+
+async function loadPerformance() {
+
+    try {
+
+        const res = await fetch(`${API_BASE}/api/performance`);
+
+        if (!res.ok) throw new Error("Backend not running");
+
+        const json = await res.json();
+
+        if (!json.success) throw new Error("No Data");
+
+        performanceData = json.data || [];
+
+        document.getElementById("metricAvgScore").textContent = json.avgScore ?? 0;
+        document.getElementById("metricTopPerformers").textContent = json.topPerformers ?? 0;
+        document.getElementById("metricAvgAttendance").textContent = json.avgAttendance ?? 0;
+        document.getElementById("metricViolations").textContent = json.activeViolations ?? 0;
+
+    } catch (err) {
+
+        console.log("Using Dummy Performance Data");
+
+        performanceData = dummyPerformanceData;
+
+        document.getElementById("metricAvgScore").textContent = "87";
+        document.getElementById("metricTopPerformers").textContent = "1";
+        document.getElementById("metricAvgAttendance").textContent = "89";
+        document.getElementById("metricViolations").textContent = "3";
+    }
+
+    populateSiteFilter();
+    renderTable(performanceData);
+}
+
+function populateSiteFilter() {
+
+    const sites = [...new Set(performanceData.map(p => p.siteAssignment).filter(Boolean))];
+
+    const select = document.getElementById("siteFilter");
+
+    select.innerHTML =
+        `<option value="All Sites">All Sites</option>` +
+        sites.map(site => `<option value="${site}">${site}</option>`).join("");
+}
+
+function renderTable(list) {
+
+    const tbody = document.getElementById("performanceTableBody");
+
+    if (!list.length) {
+        tbody.innerHTML = `
+        <tr>
+            <td colspan="5" class="text-center py-10 text-gray-400">
+                No workers found.
+            </td>
+        </tr>`;
+        return;
+    }
+
+    tbody.innerHTML = list.map(p => {
+
+        const initials = (p.fullName || "?")
+            .split(" ")
+            .map(x => x[0])
+            .join("")
+            .substring(0,2)
+            .toUpperCase();
+
+        return `
+        <tr class="border-b border-border-dark hover:bg-white/5 transition duration-200 cursor-pointer"
+            data-workerid="${p.workerID}">
+
+            <!-- Worker -->
+            <td class="px-6 py-5 w-[340px]">
+
+                <div class="flex items-center gap-4">
+
+                    <div class="w-12 h-12 rounded-full border border-gray-600 flex items-center justify-center font-bold text-gray-300 bg-zinc-900 shrink-0">
+
+                        ${
+                            p.photoURL
+                            ? `<img src="${p.photoURL}" class="w-full h-full rounded-full object-cover">`
+                            : initials
+                        }
+
+                    </div>
+
+                    <div>
+
+                        <h3 class="text-white font-semibold text-base">
+                            ${p.fullName}
+                        </h3>
+
+                        <p class="text-gray-400 text-sm">
+                            ${p.siteAssignment}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </td>
+
+            <!-- ID -->
+
+            <td class="px-6 py-5 w-[150px]">
+
+                <span class="text-gray-300 font-medium">
+                    ${p.workerID}
+                </span>
+
+            </td>
+
+            <!-- Attendance -->
+
+            <td class="px-6 py-5 w-[150px]">
+
+                <span class="text-white font-semibold">
+                    ${p.attendancePct}%
+                </span>
+
+            </td>
+
+            <!-- Safety -->
+
+            <td class="px-6 py-5 w-[150px]">
+
+                <span class="text-white font-semibold">
+                    ${p.safetyScore}
+                </span>
+
+            </td>
+
+            <!-- Rating -->
+
+            <td class="px-6 py-5 text-right w-[220px]">
+
+                <span class="inline-flex items-center justify-center px-5 py-2 rounded-full text-xs font-bold border whitespace-nowrap ${tierClass(p.tier)}">
+
+                    ${p.overall} • ${p.tier}
+
+                </span>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    }).join("");
+
+    tbody.querySelectorAll("tr[data-workerid]").forEach(row => {
+
+        row.onclick = () => {
+
+            selectWorker(row.dataset.workerid);
+
+        };
+
+    });
+
+}
+function selectWorker(workerID) {
+
+    selectedWorkerID = workerID;
+
+    const worker = performanceData.find(p => p.workerID === workerID);
+
+    if (!worker) return;
+
+    document.getElementById("evalWorkerLabel").textContent =
+        `Evaluating: ${worker.fullName} (${worker.workerID})`;
+
+    const box = document.getElementById("violationImpactBox");
+
+    if (worker.violationCount > 0) {
+
+        box.innerHTML = `
+        <div class="bg-red-500/5 border border-red-500/20 rounded-lg p-3 flex gap-3">
+
+            <span class="material-symbols-outlined text-red-500 text-lg">
+                no_accounts
+            </span>
+
+            <div>
+                <p class="text-[11px] font-bold text-red-500">
+                    ${worker.violationCount} Violation${worker.violationCount > 1 ? "s" : ""} Recorded
+                </p>
+
+                <p class="text-[9px] text-text-muted leading-tight">
+                    Impacting safety score for ${worker.fullName}.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="bg-primary/5 border border-primary/20 rounded-lg p-3 flex gap-3">
+
+            <span class="material-symbols-outlined text-primary text-lg">
+                info
+            </span>
+
+            <div>
+
+                <p class="text-[11px] font-bold">
+                    Safety Score: ${worker.safetyScore} / 100
+                </p>
+
+                <p class="text-[9px] text-text-muted leading-tight">
+                    -8 points applied per logged violation.
+                </p>
+
+            </div>
+
+        </div>`;
+    }
+
+    else {
+
+        box.innerHTML = `
+        <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-3 flex gap-3">
+
+            <span class="material-symbols-outlined text-emerald-500 text-lg">
+                check_circle
+            </span>
+
+            <div>
+
+                <p class="text-[11px] font-bold text-emerald-500">
+                    Clean Safety Record
+                </p>
+
+                <p class="text-[9px] text-text-muted leading-tight">
+                    No violations logged for ${worker.fullName}.
+                </p>
+
+            </div>
+
+        </div>`;
+    }
+
+}
+
+async function updateProfile() {
+
+    if (!selectedWorkerID) {
+
+        alert("Please select a worker from the table first.");
+
+        return;
+    }
+
+    const ratingAction =
+        document.getElementById("ratingAction").value;
+
+    const note =
+        document.getElementById("evalNote").value;
+
+    try {
+
+        const res = await fetch(`${API_BASE}/api/performance/evaluate`, {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                workerID: selectedWorkerID,
+                ratingAction,
+                note
+
+            })
+
+        });
+
+        const json = await res.json();
+
+        if (json.success) {
+
+            alert("Performance profile updated successfully.");
+
+            document.getElementById("evalNote").value = "";
+
+        }
+
+        else {
+
+            alert(json.error || "Update failed.");
+
+        }
+
+    }
+
+    catch (err) {
+
+        // Dummy Mode
+
+        alert(
+            "Dummy Mode\n\n" +
+            "Worker ID : " + selectedWorkerID +
+            "\nAction : " + ratingAction +
+            "\nNote : " + (note || "No Note") +
+            "\n\nPerformance profile updated successfully."
+        );
+
+        document.getElementById("evalNote").value = "";
+
+    }
+
+}
+
+function applyFilters() {
+
+    const search =
+        document.getElementById("performanceSearch").value.toLowerCase();
+
+    const site =
+        document.getElementById("siteFilter").value;
+
+    const tier =
+        document.getElementById("tierFilter").value;
+
+    const filtered = performanceData.filter(p => {
+
+        const matchesSearch =
+            !search ||
+            p.fullName.toLowerCase().includes(search) ||
+            p.workerID.toLowerCase().includes(search) ||
+            (p.siteAssignment || "").toLowerCase().includes(search);
+
+        const matchesSite =
+            site === "All Sites" ||
+            p.siteAssignment === site;
+
+        const matchesTier =
+            tier === "All" ||
+            p.tier === tier;
+
+        return matchesSearch && matchesSite && matchesTier;
+
+    });
+
+    renderTable(filtered);
+
+}
+
+// ==========================
+// Event Listeners
+// ==========================
+
+document.getElementById("performanceSearch").addEventListener("input", applyFilters);
+
+document.getElementById("siteFilter").addEventListener("change", applyFilters);
+
+document.getElementById("tierFilter").addEventListener("change", applyFilters);
+
+document.getElementById("updateProfileBtn").addEventListener("click", updateProfile);
+
+// ==========================
+// Notification Dropdown
+// ==========================
+
+document.getElementById("notifBtn").addEventListener("click", (e) => {
+
+    e.stopPropagation();
+
+    document.getElementById("notifDropdown").classList.toggle("hidden");
+
+});
+
+document.addEventListener("click", (e) => {
+
+    const dropdown = document.getElementById("notifDropdown");
+
+    if (
+        dropdown &&
+        !dropdown.contains(e.target) &&
+        e.target.id !== "notifBtn"
+    ) {
+        dropdown.classList.add("hidden");
+    }
+
+});
+
+// ==========================
+// Logout
+// ==========================
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+
+    window.location.href = "adminloginscreen.html";
+
+});
+
+// ==========================
+// Initial Load
+// ==========================
+
+loadPerformance();
+
+// ==========================
+// Auto Refresh Every 15 Seconds
+// Works with Backend & Dummy Data
+// ==========================
+
+setInterval(() => {
+
+    loadPerformance();
+
+}, 15000);
+</script>
+</body></html>

@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Report and Analysics- Safety Compliance System</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f97316",
+                        "primary-light": "#fdba74",
+                        "primary-dark": "#c2410c",
+                        "accent": "#fb923c",
+                        "background-dark": "#000000",
+                        "surface-dark": "#262626",
+                        "surface-darker": "#171717",
+                        "text-main": "#fafafa",
+                        "text-sub": "#a3a3a3",
+                        "border-dark": "#404040"
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.1)',
+                        'glow': '0 0 15px rgba(249, 115, 22, 0.15)'
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #18181b; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .icon-filled { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { background-color: #0f0f10; color: #e4e4e7; }
+        .pdf-btn-fix { display: flex !important; align-items: center !important; justify-content: center !important; width: 120px !important; height: 36px !important; white-space: nowrap; }
+        .filter-btn.active-filter { background-color: #f97316 !important; color: #fff !important; }
+        .filter-btn { background-color: transparent; color: #a3a3a3; }
+        #dateFrom, #dateTo, #workerSelect { color-scheme: dark; }
+        .toast-msg {
+            position: fixed; bottom: 24px; right: 24px; z-index: 200;
+            background: #171717; border: 1px solid #f97316; color: #fafafa;
+            padding: 12px 18px; border-radius: 10px; font-size: 13px;
+            box-shadow: 0 10px 25px rgba(0,0,0,.4); opacity: 0;
+            transform: translateY(10px); transition: all .25s ease; pointer-events: none;
+        }
+        .toast-msg.show { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body class="bg-background-dark font-display text-text-main antialiased overflow-hidden selection:bg-primary selection:text-white">
+<div class="flex h-screen w-full">
+<aside class="w-72 bg-black border-r border-border-dark flex-col hidden lg:flex z-30 flex-shrink-0">
+<div class="h-20 flex items-center px-8 border-b border-border-dark">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg size-8 shadow-sm flex-shrink-0 border border-border-dark relative">
+<div class="size-9 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white shadow-glow">
+    <img src="logo.png" alt="My Logo" class="h-6 w-6 object-contain" />
+  </div>
+</div>
+<h1 class="text-text-main text-lg font-bold leading-tight tracking-wide">SafeSite<span class="text-primary"></span></h1>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+<div class="px-4 mb-2"></div>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-sub rounded-lg hover:bg-surface-darker hover:text-white transition-colors group" href="Admin-Dashboard.html">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-white/5 text-white border border-neutral-700 shadow-soft mb-1 group" href="live monitoring.html">
+<span class="material-symbols-outlined text-orange-500">videocam</span>
+<span class="text-sm font-medium">Live Monitoring</span>
+<span class="ml-auto size-2 rounded-full bg-red-500 animate-pulse"></span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-orange-500/10 text-orange-500 shadow-glow-sub border border-orange-500/20 group relative overflow-hidden mb-1" href="attendance report.html">
+<div class="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-500"></div>
+<span class="material-symbols-outlined icon-filled">calendar_month</span>
+<span class="text-sm font-bold relative z-10">Attendance Reports</span>
+<span class="ml-auto bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg">Live</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workermanagementsystem.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">engineering</span>
+<span class="text-sm font-medium">Staff Management</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="live incident.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">crisis_alert</span>
+<span class="text-sm font-medium">Live Incidents</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="safety-compliance-ppe-detection.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">health_and_safety</span>
+<span class="text-sm font-medium">Safety Compliance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="violotion.html">
+<span class="material-symbols-outlined group-hover:text-red-400 transition-colors">warning_amber</span>
+<span class="text-sm font-medium">Violations</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="salary.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">payments</span>
+<span class="text-sm font-medium">Salary &amp; Rewards</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workerperformance.html">
+<span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">trending_up</span>
+<span class="text-sm font-medium">Performance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-orange-500/10 text-orange-500 shadow-glow-sub border border-orange-500/20 group relative overflow-hidden mb-1" href="reportandanalysics.html">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-500"></div>
+<span class="material-symbols-outlined icon-filled">analytics</span>
+<span class="text-sm font-bold relative z-10">Reports Center</span>
+</a>
+<div class="mt-auto px-2 pb-4 pt-8">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="systemsettingscreen.html">
+<span class="material-symbols-outlined group-hover:text-neutral-200 transition-colors">settings</span>
+<span class="text-sm font-medium">System Settings</span>
+</a>
+</div>
+</nav>
+</aside>
+<main class="flex-1 flex flex-col h-full overflow-hidden">
+<header class="h-20 flex-shrink-0 flex items-center justify-between px-8 bg-black border-b border-border-dark z-20">
+<div class="flex items-center gap-6">
+<div class="lg:hidden flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg size-9 shadow-sm flex-shrink-0 border border-border-dark relative">
+<div class="absolute inset-0 bg-orange-500/10 rounded-lg"></div>
+</div>
+</div>
+<div>
+<h2 class="text-xl font-bold text-white tracking-tight">Report and Analysis </h2>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden md:flex items-center">
+<span class="absolute left-3 text-text-sub material-symbols-outlined text-[20px]">search</span>
+<input id="searchInput" class="pl-10 pr-4 py-2 bg-surface-darker border border-border-dark rounded-lg w-64 text-sm text-text-main focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-600" placeholder="Search reports, logs ..." type="text"/></div>
+<div class="flex items-center gap-4">
+<button id="newReportBtn" class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        New Report
+                    </button>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative">
+    <button id="notifBtn" class="relative p-2 rounded-lg text-text-sub hover:bg-surface-darker transition-all">
+        <span class="material-symbols-outlined">notifications</span>
+        <span id="notifDot" class="absolute top-2 right-2 size-2 bg-primary rounded-full shadow-[0_0_10px_rgba(249,115,22,0.5)]"></span>
+    </button>
+    <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-72 bg-surface-dark border border-border-dark rounded-xl shadow-2xl z-[100] overflow-hidden">
+        <div class="p-3 border-b border-border-dark flex justify-between items-center bg-surface-darker">
+            <span class="text-xs font-bold text-white">Recent Activity</span>
+            <button onclick="clearNotifications()" class="text-[10px] text-primary hover:underline">Clear All</button>
+        </div>
+        <div id="notifList" class="max-h-60 overflow-y-auto">
+            <div class="p-3 border-b border-border-dark hover:bg-white/[0.02] transition-all cursor-pointer">
+                <p class="text-[11px] text-white font-medium">System Ready</p>
+                <p class="text-[10px] text-text-sub">Staff management database linked successfully.</p>
+                <p class="text-[9px] text-gray-500 mt-1">Just now</p>
+            </div>
+        </div>
+        <div class="p-2 text-center bg-surface-darker">
+            <button id="viewAllAlertsBtn" class="text-[10px] text-text-sub hover:text-white transition-all">View All Alerts</button>
+        </div>
+    </div>
+</div>
+<div class="h-8 w-[1px] bg-border-dark mx-1"></div>
+<button id="logoutBtn" class="flex items-center gap-3 hover:bg-surface-darker p-1.5 pr-3 rounded-full border border-transparent hover:border-border-dark transition-all cursor-pointer">
+<div class="size-9 rounded-full border border-border-dark shadow-sm overflow-hidden bg-surface-darker flex items-center justify-center">
+    <img src="admin.png" alt="Admin" class="w-full h-full object-cover">
+</div>
+<div class="hidden md:block text-left">
+    <p class="text-sm font-semibold text-gray-200 leading-none">Ali Khan</p>
+  </div>
+  <span class="material-symbols-outlined text-gray-500 text-sm">expand_more</span>
+</button>
+</div>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto overflow-x-hidden p-8 flex flex-col lg:flex-row gap-8">
+<div class="flex-1 space-y-8 max-w-full overflow-hidden">
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+<div class="bg-surface-dark p-5 rounded-xl border border-border-dark">
+<div class="flex justify-between items-start mb-3">
+<span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">analytics</span>
+<span id="totalReportsTrend" class="text-[10px] font-bold text-green-500">+0% vs last month</span>
+</div>
+<p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Reports</p>
+<h3 id="totalReportsCard" class="text-2xl font-bold text-white mt-1">0</h3>
+</div>
+<div class="bg-surface-dark p-5 rounded-xl border border-border-dark">
+<div class="flex justify-between items-start mb-3">
+<span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">pending_actions</span>
+<span class="text-[10px] font-bold text-slate-500">Normal</span>
+</div>
+<p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Pending Reviews</p>
+<h3 id="pendingReviewsCard" class="text-2xl font-bold text-white mt-1">0</h3>
+</div>
+<div class="bg-surface-dark p-5 rounded-xl border border-border-dark">
+<div class="flex justify-between items-start mb-3">
+<span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">verified</span>
+<span class="text-[10px] font-bold text-green-500">Top Rated</span>
+</div>
+<p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Compliance Accuracy</p>
+<h3 id="complianceCard" class="text-2xl font-bold text-white mt-1">0%</h3>
+</div>
+<div class="bg-surface-dark p-5 rounded-xl border border-border-dark">
+<div class="flex justify-between items-start mb-3">
+<span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">calendar_month</span>
+<span class="text-[10px] font-bold text-slate-500">Automated</span>
+</div>
+<p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Scheduled Reports</p>
+<h3 id="scheduledCard" class="text-2xl font-bold text-white mt-1">0</h3>
+</div>
+</div>
+<div class="bg-surface-dark rounded-xl border border-border-dark overflow-hidden flex flex-col">
+<div class="p-6 border-b border-border-dark flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h2 class="text-xl font-bold text-white">Report Repository</h2>
+<p class="text-slate-400 text-sm mt-1">Manage and access all system-generated compliance documentation.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center bg-border-dark/50 rounded-lg p-1 border border-border-dark">
+<button data-filter="All" class="filter-btn active-filter px-3 py-1.5 text-xs font-bold rounded-md transition-colors">All</button>
+<button data-filter="Safety" class="filter-btn px-3 py-1.5 text-xs font-bold rounded-md transition-colors hover:text-white">Safety</button>
+<button data-filter="Attendance" class="filter-btn px-3 py-1.5 text-xs font-bold rounded-md transition-colors hover:text-white">Attendance</button>
+</div>
+<button id="refreshBtn" class="flex items-center gap-2 border border-border-dark px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-border-dark transition-all">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+                                    Refresh
+                                </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="text-slate-500 text-[10px] uppercase tracking-widest border-b border-border-dark bg-border-dark/20">
+<th class="px-6 py-4 font-bold">Report Name</th>
+<th class="px-6 py-4 font-bold">Generated By</th>
+<th class="px-6 py-4 font-bold">Date</th>
+<th class="px-6 py-4 font-bold">File Type</th>
+<th class="px-6 py-4 font-bold">Status</th>
+<th class="px-6 py-4 font-bold text-right">Actions</th>
+</tr>
+</thead>
+<tbody id="reportsTableBody" class="text-sm">
+<tr>
+<td colspan="6" class="px-6 py-8 text-center text-slate-500 text-sm">Loading reports...</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-border-dark flex items-center justify-between text-xs text-slate-500">
+<span id="paginationInfo">Showing 0-0 of 0 results</span>
+<div class="flex gap-2">
+<button id="prevPageBtn" class="px-2 py-1 border border-border-dark rounded hover:bg-border-dark transition-colors">Previous</button>
+<button id="nextPageBtn" class="px-2 py-1 border border-border-dark rounded hover:bg-border-dark transition-colors">Next</button>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full lg:w-80 shrink-0 space-y-6">
+<div id="generatePanel" class="bg-surface-dark rounded-xl border border-border-dark overflow-hidden shadow-2xl">
+<div class="p-6 bg-primary/10 border-b border-primary/20">
+<h3 class="text-lg font-bold text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">add_chart</span>
+                                Generate Report
+                            </h3>
+<p class="text-slate-400 text-xs mt-1">Configure parameters for custom export</p>
+</div>
+<div class="p-6 space-y-6">
+<div class="space-y-2">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Select Module</label>
+<div class="relative">
+<select id="moduleSelect" class="w-full bg-border-dark/50 border-border-dark rounded-lg text-sm text-white focus:ring-primary focus:border-primary appearance-none py-2.5 px-4">
+<option value="Safety Compliance">Safety Compliance</option>
+<option value="PPE Detection Logs">PPE Detection Logs</option>
+<option value="Worker Attendance">Worker Attendance</option>
+<option value="Hazard Incident Analysis">Hazard Incident Analysis</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Worker (optional)</label>
+<div class="relative">
+<select id="workerSelect" class="w-full bg-border-dark/50 border-border-dark rounded-lg text-sm text-white focus:ring-primary focus:border-primary appearance-none py-2.5 px-4">
+<option value="">All Workers</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Date Range</label>
+<div class="flex items-center gap-2">
+<input id="dateFrom" class="w-1/2 bg-border-dark/50 border-border-dark rounded-lg text-xs text-white px-3 py-2.5 focus:ring-primary focus:border-primary" type="date"/>
+<span class="text-slate-500 text-xs">to</span>
+<input id="dateTo" class="w-1/2 bg-border-dark/50 border-border-dark rounded-lg text-xs text-white px-3 py-2.5 focus:ring-primary focus:border-primary" type="date"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Export Format</label>
+<div class="grid grid-cols-2 gap-2">
+<label class="cursor-pointer">
+<input checked="" class="hidden peer" name="format" type="radio" value="pdf"/>
+<div class="flex items-center justify-center gap-2 py-3 rounded-lg border border-border-dark bg-border-dark/30 text-slate-400 peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:text-white transition-all">
+<span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+<span class="text-xs font-bold">PDF</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="hidden peer" name="format" type="radio" value="excel"/>
+<div class="flex items-center justify-center gap-2 py-3 rounded-lg border border-border-dark bg-border-dark/30 text-slate-400 peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:text-white transition-all">
+<span class="material-symbols-outlined text-[20px]">table_view</span>
+<span class="text-xs font-bold">EXCEL</span>
+</div>
+</label>
+</div>
+</div>
+<div class="flex items-center gap-2 py-2">
+<input class="size-4 bg-border-dark rounded border-slate-700 text-primary focus:ring-primary focus:ring-offset-background-dark" id="schedule" type="checkbox"/>
+<label class="text-xs text-slate-400 cursor-pointer" for="schedule">Schedule automatic delivery to email</label>
+</div>
+<div id="frequencyWrap" class="hidden space-y-2">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Frequency</label>
+<div class="relative">
+<select id="frequencySelect" class="w-full bg-border-dark/50 border-border-dark rounded-lg text-sm text-white focus:ring-primary focus:border-primary appearance-none py-2.5 px-4">
+<option value="daily">Daily</option>
+<option value="weekly">Weekly</option>
+<option value="monthly">Monthly</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">expand_more</span>
+</div>
+</div>
+<button id="generateBtn" class="w-full py-4 bg-primary text-white rounded-xl font-bold text-sm shadow-xl shadow-primary/30 hover:bg-primary/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-4">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span id="generateBtnLabel">Generate &amp; Download</span>
+</button>
+</div>
+</div>
+<div class="bg-surface-dark rounded-xl border border-border-dark p-6">
+<h4 class="text-xs font-bold text-white uppercase tracking-wider mb-4">AI Insight of the Week</h4>
+<div id="insightBox" class="bg-primary/5 border-l-2 border-primary p-4 rounded-r-lg">
+<p class="text-[11px] leading-relaxed text-slate-300 italic">Generate a report to see fresh insights here.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<div id="toast" class="toast-msg"></div>
+<script>
+/* ==========================================================
+   REPORT & ANALYSIS SCREEN - FRONTEND LOGIC
+   Talks to the Node/Express backend (index.js) on same origin.
+   ========================================================== */
+/* IMPORTANT: yeh page hamesha backend (Node/Express, port 5000) se hi
+   khulna chahiye, e.g. http://localhost:5000/reportandanalysics.html —
+   PUBLIC_DIR wahi se serve hota hai (app.use(express.static(PUBLIC_DIR))).
+   Agar kabhi file ko seedha double-click kiya jaye (file://) ya kisi
+   alag Live Server (jaise VS Code ka 127.0.0.1:5500) se khola jaye,
+   to relative fetch("/api/...") galat server ko hit karega aur wahan
+   se HTML 404 page wapas aayega. Yeh check isay khud detect kar ke
+   hamesha sahi backend (localhost:5000) par redirect karta hai.
+   Agar aapka backend kisi doosre port/host par chal raha ho, sirf
+   neeche wali BACKEND_URL line badal dein. */
+const BACKEND_URL = "http://localhost:5000";
+const API_BASE = (location.protocol === "file:" || location.origin !== BACKEND_URL)
+    ? BACKEND_URL
+    : "";
+
+let allReports = [];
+let currentFilter = "All";
+let currentPage = 1;
+const PAGE_SIZE = 10;
+const LOCAL_KEY = "safesite_local_reports";
+
+/* Dummy sample reports — hamesha table mein dikhte hain (backend ho ya na ho),
+   taake repository kabhi bilkul khali na lage. */
+const DUMMY_REPORTS = [
+    {
+        id: "dummy-1",
+        name: "Weekly PPE Compliance Report",
+        module: "Safety Compliance",
+        generatedBy: "Ali Khan",
+        dateGenerated: new Date(Date.now() - 86400000 * 1).getTime(),
+        fileType: "PDF",
+        status: "READY",
+        filePath: null
+    },
+    {
+        id: "dummy-2",
+        name: "August Worker Attendance Summary",
+        module: "Worker Attendance",
+        generatedBy: "System (Automated)",
+        dateGenerated: new Date(Date.now() - 86400000 * 3).getTime(),
+        fileType: "Excel",
+        status: "SCHEDULED",
+        filePath: null
+    }
+];
+
+/* Reports generated/scheduled while backend is unreachable are saved here
+   so they survive a page refresh even without a server. */
+function getLocalReports() {
+    try {
+        return JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
+    } catch (e) {
+        return [];
+    }
+}
+function saveLocalReport(report) {
+    const list = getLocalReports();
+    list.unshift(report);
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
+}
+
+function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 3200);
+}
+
+function fileIcon(fileType) {
+    if ((fileType || "").toLowerCase().includes("pdf")) {
+        return '<span class="material-symbols-outlined text-red-500">picture_as_pdf</span><span class="text-xs font-medium">PDF</span>';
+    }
+    return '<span class="material-symbols-outlined text-green-600">table_view</span><span class="text-xs font-medium">Excel</span>';
+}
+
+function statusBadge(status) {
+    const s = (status || "").toUpperCase();
+    if (s === "READY") return '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-green-500/10 text-green-500 border border-green-500/20">READY</span>';
+    if (s === "PROCESSING" || s === "SCHEDULED") return `<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 animate-pulse">${s}</span>`;
+    return '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-500/10 text-slate-500 border border-slate-500/20">ARCHIVED</span>';
+}
+
+function moduleCategory(moduleName) {
+    const m = (moduleName || "").toLowerCase();
+    if (m.includes("attendance")) return "Attendance";
+    return "Safety";
+}
+
+function renderReportsTable() {
+    const tbody = document.getElementById("reportsTableBody");
+    const searchVal = (document.getElementById("searchInput").value || "").toLowerCase();
+
+    let filtered = allReports.filter(r => {
+        const matchesFilter = currentFilter === "All" || moduleCategory(r.module) === currentFilter;
+        const matchesSearch = !searchVal ||
+            (r.name || "").toLowerCase().includes(searchVal) ||
+            (r.generatedBy || "").toLowerCase().includes(searchVal) ||
+            (r.module || "").toLowerCase().includes(searchVal);
+        return matchesFilter && matchesSearch;
+    });
+
+    filtered.sort((a, b) => (b.dateGenerated || 0) - (a.dateGenerated || 0));
+
+    const totalResults = filtered.length;
+    const totalPages = Math.max(1, Math.ceil(totalResults / PAGE_SIZE));
+    if (currentPage > totalPages) currentPage = totalPages;
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const pageItems = filtered.slice(start, start + PAGE_SIZE);
+
+    if (pageItems.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-slate-500 text-sm">No reports found.</td></tr>`;
+    } else {
+        tbody.innerHTML = pageItems.map(r => `
+            <tr class="border-b border-border-dark hover:bg-white/5 transition-colors group">
+                <td class="px-6 py-4">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-white">${r.name}</span>
+                        <span class="text-[10px] text-slate-500 uppercase font-bold mt-1">${r.module || ""}</span>
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-slate-400">${r.generatedBy || "Admin"}</td>
+                <td class="px-6 py-4 text-slate-400">${r.dateGenerated ? new Date(r.dateGenerated).toLocaleDateString() : "--"}</td>
+                <td class="px-6 py-4"><div class="flex items-center gap-2">${fileIcon(r.fileType)}</div></td>
+                <td class="px-6 py-4">${statusBadge(r.status)}</td>
+                <td class="px-6 py-4 text-right">
+                    ${(r.status || "").toUpperCase() === "SCHEDULED"
+                        ? `<span class="text-slate-700 cursor-not-allowed inline-flex" title="Scheduled — no file yet"><span class="material-symbols-outlined">hourglass_empty</span></span>`
+                        : `<button data-report-id="${r.id}" class="download-btn text-slate-500 hover:text-primary transition-colors inline-flex" title="Download"><span class="material-symbols-outlined">download</span></button>`
+                    }
+                </td>
+            </tr>
+        `).join("");
+
+        document.querySelectorAll(".download-btn").forEach(btn => {
+            btn.addEventListener("click", () => downloadReportById(btn.dataset.reportId));
+        });
+    }
+
+    document.getElementById("paginationInfo").textContent =
+        `Showing ${totalResults === 0 ? 0 : start + 1}-${Math.min(start + PAGE_SIZE, totalResults)} of ${totalResults} results`;
+}
+
+async function loadReports() {
+    let backendReports = [];
+    let backendOk = false;
+
+    try {
+        const res = await fetch(`${API_BASE}/api/reports`);
+        const ct = res.headers.get("Content-Type") || "";
+        if (res.ok && ct.includes("application/json")) {
+            const data = await res.json();
+            if (data.success) {
+                backendReports = data.data || [];
+                backendOk = true;
+            }
+        }
+    } catch (err) {
+        console.warn("Backend not reachable, using local + dummy data only:", err.message);
+    }
+
+    // Hamesha teenon combine karo: backend (agar mila) + locally saved
+    // (backend ke bagair generate/schedule kiye gaye) + fixed dummy samples.
+    allReports = [...backendReports, ...getLocalReports(), ...DUMMY_REPORTS];
+
+    const totalReports = allReports.length;
+    const pendingReviews = allReports.filter(r => (r.status || "").toUpperCase() === "PROCESSING").length;
+    const scheduledReports = allReports.filter(r => (r.status || "").toUpperCase() === "SCHEDULED").length;
+    const readyCount = allReports.filter(r => (r.status || "").toUpperCase() === "READY").length;
+    const complianceAccuracy = totalReports === 0 ? 0 : Math.round((readyCount / totalReports) * 100);
+
+    document.getElementById("totalReportsCard").textContent = totalReports;
+    document.getElementById("pendingReviewsCard").textContent = pendingReviews;
+    document.getElementById("complianceCard").textContent = complianceAccuracy + "%";
+    document.getElementById("scheduledCard").textContent = scheduledReports;
+
+    if (!backendOk) {
+        showToast("Backend not connected — showing saved + sample reports.");
+    }
+
+    renderReportsTable();
+}
+
+async function loadWorkersIntoSelect() {
+    try {
+        const res = await fetch(`${API_BASE}/api/workers?limit=1000`);
+        const data = await res.json();
+        const select = document.getElementById("workerSelect");
+        if (data.success && Array.isArray(data.data)) {
+            data.data.forEach(w => {
+                const opt = document.createElement("option");
+                opt.value = w.workerID;
+                opt.textContent = `${w.fullName} (${w.workerID})`;
+                select.appendChild(opt);
+            });
+        }
+    } catch (err) {
+        console.error("Failed to load workers:", err);
+    }
+}
+
+document.getElementById("searchInput").addEventListener("input", () => {
+    currentPage = 1;
+    renderReportsTable();
+});
+
+document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active-filter"));
+        btn.classList.add("active-filter");
+        currentFilter = btn.dataset.filter;
+        currentPage = 1;
+        renderReportsTable();
+    });
+});
+
+document.getElementById("prevPageBtn").addEventListener("click", () => {
+    if (currentPage > 1) { currentPage--; renderReportsTable(); }
+});
+document.getElementById("nextPageBtn").addEventListener("click", () => {
+    currentPage++; renderReportsTable();
+});
+
+document.getElementById("refreshBtn").addEventListener("click", loadReports);
+
+document.getElementById("newReportBtn").addEventListener("click", () => {
+    document.getElementById("generatePanel").scrollIntoView({ behavior: "smooth", block: "center" });
+    document.getElementById("generatePanel").classList.add("ring-2", "ring-primary");
+    setTimeout(() => document.getElementById("generatePanel").classList.remove("ring-2", "ring-primary"), 1200);
+});
+
+const notifBtn = document.getElementById("notifBtn");
+const notifDropdown = document.getElementById("notifDropdown");
+const notifDot = document.getElementById("notifDot");
+
+notifBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    notifDropdown.classList.toggle("hidden");
+    if (!notifDropdown.classList.contains("hidden")) {
+        loadNotifications();
+        notifDot.classList.add("hidden");
+    }
+});
+document.addEventListener("click", (e) => {
+    if (!notifDropdown.contains(e.target) && e.target !== notifBtn) {
+        notifDropdown.classList.add("hidden");
+    }
+});
+
+async function loadNotifications() {
+    const list = document.getElementById("notifList");
+    const recent = allReports.slice(0, 5);
+    if (recent.length === 0) {
+        list.innerHTML = `<div class="p-3 text-[11px] text-slate-500">No recent activity.</div>`;
+        return;
+    }
+    list.innerHTML = recent.map(r => `
+        <div class="p-3 border-b border-border-dark hover:bg-white/[0.02] transition-all cursor-pointer notif-item" data-file="${r.filePath || ''}">
+            <p class="text-[11px] text-white font-medium">${r.name}</p>
+            <p class="text-[10px] text-text-sub">${r.status} • ${r.module || ""}</p>
+            <p class="text-[9px] text-gray-500 mt-1">${r.dateGenerated ? new Date(r.dateGenerated).toLocaleString() : ""}</p>
+        </div>
+    `).join("");
+    document.querySelectorAll(".notif-item").forEach(item => {
+        item.addEventListener("click", () => {
+            const file = item.dataset.file;
+            if (file && file !== "#") window.open(file, "_blank");
+            notifDropdown.classList.add("hidden");
+        });
+    });
+}
+
+function clearNotifications() {
+    document.getElementById("notifList").innerHTML = `<div class="p-3 text-[11px] text-slate-500">No new notifications.</div>`;
+    notifDot.classList.add("hidden");
+}
+
+// Table ke "Actions" column ke download button ka handler. Agar report
+// backend ki asal file hai (filePath maujood) to seedha wahi download
+// hoti hai; agar yeh dummy/local/offline entry hai (koi file store nahi
+// hui) to isi waqt ek real PDF/CSV client-side generate ho kar download hoti hai.
+async function downloadReportById(id) {
+    const report = allReports.find(r => String(r.id) === String(id));
+    if (!report) {
+        showToast("Report not found.");
+        return;
+    }
+
+    if (report.filePath) {
+        const url = report.filePath.startsWith("http") ? report.filePath : `${API_BASE}${report.filePath}`;
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = report.name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        showToast(`Downloading ${report.name}...`);
+        return;
+    }
+
+    // No stored file (dummy sample / offline record) -> build it now.
+    const { headers, rows } = sampleRowsForModule(report.module);
+    const metaLines = [
+        `Report Type: ${report.module || "Safety Compliance"}`,
+        `Generated By: ${report.generatedBy || "Admin"}`,
+        `Generated On: ${report.dateGenerated ? new Date(report.dateGenerated).toLocaleString() : new Date().toLocaleString()}`
+    ];
+    const isExcel = (report.fileType || "").toLowerCase().includes("excel");
+
+    let blob;
+    if (isExcel) {
+        blob = buildClientCsvBlob(report.module || "Report", metaLines, headers, rows);
+    } else {
+        const tableLines = [headers.join("  |  "), ...rows.map(r => r.join("  |  "))];
+        blob = buildClientPdfBlob(report.module || "Report", metaLines, tableLines);
+    }
+
+    const ext = isExcel ? "csv" : "pdf";
+    const filename = /\.(pdf|csv|xlsx)$/i.test(report.name) ? report.name : `${report.name}.${ext}`;
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+    showToast(`Downloaded ${filename}`);
+}
+
+document.getElementById("viewAllAlertsBtn").addEventListener("click", () => {
+    notifDropdown.classList.add("hidden");
+    document.querySelector('a[href="live incident.html"]').click();
+});
+
+/* ==========================================================
+   OFFLINE FALLBACK: real PDF/CSV built in the browser when the
+   Node backend isn't reachable, so Generate & Schedule keep
+   working (and keep showing up in the table) with no server.
+   ========================================================== */
+
+function escapePdfText(s) {
+    return String(s).replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+}
+
+// Minimal but valid single-page PDF (title band + meta lines + a few
+// sample rows) built with raw PDF syntax — no external library needed.
+function buildClientPdfBlob(title, metaLines, tableLines) {
+    const PAGE_W = 612, PAGE_H = 792, MARGIN = 40;
+    const ops = [];
+    ops.push(`0.976 0.451 0.086 rg`);
+    ops.push(`0 ${PAGE_H - 70} ${PAGE_W} 70 re f`);
+    ops.push(`BT /F2 18 Tf 1 1 1 rg 1 0 0 1 ${MARGIN} ${PAGE_H - 42} Tm (${escapePdfText(title)}) Tj ET`);
+    ops.push(`BT /F1 10 Tf 1 1 1 rg 1 0 0 1 ${MARGIN} ${PAGE_H - 58} Tm (SafeSite Compliance & Workforce Management System) Tj ET`);
+
+    let y = PAGE_H - 95;
+    ops.push(`BT /F2 9 Tf 0 0 0 rg`);
+    metaLines.forEach(line => { ops.push(`1 0 0 1 ${MARGIN} ${y} Tm (${escapePdfText(line)}) Tj`); y -= 14; });
+    ops.push(`ET`);
+
+    y -= 10;
+    ops.push(`BT /F1 8.5 Tf 0.2 0.2 0.2 rg`);
+    tableLines.forEach(line => {
+        if (y < 60) return;
+        ops.push(`1 0 0 1 ${MARGIN} ${y} Tm (${escapePdfText(line)}) Tj`);
+        y -= 14;
+    });
+    ops.push(`ET`);
+    ops.push(`BT /F1 7 Tf 0.4 0.4 0.4 rg 1 0 0 1 ${MARGIN} 35 Tm (Generated offline by SafeSite \\(no backend connection\\)  |  ${escapePdfText(new Date().toLocaleString())}) Tj ET`);
+
+    const stream = ops.join("\n");
+    const objects = [
+        { num: 1, body: `<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>` },
+        { num: 2, body: `<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>` },
+        { num: 3, stream },
+        { num: 4, body: `<< /Type /Page /Parent 5 0 R /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /MediaBox [0 0 ${PAGE_W} ${PAGE_H}] /Contents 3 0 R >>` },
+        { num: 5, body: `<< /Type /Pages /Kids [4 0 R] /Count 1 >>` },
+        { num: 6, body: `<< /Type /Catalog /Pages 5 0 R >>` }
+    ];
+
+    let pdf = "%PDF-1.4\n";
+    const offsets = {};
+    objects.forEach(o => {
+        offsets[o.num] = new TextEncoder().encode(pdf).length;
+        if (o.stream !== undefined) {
+            const len = new TextEncoder().encode(o.stream).length;
+            pdf += `${o.num} 0 obj\n<< /Length ${len} >>\nstream\n${o.stream}\nendstream\nendobj\n`;
+        } else {
+            pdf += `${o.num} 0 obj\n${o.body}\nendobj\n`;
+        }
+    });
+    const xrefStart = new TextEncoder().encode(pdf).length;
+    let xref = `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+    for (let n = 1; n <= objects.length; n++) {
+        xref += `${String(offsets[n]).padStart(10, "0")} 00000 n \n`;
+    }
+    pdf += xref;
+    pdf += `trailer\n<< /Size ${objects.length + 1} /Root 6 0 R >>\nstartxref\n${xrefStart}\n%%EOF`;
+
+    return new Blob([pdf], { type: "application/pdf" });
+}
+
+function csvEscape(val) {
+    const s = val === undefined || val === null ? "" : String(val);
+    return (s.includes(",") || s.includes('"') || s.includes("\n")) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+function buildClientCsvBlob(title, metaLines, headers, rows) {
+    let csv = csvEscape(title) + "\n";
+    metaLines.forEach(l => csv += csvEscape(l) + "\n");
+    csv += "\n" + headers.map(csvEscape).join(",") + "\n";
+    rows.forEach(r => csv += r.map(csvEscape).join(",") + "\n");
+    return new Blob([csv], { type: "text/csv" });
+}
+
+// Sample rows so the offline-generated file isn't empty — mirrors the
+// shape the real backend would pull from Firebase for each module.
+function sampleRowsForModule(mod) {
+    const m = (mod || "").toLowerCase();
+    if (m.includes("attendance")) {
+        return {
+            headers: ["Worker ID", "Name", "Date", "Check-In", "Check-Out", "Status"],
+            rows: [
+                ["WK-1001", "Ali Khan", new Date().toLocaleDateString(), "08:02 AM", "05:10 PM", "Completed"],
+                ["WK-1002", "Sana Malik", new Date().toLocaleDateString(), "08:15 AM", "--:--", "Present"]
+            ]
+        };
+    }
+    if (m.includes("hazard") || m.includes("incident")) {
+        return {
+            headers: ["Incident ID", "Severity", "Description", "Location", "Status"],
+            rows: [
+                ["INC-501", "Medium", "Loose scaffolding railing", "Site B", "Open"],
+                ["INC-502", "Low", "Missing signage near excavation", "Site A", "Resolved"]
+            ]
+        };
+    }
+    return {
+        headers: ["Worker ID", "Name", "Site", "Violations", "Safety Score", "Compliance Status"],
+        rows: [
+            ["WK-1001", "Ali Khan", "Site A", "0", "100", "Compliant"],
+            ["WK-1002", "Sana Malik", "Site B", "2", "84", "Needs Review"]
+        ]
+    };
+}
+
+// Builds the file (or just a schedule record), triggers download when
+// applicable, and always saves a record locally so it shows in the table.
+function generateOffline(payload) {
+    const { module: mod, dateFrom, dateTo, format, workerID, schedule, frequency } = payload;
+    const chosenModule = mod || "Safety Compliance";
+    const now = Date.now();
+    const rangeLabel = (dateFrom || dateTo) ? `${dateFrom || "…"}  to  ${dateTo || "…"}` : "All available data";
+    const workerLabel = workerID
+        ? (document.getElementById("workerSelect").selectedOptions[0]?.textContent || workerID)
+        : "All Workers";
+    const metaLines = [
+        `Report Type: ${chosenModule}`,
+        `Worker: ${workerLabel}`,
+        `Date Range: ${rangeLabel}`,
+        `Generated By: Ali Khan (Admin)  |  Generated On: ${new Date(now).toLocaleString()}`
+    ];
+
+    if (schedule) {
+        const record = {
+            id: "local-" + now,
+            name: `${chosenModule.replace(/\s+/g, "_")}_${frequency}_schedule`,
+            module: chosenModule,
+            generatedBy: "Admin",
+            dateGenerated: now,
+            fileType: format === "excel" ? "Excel" : "PDF",
+            status: "SCHEDULED",
+            filePath: null
+        };
+        saveLocalReport(record);
+        showToast(`Report scheduled to run ${frequency}. (Saved locally — no backend connected)`);
+        document.querySelector("#insightBox p").textContent =
+            `A ${frequency} ${chosenModule} report is scheduled and will appear here each cycle.`;
+        return;
+    }
+
+    const { headers, rows } = sampleRowsForModule(chosenModule);
+    const ext = format === "excel" ? "csv" : "pdf";
+    const displayName = `${chosenModule.replace(/\s+/g, "_")}_${new Date(now).toISOString().split("T")[0]}.${ext}`;
+
+    let blob;
+    if (format === "excel") {
+        blob = buildClientCsvBlob(`${chosenModule} Report`, metaLines, headers, rows);
+    } else {
+        const tableLines = [headers.join("  |  "), ...rows.map(r => r.join("  |  "))];
+        blob = buildClientPdfBlob(`${chosenModule} Report`, metaLines, tableLines);
+    }
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = displayName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+
+    const record = {
+        id: "local-" + now,
+        name: displayName,
+        module: chosenModule,
+        generatedBy: "Admin",
+        dateGenerated: now,
+        fileType: format === "excel" ? "Excel" : "PDF",
+        status: "READY",
+        filePath: null
+    };
+    saveLocalReport(record);
+    showToast("Report generated and downloaded (offline — no backend connected).");
+}
+
+const scheduleCheckbox = document.getElementById("schedule");
+const frequencyWrap = document.getElementById("frequencyWrap");
+scheduleCheckbox.addEventListener("change", () => {
+    frequencyWrap.classList.toggle("hidden", !scheduleCheckbox.checked);
+    document.getElementById("generateBtnLabel").textContent = scheduleCheckbox.checked ? "Save Schedule" : "Generate & Download";
+});
+
+document.getElementById("generateBtn").addEventListener("click", async () => {
+    const btn = document.getElementById("generateBtn");
+    const originalLabel = document.getElementById("generateBtnLabel").textContent;
+    const payload = {
+        module: document.getElementById("moduleSelect").value,
+        workerID: document.getElementById("workerSelect").value,
+        dateFrom: document.getElementById("dateFrom").value,
+        dateTo: document.getElementById("dateTo").value,
+        format: document.querySelector('input[name="format"]:checked').value,
+        schedule: scheduleCheckbox.checked,
+        frequency: document.getElementById("frequencySelect").value
+    };
+
+    btn.disabled = true;
+    document.getElementById("generateBtnLabel").textContent = "Working...";
+
+    try {
+        const res = await fetch(`${API_BASE}/api/reports/generate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        const contentType = res.headers.get("Content-Type") || "";
+
+        // SAFETY: agar server (ya galat host) HTML wapas de raha hai — jaise
+        // koi 404/error page — to usay kabhi bhi report file samajh kar
+        // download NA karein. Yeh wahi bug fix karta hai jahan asal PDF/Excel
+        // ki jagah ek .html file download ho rahi thi.
+        if (!res.ok || contentType.includes("text/html")) {
+            const text = await res.text();
+            console.warn("Backend returned an unexpected response, falling back to offline mode:", text.slice(0, 200));
+            generateOffline(payload);
+            await loadReports();
+            return;
+        }
+
+        if (contentType.includes("application/json")) {
+            const data = await res.json();
+            if (data.success) {
+                showToast(data.message || "Saved successfully.");
+                if (data.insight) {
+                    document.querySelector("#insightBox p").textContent = data.insight;
+                }
+            } else {
+                showToast(data.error || "Something went wrong.");
+            }
+        } else {
+            // Binary file response (real PDF/CSV from backend) -> trigger download
+            const blob = await res.blob();
+            const disposition = res.headers.get("Content-Disposition") || "";
+            const match = disposition.match(/filename="?([^"]+)"?/);
+            const filename = match ? match[1] : "report";
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            showToast("Report generated and downloaded.");
+        }
+
+        await loadReports();
+    } catch (err) {
+        console.warn("Backend not reachable, generating offline instead:", err.message);
+        generateOffline(payload);
+        await loadReports();
+    } finally {
+        btn.disabled = false;
+        document.getElementById("generateBtnLabel").textContent = originalLabel;
+    }
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+    window.location.href = "adminloginscreen.html";
+});
+
+/* ---------- Init ---------- */
+loadReports();
+loadWorkersIntoSelect();
+</script>
+</body></html>

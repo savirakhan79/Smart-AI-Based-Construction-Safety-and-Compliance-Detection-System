@@ -1,0 +1,5 @@
+[
+  { "workerId": "W001", "workerName": "Ali", "date": "2026-01-10", "checkIn": "09:00", "checkOut": "17:00", "totalHours": 8, "status": "Present" },
+  { "workerId": "W002", "workerName": "Sara", "date": "2026-01-10", "checkIn": "09:15", "checkOut": "17:00", "totalHours": 7.75, "status": "Late" },
+  { "workerId": "W003", "workerName": "Ahmed", "date": "2026-01-10", "checkIn": null, "checkOut": null, "totalHours": 0, "status": "Absent" }
+]

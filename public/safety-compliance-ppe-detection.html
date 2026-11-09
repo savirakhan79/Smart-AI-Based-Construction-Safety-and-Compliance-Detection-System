@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Safety Compliance &amp; PPE Reports</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#FF6D00", 
+                        "primary-hover": "#FF8F00",
+                        "secondary": "#282828",
+                        "bg-dark": "#0a0a0a",
+                        "bg-card": "#121212",
+                        "border-dark": "#27272a",
+                        "text-main": "#FFFFFF",
+                        "text-muted": "#A1A1AA",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #121212;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+    </style>
+</head>
+<body class="bg-bg-dark min-h-screen flex flex-col font-display text-text-main overflow-x-hidden">
+
+<header class="sticky top-0 z-50 w-full border-b border-border-dark bg-bg-card px-6 py-3 shadow-lg shadow-black/50 h-[72px] flex-none">
+    <div class="flex items-center gap-4">
+        <div class="flex flex-1 justify-end gap-6 items-center">
+            <div class="hidden md:flex gap-3">
+                <button id="exportReport" class="flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-bold text-black transition-colors hover:bg-primary-hover shadow-[0_0_10px_rgba(255,109,0,0.3)]">
+                    <span class="mr-2 material-symbols-outlined text-[20px]">download</span>
+                    Export Report
+                </button>
+                <div class="relative">
+                    <button id="notifBtn" class="relative p-2 rounded-lg text-text-muted hover:bg-secondary transition-all">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span id="notifDot" class="absolute top-2 right-2 size-2 bg-primary rounded-full shadow-[0_0_10px_rgba(249,115,22,0.5)]"></span>
+                    </button>
+
+                    <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-72 bg-bg-card border border-border-dark rounded-xl shadow-2xl z-[100] overflow-hidden">
+                        <div class="p-3 border-b border-border-dark flex justify-between items-center bg-secondary">
+                            <span class="text-xs font-bold text-white">Recent Activity</span>
+                            <button id="clearNotifBtn" class="text-[10px] text-primary hover:underline">Clear All</button>
+                        </div>
+                        <div id="notifList" class="max-h-60 overflow-y-auto">
+                            </div>
+                        <div class="p-2 text-center bg-secondary">
+                            <button class="text-[10px] text-text-muted hover:text-white transition-all">View All Alerts</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="h-8 w-[1px] bg-border-dark mx-1"></div>
+                <button id="logoutBtn" class="flex items-center gap-3 hover:bg-secondary p-1.5 pr-3 rounded-full border border-transparent hover:border-border-dark transition-all cursor-pointer">
+                    <div class="size-9 rounded-full border border-border-dark shadow-sm overflow-hidden bg-secondary flex items-center justify-center">
+                        <img src="admin.png" alt="Admin" class="w-full h-full object-cover" onerror="this.src='https://ui-avatars.com/api/?name=Ali+Khan&background=282828&color=fff'">
+                    </div>  
+                    <div class="hidden md:block text-left">
+                        <p class="text-sm font-semibold text-gray-200 leading-none">Ali Khan</p>
+                    </div>
+                    <span class="material-symbols-outlined text-gray-500 text-sm">expand_more</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="flex flex-1 min-h-0">
+    <aside class="w-72 bg-black border-r border-border-dark flex-col hidden lg:flex z-30 flex-shrink-0">
+        <div class="h-20 flex items-center px-8 border-b border-border-dark">
+            <div class="flex items-center gap-3">
+                <div class="bg-center bg-no-repeat bg-cover rounded-lg size-8 shadow-sm flex-shrink-0 border border-border-dark relative">
+                    <div class="size-9 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white shadow-glow">
+                        <img src="logo.png" alt="My Logo" class="h-6 w-6 object-contain" />
+                    </div>
+                </div>
+                <h1 class="text-text-main text-lg font-bold leading-tight tracking-wide">SafeSite<span class="text-primary"></span></h1>
+            </div>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+            <a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-sub rounded-lg hover:bg-surface-darker hover:text-white transition-colors group" href="Admin-Dashboard.html">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
+                Dashboard
+            </a>
+            <a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-white/5 text-white border border-neutral-700 shadow-soft mb-1 group" href="live monitoring.html">
+                <span class="material-symbols-outlined text-orange-500">videocam</span>
+                <span class="text-sm font-medium">Live Monitoring</span>
+                <span class="ml-auto size-2 rounded-full bg-red-500 animate-pulse"></span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-orange-500/10 text-orange-500 shadow-glow-sub border border-orange-500/20 group relative overflow-hidden mb-1" href="attendance report.html">
+                <div class="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-500"></div>
+                <span class="material-symbols-outlined icon-filled">calendar_month</span>
+                <span class="text-sm font-bold relative z-10">Attendance Reports</span>
+                <span class="ml-auto bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg">Live</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workermanagementsystem.html">
+                <span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">engineering</span>
+                <span class="text-sm font-medium">Staff Management</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="live incident.html">
+                <span class="material-symbols-outlined group-hover:text-red-400 transition-colors">crisis_alert</span>
+                <span class="text-sm font-medium">Live Incidents</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-3 rounded-xl bg-orange-500/10 text-orange-500 border border-orange-500/20 group mb-1" href="safety-compliance-ppe-detection.html">
+                <span class="material-symbols-outlined icon-filled">health_and_safety</span>
+                <span class="text-sm font-bold">Safety Compliance</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="violotion.html">
+                <span class="material-symbols-outlined group-hover:text-red-400 transition-colors">warning_amber</span>
+                <span class="text-sm font-medium">Violations</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="salary.html">
+                <span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">payments</span>
+                <span class="text-sm font-medium">Salary &amp; Rewards</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="workerperformance.html">
+                <span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">trending_up</span>
+                <span class="text-sm font-medium">Performance</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="reportandanalysics.html">
+                <span class="material-symbols-outlined group-hover:text-orange-400 transition-colors">analytics</span>
+                <span class="text-sm font-medium">Reports Center</span>
+            </a>
+            <div class="mt-auto px-2 pb-4 pt-8">
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-all group" href="systemsettingscreen.html">
+                    <span class="material-symbols-outlined group-hover:text-neutral-200 transition-colors">settings</span>
+                    <span class="text-sm font-medium">System Settings</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="flex-1 min-h-0 overflow-y-auto bg-bg-dark px-6 py-8">
+        <div class="mx-auto flex max-w-[1600px] flex-col gap-8">
+            <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                <div class="flex flex-col gap-2">
+                    <h1 class="text-3xl font-black leading-tight tracking-[-0.033em] text-white lg:text-4xl">
+                        Safety Compliance <span class="text-primary">&amp; PPE Reports</span>
+                    </h1>
+                    <p class="text-base font-normal leading-normal text-text-muted">
+                        Analyze safety gear compliance, trends, and violations across active construction sites.
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <div class="relative">
+                        <select id="shiftFilter" class="h-10 cursor-pointer appearance-none rounded-lg border border-border-dark bg-secondary px-4 pr-10 text-sm font-bold text-white focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary hover:border-gray-600 transition-colors">
+                            <option value="all">Shift: All Shifts</option>
+                            <option value="Morning">Morning (06:00 - 14:00)</option>
+                            <option value="Evening">Evening (14:00 - 22:00)</option>
+                            <option value="Night">Night (22:00 - 06:00)</option>
+                        </select>
+                        <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-muted">expand_more</span>
+                    </div>
+                    <div class="relative">
+                        <select id="zoneFilter" class="h-10 cursor-pointer appearance-none rounded-lg border border-border-dark bg-secondary px-4 pr-10 text-sm font-bold text-white focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary hover:border-gray-600 transition-colors">
+                            <option value="all">Site: All Zones</option>
+                            <option value="Zone A">Site: Zone A - North Gate</option>
+                            <option value="Zone B">Site: Zone B - Foundation</option>
+                        </select>
+                        <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-muted">expand_more</span>
+                    </div>
+                    <div class="relative">
+                        <div class="flex h-10 items-center rounded-lg border border-border-dark bg-secondary px-3 transition-colors hover:border-gray-600 hover:bg-border-dark focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+                            <span class="material-symbols-outlined mr-2 text-[20px] text-primary">calendar_today</span>
+                            <input id="dateFilter" class="bg-transparent border-none p-0 text-sm font-bold text-white focus:ring-0 [color-scheme:dark] cursor-pointer" type="date" value="2026-06-04"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="flex flex-col gap-2 rounded-xl border border-border-dark bg-bg-card p-6 shadow-md hover:border-primary/50 transition-colors group">
+                    <div class="flex items-center justify-between">
+                        <p class="text-base font-medium text-text-muted group-hover:text-white transition-colors">Overall Compliance</p>
+                        <span class="material-symbols-outlined text-green-500">check_circle</span>
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <p id="overallTrend" class="text-3xl font-bold tracking-tight text-white">84%</p>
+                        <span class="mb-1 text-sm font-bold text-text-muted">Live</span>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2 rounded-xl border border-border-dark bg-bg-card p-6 shadow-md hover:border-primary/50 transition-colors group">
+                    <div class="flex items-center justify-between">
+                        <p class="text-base font-medium text-text-muted group-hover:text-white transition-colors">Total Entry Checks</p>
+                        <span class="material-symbols-outlined text-primary">group</span>
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <p id="totalChecks" class="text-3xl font-bold tracking-tight text-white">1,240</p>
+                        <span class="mb-1 text-sm font-medium text-text-muted">This Month</span>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2 rounded-xl border border-border-dark bg-bg-card p-6 shadow-md hover:border-primary/50 transition-colors group">
+                    <div class="flex items-center justify-between">
+                        <p class="text-base font-medium text-text-muted group-hover:text-white transition-colors">Violations Detected</p>
+                        <span class="material-symbols-outlined text-red-500">warning</span>
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <p id="violationCount" class="text-3xl font-bold tracking-tight text-white">3</p>
+                        <span class="mb-1 flex items-center text-sm font-bold text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded border border-red-500/20">
+                            <span class="material-symbols-outlined text-[16px] mr-0.5">trending_down</span> +5%
+                        </span>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2 rounded-xl border border-border-dark bg-bg-card p-6 shadow-md hover:border-primary/50 transition-colors group">
+                    <div class="flex items-center justify-between">
+                        <p class="text-base font-medium text-text-muted group-hover:text-white transition-colors">Most Missing Item</p>
+                        <span class="material-symbols-outlined text-primary">apparel</span>
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <p id="mostMissing" class="text-3xl font-bold tracking-tight text-white">Safety Vest</p>
+                    </div>
+                    <p id="missingCount" class="text-sm font-medium text-text-muted">14 incidents</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+                <div class="flex flex-col rounded-xl border border-border-dark bg-bg-card p-6 shadow-md">
+                    <div class="mb-6 flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-white">Site-wise Compliance Trend</h3>
+                            <p class="text-xs text-text-muted mt-1">Daily compliance percentages across all active zones</p>
+                        </div>
+                        <button class="rounded p-1 hover:bg-secondary text-text-muted hover:text-white transition-colors">
+                            <span class="material-symbols-outlined">more_horiz</span>
+                        </button>
+                    </div>
+                    <div class="relative h-64 w-full">
+                        <div class="absolute left-0 top-0 flex h-full flex-col justify-between text-xs text-text-muted font-medium">
+                            <span>100%</span><span>75%</span><span>50%</span><span>25%</span><span>0%</span>
+                        </div>
+                        <div class="ml-10 h-full w-[calc(100%-2.5rem)]">
+                            <div class="flex h-full flex-col justify-between border-l border-b border-border-dark">
+                                <div class="h-px w-full bg-border-dark/50"></div>
+                                <div class="h-px w-full bg-border-dark/50"></div>
+                                <div class="h-px w-full bg-border-dark/50"></div>
+                                <div class="h-px w-full bg-border-dark/50"></div>
+                                <div class="h-px w-full bg-transparent"></div>
+                            </div>
+                            <svg class="absolute bottom-0 left-0 h-full w-full overflow-visible" preserveAspectRatio="none">
+                                <defs>
+                                    <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+                                        <stop offset="0%" stop-color="#FF6D00" stop-opacity="0.25"></stop>
+                                        <stop offset="100%" stop-color="#FF6D00" stop-opacity="0"></stop>
+                                    </linearGradient>
+                                </defs>
+                                <path id="graphGradientPath" class="text-primary/20" d="M0,45 L100,55 L200,35 L300,75 L400,25 L500,60 L550,42 L600,38 L600,240 L0,240 Z" fill="url(#chartGradient)"></path>
+                                <polyline id="graphPolyline" fill="none" points="0,45 100,55 200,35 300,75 400,25 500,60 550,42 600,38" stroke="#FF6D00" stroke-width="3" vector-effect="non-scaling-stroke"></polyline>
+                                <circle id="graphCircle1" cx="550" cy="42" fill="#121212" r="5" stroke="#FF6D00" stroke-width="2"></circle>
+                                <circle id="graphCircle2" cx="600" cy="38" fill="#121212" r="5" stroke="#FF6D00" stroke-width="2"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="ml-10 mt-2 flex justify-between text-xs text-text-muted font-medium">
+                        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col rounded-xl border border-border-dark bg-bg-card p-6 shadow-md">
+                    <div class="mb-6 flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-white">PPE Item Breakdown</h3>
+                            <p class="text-xs text-text-muted mt-1">Specific equipment compliance statistics</p>
+                        </div>
+                        <div class="flex gap-2 text-xs font-bold text-text-muted">
+                            <span class="flex items-center gap-1"><span class="h-2 w-2 rounded-full bg-primary"></span> Compliant</span>
+                            <span class="flex items-center gap-1"><span class="h-2 w-2 rounded-full bg-secondary border border-border-dark"></span> Missing</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-6">
+                        <div class="group">
+                            <div class="mb-2 flex justify-between">
+                                <span class="text-sm font-bold text-white flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-text-muted text-[18px]">engineering</span> Helmet
+                                </span>
+                                <span id="helmetPercent" class="text-sm font-bold text-primary">92%</span>
+                            </div>
+                            <div class="h-2 w-full overflow-hidden rounded-full bg-secondary">
+                                <div id="helmetBar" class="h-full rounded-full bg-primary transition-all duration-500 shadow-[0_0_10px_rgba(255,109,0,0.5)]" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        <div class="group">
+                            <div class="mb-2 flex justify-between">
+                                <span class="text-sm font-bold text-white flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-text-muted text-[18px]">apparel</span> Safety Vest
+                                </span>
+                                <span id="vestPercent" class="text-sm font-bold text-primary">78%</span>
+                            </div>
+                            <div class="h-2 w-full overflow-hidden rounded-full bg-secondary">
+                                <div id="vestBar" class="h-full rounded-full bg-red-500 transition-all duration-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        <div class="group">
+                            <div class="mb-2 flex justify-between">
+                                <span class="text-sm font-bold text-white flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-text-muted text-[18px]">back_hand</span> Gloves
+                                </span>
+                                <span id="glovesPercent" class="text-sm font-bold text-primary">88%</span>
+                            </div>
+                            <div class="h-2 w-full overflow-hidden rounded-full bg-secondary">
+                                <div id="glovesBar" class="h-full rounded-full bg-primary transition-all duration-500 shadow-[0_0_10px_rgba(255,109,0,0.5)]" style="width: 88%"></div>
+                            </div>
+                        </div>
+                        <div class="group">
+                            <div class="mb-2 flex justify-between">
+                                <span class="text-sm font-bold text-white flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-text-muted text-[18px]">visibility</span> Goggles
+                                </span>
+                                <span id="gogglesPercent" class="text-sm font-bold text-primary">95%</span>
+                            </div>
+                            <div class="h-2 w-full overflow-hidden rounded-full bg-secondary">
+                                <div id="gogglesBar" class="h-full rounded-full bg-primary transition-all duration-500 shadow-[0_0_10px_rgba(255,109,0,0.5)]" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div class="group">
+                            <div class="mb-2 flex justify-between">
+                                <span class="text-sm font-bold text-white flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-text-muted text-[18px]">do_not_step</span> Safety Boots
+                                </span>
+                                <span id="bootsPercent" class="text-sm font-bold text-primary">81%</span>
+                            </div>
+                            <div class="h-2 w-full overflow-hidden rounded-full bg-secondary">
+                                <div id="bootsBar" class="h-full rounded-full bg-red-500 transition-all duration-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" style="width: 81%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col rounded-xl border border-border-dark bg-bg-card shadow-md">
+                <div class="flex flex-col gap-4 border-b border-border-dark p-5 sm:flex-row sm:items-center sm:justify-between bg-bg-card rounded-t-xl">
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Worker-wise Violation Log</h3>
+                        <p class="text-sm text-text-muted mt-1">Detailed list of non-compliant workers</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <div class="relative min-w-[200px]">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px] text-text-muted">search</span>
+                            <input id="tableSearch" class="h-9 w-full rounded-lg border border-border-dark bg-secondary pl-9 text-sm text-white placeholder-text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors" placeholder="Search worker name..." type="text"/>
+                        </div>
+                        <button class="flex h-9 items-center justify-center gap-1 rounded-lg border border-border-dark bg-secondary px-3 text-sm font-medium text-white hover:bg-border-dark hover:text-primary transition-colors">
+                            <span class="material-symbols-outlined text-[18px]">filter_list</span> Filter
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-secondary border-b border-border-dark">
+                            <tr>
+                                <th class="whitespace-nowrap px-6 py-4 text-xs font-bold uppercase tracking-wider text-text-muted">Worker</th>
+                                <th class="whitespace-nowrap px-6 py-4 text-xs font-bold uppercase tracking-wider text-text-muted">Zone / Gate</th>
+                                <th class="whitespace-nowrap px-6 py-4 text-xs font-bold uppercase tracking-wider text-text-muted">Missing Item</th>
+                                <th class="whitespace-nowrap px-6 py-4 text-xs font-bold uppercase tracking-wider text-text-muted">Time Detected</th>
+                                <th class="whitespace-nowrap px-6 py-4 text-xs font-bold uppercase tracking-wider text-text-muted">Evidence</th>
+                                <th class="whitespace-nowrap px-6 py-4 text-xs font-bold uppercase tracking-wider text-text-muted text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="liveTable" class="divide-y divide-border-dark">
+                            </tbody>
+                    </table>
+                </div>
+                <div class="flex items-center justify-between border-t border-border-dark bg-bg-card px-5 py-3 rounded-b-xl">
+                    <p id="liveStatus" class="text-sm text-text-muted">Displaying latest real-time compliance checks</p>
+                    <div class="flex gap-2">
+                        <button id="prevBtn" class="flex h-8 items-center justify-center rounded border border-border-dark bg-secondary px-3 text-sm font-bold text-text-muted disabled:opacity-30 hover:bg-border-dark hover:text-white transition-colors">Prev</button>
+                        <button id="nextBtn" class="flex h-8 items-center justify-center rounded border border-border-dark bg-secondary px-3 text-sm font-bold text-white hover:bg-primary hover:border-primary hover:text-black transition-colors">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div id="evidenceModal" class="hidden fixed inset-0 z-[200] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+    <div class="bg-bg-card border border-border-dark rounded-xl max-w-lg w-full overflow-hidden shadow-2xl">
+        <div class="p-4 border-b border-border-dark flex justify-between items-center bg-secondary">
+            <h4 id="modalTitle" class="text-sm font-bold text-white">Violation Snapshot</h4>
+            <button id="closeModal" class="text-text-muted hover:text-white material-symbols-outlined">close</button>
+        </div>
+        <div class="p-6 flex flex-col items-center justify-center bg-bg-dark/50">
+            <img id="modalImg" src="" alt="Evidence Snap" class="rounded-lg border border-border-dark max-h-72 object-cover shadow-lg w-full bg-secondary">
+            <p id="modalMeta" class="text-xs text-text-muted mt-3 font-medium text-center"></p>
+        </div>
+    </div>
+</div>
+
+<div id="actionMenu" class="hidden absolute bg-bg-card border border-border-dark rounded-lg shadow-2xl py-1 w-36 z-[300] text-xs">
+    <button id="alertWorkerAction" class="w-full text-left px-4 py-2.5 hover:bg-white/5 text-white flex items-center gap-2">
+        <span class="material-symbols-outlined text-sm text-orange-500">sms</span> Send Notification
+    </button>
+    <button id="logFineAction" class="w-full text-left px-4 py-2.5 hover:bg-white/5 text-red-400 flex items-center gap-2 border-t border-border-dark/50">
+        <span class="material-symbols-outlined text-sm text-red-500">receipt_long</span> Log Fine
+    </button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // 1. Firebase Configuration
+    const firebaseConfig = {
+        databaseURL: "https://safesite-compliance-default-rtdb.firebaseio.com"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // 2. DOM Elements Selection
+    const liveTable = document.getElementById("liveTable");
+    const tableSearch = document.getElementById("tableSearch");
+    const shiftFilter = document.getElementById("shiftFilter");
+    const zoneFilter = document.getElementById("zoneFilter");
+    const dateFilter = document.getElementById("dateFilter");
+    
+    // KPI Counters
+    const overallTrend = document.getElementById("overallTrend");
+    const totalChecks = document.getElementById("totalChecks");
+    const violationCount = document.getElementById("violationCount");
+    const mostMissing = document.getElementById("mostMissing");
+    const missingCount = document.getElementById("missingCount");
+
+    // Progress Bars & Percentages
+    const itemsConfig = {
+        helmet: { percent: document.getElementById("helmetPercent"), bar: document.getElementById("helmetBar") },
+        vest: { percent: document.getElementById("vestPercent"), bar: document.getElementById("vestBar") },
+        gloves: { percent: document.getElementById("glovesPercent"), bar: document.getElementById("glovesBar") },
+        goggles: { percent: document.getElementById("gogglesPercent"), bar: document.getElementById("gogglesBar") },
+        boots: { percent: document.getElementById("bootsPercent"), bar: document.getElementById("bootsBar") }
+    };
+
+    // Modal Elements
+    const evidenceModal = document.getElementById("evidenceModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalImg = document.getElementById("modalImg");
+    const modalMeta = document.getElementById("modalMeta");
+    const closeModal = document.getElementById("closeModal");
+
+    // Notification Dropdown Elements
+    const notifBtn = document.getElementById("notifBtn");
+    const notifDropdown = document.getElementById("notifDropdown");
+    const notifList = document.getElementById("notifList");
+    const notifDot = document.getElementById("notifDot");
+    const clearNotifBtn = document.getElementById("clearNotifBtn");
+
+    // Action Menu Context Menu
+    const actionMenu = document.getElementById("actionMenu");
+
+    // Pagination & Data Arrays
+    let allData = [];
+    let filteredData = [];
+    let currentPage = 1;
+    const rowsPerPage = 5;
+
+    // 3. Professional Dummy/Mock Data
+    const dummyData = [
+        { id: "mock1", workerId: "EMP-204", workerName: "Muhammad Ahmed", zone: "Zone A", shift: "Morning", missingItem: "Safety Vest", isViolation: true, timeDetected: "2026-06-04T08:30:00Z", hasHelmet: true, hasVest: false, hasGloves: true, hasGoggles: true, hasBoots: true, evidenceUrl: "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?w=500" },
+        { id: "mock2", workerId: "EMP-112", workerName: "Zainab Bibi", zone: "Zone B", shift: "Morning", missingItem: "None", isViolation: false, timeDetected: "2026-06-04T09:15:00Z", hasHelmet: true, hasVest: true, hasGloves: true, hasGoggles: true, hasBoots: true, evidenceUrl: "" },
+        { id: "mock3", workerId: "EMP-085", workerName: "Asif Khan", zone: "Zone A", shift: "Evening", missingItem: "Helmet", isViolation: true, timeDetected: "2026-06-04T15:20:00Z", hasHelmet: false, hasVest: true, hasGloves: true, hasGoggles: true, hasBoots: true, evidenceUrl: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500" },
+        { id: "mock4", workerId: "EMP-301", workerName: "Bilal Umar", zone: "Zone B", shift: "Evening", missingItem: "None", isViolation: false, timeDetected: "2026-06-04T16:45:00Z", hasHelmet: true, hasVest: true, hasGloves: true, hasGoggles: true, hasBoots: true, evidenceUrl: "" },
+        { id: "mock5", workerId: "EMP-104", workerName: "Sajid Mahmood", zone: "Zone A", shift: "Night", missingItem: "Safety Boots", isViolation: true, timeDetected: "2026-06-04T23:10:00Z", hasHelmet: true, hasVest: true, hasGloves: true, hasGoggles: true, hasBoots: false, evidenceUrl: "https://images.unsplash.com/photo-1590069261209-f8e9b8642343?w=500" },
+        { id: "mock6", workerId: "EMP-219", workerName: "Tariq Jameel", zone: "Zone B", shift: "Morning", missingItem: "Safety Vest", isViolation: true, timeDetected: "2026-06-04T07:45:00Z", hasHelmet: true, hasVest: false, hasGloves: true, hasGoggles: true, hasBoots: true, evidenceUrl: "" },
+        { id: "mock7", workerId: "EMP-055", workerName: "Hamza Ali", zone: "Zone A", shift: "Night", missingItem: "None", isViolation: false, timeDetected: "2026-06-04T02:15:00Z", hasHelmet: true, hasVest: true, hasGloves: true, hasGoggles: true, hasBoots: true, evidenceUrl: "" }
+    ];
+
+    // Initial Setup
+    allData = [...dummyData];
+    calculateAnalytics(allData);
+    applyFilters();
+
+    // 4. Dropdown Interactions
+    notifBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        notifDropdown.classList.toggle("hidden");
+        notifDot.classList.add("hidden"); 
+    });
+
+    clearNotifBtn.addEventListener("click", () => {
+        notifList.innerHTML = `<div class="p-4 text-center text-xs text-text-muted">No recent notifications</div>`;
+    });
+
+    document.addEventListener("click", () => {
+        notifDropdown.classList.add("hidden");
+        actionMenu.classList.add("hidden");
+    });
+
+    // 5. Connect Firebase Realtime Database
+    const complianceRef = ref(db, "safety_compliance");
+    onValue(complianceRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            const firebaseItems = Object.keys(data).map(key => ({
+                id: key,
+                ...data[key]
+            }));
+            
+            allData = [...firebaseItems, ...dummyData].sort((a, b) => new Date(b.timeDetected) - new Date(a.timeDetected));
+            
+            calculateAnalytics(allData);
+            applyFilters();
+            
+            if(firebaseItems.length > 0) {
+                pushNotificationAlert(firebaseItems[0]); 
+            }
+        }
+    });
+
+    // 6. Analytics Computation Engine
+    function calculateAnalytics(data) {
+        let totalRecords = data.length;
+        let violations = data.filter(item => item.isViolation || item.missingItem !== "None");
+        let safeCount = totalRecords - violations.length;
+        
+        let complianceScore = totalRecords > 0 ? Math.round((safeCount / totalRecords) * 100) : 100;
+        overallTrend.innerText = `${complianceScore}%`;
+        totalChecks.innerText = totalRecords.toLocaleString();
+        violationCount.innerText = violations.length;
+
+        let counts = { helmet: 0, vest: 0, gloves: 0, goggles: 0, boots: 0 };
+        let missingItemTracker = {};
+
+        data.forEach(item => {
+            if (item.hasHelmet) counts.helmet++;
+            if (item.hasVest) counts.vest++;
+            if (item.hasGloves) counts.gloves++;
+            if (item.hasGoggles) counts.goggles++;
+            if (item.hasBoots) counts.boots++;
+
+            if (item.missingItem && item.missingItem !== "None") {
+                missingItemTracker[item.missingItem] = (missingItemTracker[item.missingItem] || 0) + 1;
+            }
+        });
+
+        Object.keys(itemsConfig).forEach(key => {
+            let itemScore = totalRecords > 0 ? Math.round((counts[key] / totalRecords) * 100) : 100;
+            itemsConfig[key].percent.innerText = `${itemScore}%`;
+            itemsConfig[key].bar.style.width = `${itemScore}%`;
+            
+            if (itemScore < 80) {
+                itemsConfig[key].bar.className = "h-full rounded-full bg-red-500 transition-all duration-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]";
+                itemsConfig[key].percent.className = "text-sm font-bold text-red-500";
+            } else {
+                itemsConfig[key].bar.className = "h-full rounded-full bg-primary transition-all duration-500 shadow-[0_0_10px_rgba(255,109,0,0.5)]";
+                itemsConfig[key].percent.className = "text-sm font-bold text-primary";
+            }
+        });
+
+        let topMissing = Object.keys(missingItemTracker).reduce((a, b) => missingItemTracker[a] > missingItemTracker[b] ? a : b, "None");
+        if (topMissing !== "None") {
+            mostMissing.innerText = topMissing;
+            missingCount.innerText = `${missingItemTracker[topMissing]} incidents`;
+        } else {
+            mostMissing.innerText = "None";
+            missingCount.innerText = "0 incidents";
+        }
+    }
+
+    // 7. Filter & Search Engine (Supports Worker Name & Worker ID Search)
+    function applyFilters() {
+        const searchQuery = tableSearch.value.toLowerCase().trim();
+        const selectedShift = shiftFilter.value;
+        const selectedZone = zoneFilter.value;
+        const selectedDate = dateFilter.value;
+
+        filteredData = allData.filter(item => {
+            const nameMatch = item.workerName ? item.workerName.toLowerCase().includes(searchQuery) : false;
+            const idMatch = item.workerId ? item.workerId.toLowerCase().includes(searchQuery) : false;
+            const matchesSearch = searchQuery === "" ? true : (nameMatch || idMatch);
+
+            const matchesShift = selectedShift === "all" ? true : item.shift === selectedShift;
+            const matchesZone = selectedZone === "all" ? true : item.zone === selectedZone;
+            
+            let matchesDate = true;
+            if (selectedDate && item.timeDetected) {
+                matchesDate = item.timeDetected.startsWith(selectedDate);
+            }
+
+            return matchesSearch && matchesShift && matchesZone && matchesDate;
+        });
+
+        currentPage = 1; 
+        renderTable();
+    }
+
+    tableSearch.addEventListener("input", applyFilters);
+    shiftFilter.addEventListener("change", applyFilters);
+    zoneFilter.addEventListener("change", applyFilters);
+    dateFilter.addEventListener("change", applyFilters);
+
+    // 8. Render Table Structure with Strict Pagination Constraints
+    function renderTable() {
+        liveTable.innerHTML = "";
+        
+        let start = (currentPage - 1) * rowsPerPage;
+        let end = start + rowsPerPage;
+        let paginatedItems = filteredData.slice(start, end);
+
+        document.getElementById("prevBtn").disabled = (currentPage === 1);
+        document.getElementById("nextBtn").disabled = (end >= filteredData.length);
+        document.getElementById("prevBtn").style.opacity = (currentPage === 1) ? "0.4" : "1";
+        document.getElementById("nextBtn").style.opacity = (end >= filteredData.length) ? "0.4" : "1";
+
+        if (paginatedItems.length === 0) {
+            liveTable.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-text-muted text-sm">No records matched the criteria</td></tr>`;
+            document.getElementById("liveStatus").innerText = "Showing 0 records";
+            return;
+        }
+
+        paginatedItems.forEach(item => {
+            const tr = document.createElement("tr");
+            tr.className = "hover:bg-white/[0.02] border-b border-border-dark/40 text-sm transition-colors";
+
+            const badgeStyle = item.missingItem === "None" 
+                ? "bg-green-500/10 text-green-500 border-green-500/20" 
+                : "bg-red-500/10 text-red-500 border-red-500/20";
+
+            tr.innerHTML = `
+                <td class="px-6 py-4 flex items-center gap-3 min-w-[220px]">
+                    <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center font-bold text-xs border border-border-dark text-primary flex-none">
+                        ${item.workerName ? item.workerName.charAt(0) : "W"}
+                    </div>
+                    <div>
+                        <p class="font-bold text-white leading-tight">${item.workerName || "Unknown Worker"}</p>
+                        <p class="text-[11px] text-text-muted mt-0.5">ID: ${item.workerId || "N/A"}</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-text-muted font-medium min-w-[150px]">${item.zone || "Gate Entrance"}</td>
+                <td class="px-6 py-4 min-w-[130px]">
+                    <span class="px-2 py-0.5 rounded text-xs border font-bold ${badgeStyle}">
+                        ${item.missingItem || "None"}
+                    </span>
+                </td>
+                <td class="px-6 py-4 text-text-muted text-xs font-mono min-w-[120px]">${formatTime(item.timeDetected)}</td>
+                <td class="px-6 py-4 min-w-[120px]">
+                    <button class="view-evidence text-xs font-bold text-primary hover:underline flex items-center gap-1" data-img="${item.evidenceUrl || ''}" data-meta="${item.workerName} - ${item.zone}">
+                        <span class="material-symbols-outlined text-sm">image</span> View Snap
+                    </button>
+                </td>
+                <td class="px-6 py-4 text-right min-w-[80px] relative">
+                    <button class="action-btn text-text-muted hover:text-white p-1 rounded hover:bg-secondary transition-all" data-id="${item.id}">
+                        <span class="material-symbols-outlined">more_vert</span>
+                    </button>
+                </td>
+            `;
+            liveTable.appendChild(tr);
+        });
+
+        attachTableEventHandlers();
+        document.getElementById("liveStatus").innerText = `Showing ${start + 1}-${Math.min(end, filteredData.length)} of ${filteredData.length} logs`;
+    }
+
+    function attachTableEventHandlers() {
+        document.querySelectorAll(".view-evidence").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const imgUrl = e.currentTarget.getAttribute("data-img");
+                const meta = e.currentTarget.getAttribute("data-meta");
+
+                modalImg.src = imgUrl || "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?w=500";
+                modalMeta.innerText = meta;
+                evidenceModal.classList.remove("hidden");
+            });
+        });
+
+        document.querySelectorAll(".action-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const rect = e.currentTarget.getBoundingClientRect();
+                actionMenu.style.top = `${rect.bottom + window.scrollY}px`;
+                actionMenu.style.left = `${rect.left - 100 + window.scrollX}px`;
+                actionMenu.classList.remove("hidden");
+            });
+        });
+    }
+
+    closeModal.addEventListener("click", () => evidenceModal.classList.add("hidden"));
+    evidenceModal.addEventListener("click", (e) => {
+        if(e.target === evidenceModal) evidenceModal.classList.add("hidden");
+    });
+
+    // Pagination Listeners
+    document.getElementById("prevBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        if (currentPage > 1) {
+            currentPage--;
+            renderTable();
+        }
+    });
+
+    document.getElementById("nextBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        if ((currentPage * rowsPerPage) < filteredData.length) {
+            currentPage++;
+            renderTable();
+        }
+    });
+
+    function pushNotificationAlert(latestLog) {
+        if (!latestLog || latestLog.missingItem === "None") return;
+
+        notifDot.classList.remove("hidden");
+        const alertItem = document.createElement("div");
+        alertItem.className = "p-3 border-b border-border-dark/50 flex flex-col gap-1 hover:bg-white/[0.02] transition-colors text-xs";
+        alertItem.innerHTML = `
+            <div class="flex items-center justify-between">
+                <span class="font-bold text-red-400 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">warning</span> PPE Violation
+                </span>
+                <span class="text-[10px] text-text-muted font-mono">${formatTime(latestLog.timeDetected)}</span>
+            </div>
+            <p class="text-white">ID: ${latestLog.workerId || 'N/A'} - ${latestLog.workerName || "Worker"} is missing a ${latestLog.missingItem}.</p>
+        `;
+        
+        if(notifList.firstChild && notifList.firstChild.innerText === "No recent notifications") {
+            notifList.innerHTML = "";
+        }
+        notifList.insertBefore(alertItem, notifList.firstChild);
+    }
+
+    function formatTime(dateTimeStr) {
+        if (!dateTimeStr) return "Live";
+        try {
+            const date = new Date(dateTimeStr);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } catch(e) {
+            return dateTimeStr;
+        }
+    }
+
+    // =======================================================
+    // 11. HIGH-LEVEL ENTERPRISE PDF COMPLIANCE REPORT EXPORTER
+    // =======================================================
+    document.getElementById("exportReport").addEventListener("click", () => {
+        if (filteredData.length === 0) {
+            alert("Export karne ke liye koi data available nahi hai!");
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: "portrait", format: "a4" });
+
+        // Document Decorative Accent Bar (Top Border)
+        doc.setFillColor(255, 109, 0); // Primary Accent Color
+        doc.rect(0, 0, 210, 4, "F");
+
+        // Report Title & Brand Header
+        doc.setFont("Helvetica", "bold");
+        doc.setFontSize(20);
+        doc.setTextColor(20, 24, 33); // Slate Black
+        doc.text("SAFESITE COMPLIANCE AUDIT REPORT", 14, 20);
+
+        doc.setFontSize(9);
+        doc.setFont("Helvetica", "normal");
+        doc.setTextColor(110, 115, 125);
+        doc.text("Automated Smart AI-Based PPE Tracking & Safety Detection Log", 14, 25);
+
+        // Metadata Info Block (Right-aligned)
+        const generateDate = new Date().toLocaleString();
+        doc.setFontSize(9);
+        doc.text(`Generated On: ${generateDate}`, 196, 20, { align: "right" });
+        doc.text(`Scope: Active Workspace Filtered Logs`, 196, 25, { align: "right" });
+        doc.text(`Total Records Extracted: ${filteredData.length}`, 196, 30, { align: "right" });
+
+        // Divider Line
+        doc.setDrawColor(220, 225, 230);
+        doc.line(14, 34, 196, 34);
+
+        // Prepare structured matrix for AutoTable compilation
+        const tableHeaders = [["Worker ID", "Full Name", "Zone / Sector", "Shift", "Safety Status", "Missing Equipment"]];
+        
+        const tableRows = filteredData.map(item => {
+            const statusText = item.missingItem === "None" ? "Compliant" : "Violation Detected";
+            return [
+                item.workerId || "N/A",
+                item.workerName || "Unknown",
+                item.zone || "Main Sector",
+                item.shift || "N/A",
+                statusText,
+                item.missingItem || "None"
+            ];
+        });
+
+        // Generate the Professional Table Design
+        doc.autoTable({
+            head: tableHeaders,
+            body: tableRows,
+            startY: 40,
+            theme: "striped",
+            headStyles: {
+                fillColor: [24, 28, 36], // Corporate Dark Slate Header
+                textColor: [255, 255, 255],
+                fontSize: 10,
+                fontStyle: "bold",
+                halign: "left"
+            },
+            bodyStyles: {
+                fontSize: 9,
+                textColor: [50, 55, 65],
+                rowPageBreak: "avoid"
+            },
+            columnStyles: {
+                0: { cellWidth: 25 },
+                1: { cellWidth: 45 },
+                2: { cellWidth: 35 },
+                3: { cellWidth: 25 },
+                4: { cellWidth: 35 },
+                5: { cellWidth: 31 }
+            },
+            alternateRowStyles: {
+                fillColor: [247, 249, 251] // Light grayish blue alternate effect
+            },
+            // Dynamic cell customization to highlight Violations in Dark Red text
+            didParseCell: function(data) {
+                if (data.section === 'body' && data.column.index === 4) {
+                    if (data.cell.raw === "Violation Detected") {
+                        data.cell.styles.textColor = [190, 20, 20]; // Deep Red Alert Text
+                        data.cell.styles.fontStyle = 'bold';
+                    } else {
+                        data.cell.styles.textColor = [30, 130, 40]; // Safe Green Text
+                    }
+                }
+            },
+            // Professional Footer on each page (Page Numbers)
+            didDrawPage: function (data) {
+                doc.setFontSize(8);
+                doc.setTextColor(150, 155, 165);
+                const str = "Page " + doc.internal.getNumberOfPages();
+                doc.text(str, data.settings.margin.left, doc.internal.pageSize.height - 10);
+                doc.text("CONFIDENTIAL - INTERNAL SAFETY AUDIT USE ONLY", 196, doc.internal.pageSize.height - 10, { align: "right" });
+            }
+        });
+
+        // Trigger safe PDF browser download sequence
+        const fileTimestamp = new Date().toISOString().slice(0, 10);
+        doc.save(`SafeSite_Compliance_Audit_Report_${fileTimestamp}.pdf`);
+    });
+</script>
+</body>
+</html>
